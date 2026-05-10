@@ -1,6 +1,6 @@
-<div class="h-full flex flex-col gap-8 justify-center items-center">
-  <form class="h-full w-caishen-input-form flex flex-col gap-4 justify-center" [formGroup]="loginForm">
-    <h2 class="my-5 text-2xl font-bold">Login</h2>
+<div class="app-form-page">
+  <form class="app-form" [formGroup]="loginForm">
+    <h2 class="app-title">Connexion</h2>
     <app-caishen-custom-form-input [placeholder]="'mail@exemple.com'"
                                    [icon]="'/icons/mail_icon.svg'"
                                    [type]="'email'"
@@ -15,8 +15,8 @@
                                    [hasError]="false">
     </app-caishen-custom-form-input>
     <div class="flex justify-end">
-      <button class="btn btn-primary" (click)="login()" [disabled]="loginForm.invalid">Log</button>
+      <button type="button" class="btn btn-primary w-full sm:w-auto" (click)="login()" [disabled]="loginForm.invalid">Se connecter</button>
     </div>
-    <a href="/register" class="text-center underline">register</a>
+    <a href="/register" class="text-center underline">Créer un compte</a>
   </form>
 </div>

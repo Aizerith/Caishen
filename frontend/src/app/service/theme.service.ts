@@ -4,7 +4,7 @@ import {Injectable, signal, WritableSignal} from '@angular/core';
   providedIn: 'root',
 })
 export class ThemeService {
-  _theme: WritableSignal<string> = signal('night');
+  _theme: WritableSignal<string> = signal('caishen');
 
   get theme() {
     return this._theme;
@@ -13,8 +13,9 @@ export class ThemeService {
   start() {
     let savedTheme: string | null = localStorage.getItem('theme');
     if (!savedTheme) {
-      savedTheme = 'night';
+      savedTheme = 'caishen';
     }
+    this._theme.set(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }
 

@@ -2,40 +2,36 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: all;
-}
-
-html {
-  scrollbar-gutter: stable;
+  themes: light --default, night --prefersdark, dark, forest, lofi;
 }
 
 @plugin "daisyui/theme" {
-  name: Pinky;
+  name: caishen;
   default: true;
   prefersdark: false;
-  color-scheme: Pinky;
-  --color-base-100: oklch(97% 0.017 320.058);
-  --color-base-200: oklch(95% 0.037 318.852);
-  --color-base-300: oklch(90% 0.076 319.62);
-  --color-base-content: oklch(40% 0.17 325.612);
-  --color-primary: oklch(58% 0.233 277.117);
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(55% 0.013 58.071);
-  --color-secondary-content: oklch(98% 0.001 106.423);
-  --color-accent: oklch(70% 0.213 47.604);
-  --color-accent-content: oklch(98% 0.016 73.684);
-  --color-neutral: oklch(40% 0.17 325.612);
-  --color-neutral-content: oklch(97% 0.017 320.058);
-  --color-info: oklch(78% 0.154 211.53);
-  --color-info-content: oklch(30% 0.056 229.695);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(26% 0.051 172.552);
-  --color-warning: oklch(85% 0.199 91.936);
-  --color-warning-content: oklch(28% 0.066 53.813);
-  --color-error: oklch(70% 0.191 22.216);
-  --color-error-content: oklch(25% 0.092 26.042);
+  color-scheme: light;
+  --color-base-100: oklch(98% 0.008 95);
+  --color-base-200: oklch(95% 0.014 95);
+  --color-base-300: oklch(90% 0.023 95);
+  --color-base-content: oklch(24% 0.025 260);
+  --color-primary: oklch(45% 0.13 250);
+  --color-primary-content: oklch(98% 0.006 250);
+  --color-secondary: oklch(54% 0.09 170);
+  --color-secondary-content: oklch(98% 0.006 170);
+  --color-accent: oklch(69% 0.14 70);
+  --color-accent-content: oklch(22% 0.035 70);
+  --color-neutral: oklch(30% 0.03 260);
+  --color-neutral-content: oklch(96% 0.008 260);
+  --color-info: oklch(68% 0.12 225);
+  --color-info-content: oklch(22% 0.04 225);
+  --color-success: oklch(64% 0.13 150);
+  --color-success-content: oklch(18% 0.035 150);
+  --color-warning: oklch(78% 0.15 80);
+  --color-warning-content: oklch(24% 0.04 80);
+  --color-error: oklch(62% 0.18 25);
+  --color-error-content: oklch(98% 0.006 25);
   --radius-selector: 0.5rem;
-  --radius-field: 0.25rem;
+  --radius-field: 0.5rem;
   --radius-box: 0.5rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
@@ -44,9 +40,124 @@ html {
   --noise: 0;
 }
 
-
-
 @theme {
-  --width-caishen-input-form: 300px;
-  --width-caishen-content: 600px;
+  --width-caishen-input-form: 24rem;
+  --width-caishen-content: 42rem;
+}
+
+html {
+  height: 100%;
+  scrollbar-gutter: stable;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+app-login,
+app-register,
+app-home,
+app-check,
+app-add,
+app-expense,
+app-settings,
+app-join {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+button,
+a,
+input:not([type="checkbox"]):not([type="radio"]),
+select {
+  min-height: 2.75rem;
+}
+
+@layer components {
+  .app-root {
+    @apply flex h-dvh w-full flex-col overflow-hidden bg-base-100 text-base-content;
+  }
+
+  .app-nav {
+    @apply z-20 flex shrink-0 items-center justify-between gap-2 border-b border-base-300 bg-base-100/95 px-3 py-2 shadow-sm backdrop-blur;
+  }
+
+  .app-page {
+    @apply flex h-full min-h-0 w-full justify-center overflow-hidden px-0 pb-0 pt-0 md:px-5 md:py-8;
+  }
+
+  .app-page-center {
+    @apply md:items-center;
+  }
+
+  .app-panel {
+    @apply flex w-full flex-1 flex-col overflow-hidden bg-base-200 md:max-w-[56rem] md:flex-none md:rounded-box md:border md:border-base-300 md:shadow-sm;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .app-panel-header {
+    @apply flex flex-col gap-3 border-b border-base-300 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5;
+  }
+
+  .app-panel-header-inline {
+    @apply flex-row items-center justify-between;
+  }
+
+  .app-title {
+    @apply text-xl font-bold leading-tight sm:text-2xl;
+  }
+
+  .app-content {
+    @apply flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overflow-x-hidden p-4 sm:p-5;
+  }
+
+  .app-content-with-tabs {
+    @apply mt-3 pt-0 sm:mt-4 sm:pt-0;
+  }
+
+  .app-card {
+    @apply w-full appearance-none rounded-box border border-base-300 bg-base-100 p-4 text-left shadow-sm;
+  }
+
+  .app-row {
+    @apply grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3;
+  }
+
+  .app-row-title {
+    @apply min-w-0 break-words text-lg font-semibold leading-tight sm:text-xl;
+  }
+
+  .app-row-meta {
+    @apply leading-6 text-base text-base-content/70 sm:text-sm;
+  }
+
+  .app-amount {
+    @apply whitespace-nowrap text-xl font-bold leading-tight sm:text-2xl;
+  }
+
+  .app-form-page {
+    @apply flex h-full min-h-0 w-full items-center justify-center overflow-hidden px-4 py-8;
+  }
+
+  .app-form {
+    @apply flex w-full max-w-sm flex-col gap-4 rounded-box border border-base-300 bg-base-200 p-5 shadow-sm sm:p-6;
+  }
 }

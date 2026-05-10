@@ -4,10 +4,6 @@ import { NotLoggedGuard } from './guard/not-logged-guard';
 
 export const routes: Routes = [
   {
-    path: 'animation',
-    loadComponent: () => import('./shared/demo-anime/demo-anime.component').then((m) => m.DemoAnimeComponent),
-  },
-  {
     path: 'group',
     canActivate: [IsLoggedGuard],
     loadChildren: () => import('./view/group/group.routes').then((value) => value.groupRoutes),

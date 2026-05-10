@@ -20,7 +20,7 @@ export class SettingsComponent {
     let savedTheme: string | null = localStorage.getItem('theme');
     savedTheme
       ? this.theme.setValue(savedTheme, { emitEvent: false })
-      : this.theme.setValue('night', { emitEvent: false });
+      : this.theme.setValue('caishen', { emitEvent: false });
     this.theme.valueChanges.subscribe((value) => {
       localStorage.setItem('theme', value!);
       this.changeTheme(this.theme.value!);

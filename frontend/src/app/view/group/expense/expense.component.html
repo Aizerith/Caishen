@@ -1,40 +1,32 @@
-<div class="flex w-full h-full justify-center items-center">
-  <div *ngIf="expenseInfo()" class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm">
-    <div class="flex flex-col justify-center items-center p-5">
-      <h1 class="card-title text-3xl">{{ expenseInfo()?.title }}</h1>
-      <p class="text-sm">Le {{ expenseInfo()?.expenseDate | date: "dd-MM-yyyy" }}</p>
-      <p></p>
-    </div>
+<div class="app-page">
+  <section *ngIf="expenseInfo()" class="app-panel">
+    <header class="app-panel-header">
+      <div class="min-w-0">
+        <h1 class="app-title">{{ expenseInfo()?.title }}</h1>
+        <p class="app-row-meta">Le {{ expenseInfo()?.expenseDate | date: "dd-MM-yyyy" }}</p>
+      </div>
+    </header>
 
-    <div class="card-body overflow-auto pt-2 gap-10">
-      <div class="flex flex-col gap-4">
-        <h2 class="card-title">Payé par</h2>
-        <div class="card w-full bg-base-100 card-xs shadow-sm">
-          <div class="card-body flex-row justify-between items-center">
-            <div class="flex py-3">
-              <h2 class="card-title px-4 text-2xl">{{ expenseInfo()?.payerName }}</h2>
-            </div>
-            <div class="text-2xl px-4 text-success">
-              {{ expenseInfo()?.amount }} euro
-            </div>
+    <div class="app-content gap-6">
+      <section class="flex flex-col gap-3">
+        <h2 class="text-lg font-semibold">Payé par</h2>
+        <div class="app-card app-row">
+          <h3 class="app-row-title">{{ expenseInfo()?.payerName }}</h3>
+          <div class="app-amount text-success">
+            {{ expenseInfo()?.amount }} euro
           </div>
         </div>
-      </div>
-      <div class="flex flex-col gap-4">
-        <h2 class="card-title">Participants</h2>
-        <div *ngFor="let participant of expenseInfo()?.participantDTOList"
-             class="card w-full bg-base-100 card-xs shadow-sm py-3">
-          <div class="card-body flex-row justify-between items-center">
-            <div class="flex flex-col">
-              <h2 class="card-title px-4 text-2xl">{{ participant.username }}</h2>
-            </div>
-            <div class="text-2xl px-4 text-warning">
-              {{ participant.amount }} euro
-            </div>
+      </section>
+
+      <section class="flex flex-col gap-3">
+        <h2 class="text-lg font-semibold">Participants</h2>
+        <div *ngFor="let participant of expenseInfo()?.participantDTOList" class="app-card app-row">
+          <h3 class="app-row-title">{{ participant.username }}</h3>
+          <div class="app-amount text-warning">
+            {{ participant.amount }} euro
           </div>
         </div>
-      </div>
+      </section>
     </div>
-  </div>
+  </section>
 </div>
-

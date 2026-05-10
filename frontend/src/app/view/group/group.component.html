@@ -1,21 +1,25 @@
-<div class="flex w-full h-full justify-center items-center">
-  <div class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm">
-    <div class="flex justify-between items-center p-5">
-      <h1 class="card-title">Groupes</h1>
-      <button class="btn btn-accent h-10 w-11" (click)="navigateToAddGroup()"><span
-        class="h-5 w-5 text-3xl leading-3.5">+</span></button>
+<div class="app-page">
+  <section class="app-panel">
+    <header class="app-panel-header app-panel-header-inline">
+      <h1 class="app-title">Groupes</h1>
+      <button type="button" class="btn btn-accent btn-square relative p-0" aria-label="Ajouter un groupe"
+              (click)="navigateToAddGroup()">
+        <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>
+        <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>
+      </button>
+    </header>
+    <div *ngIf="groups$ | async as groupList" class="app-content">
+      <article *ngFor="let group of groupList"
+               role="button"
+               tabindex="0"
+               class="app-card app-row cursor-pointer"
+               (click)="navigateToGroupId(group.id)"
+               (keydown.enter)="navigateToGroupId(group.id)">
+        <h2 class="app-row-title">{{ group.title }}</h2>
+        <span class="btn btn-primary btn-square self-end sm:self-auto">
+          <img src="/icons/right-arrow.svg" alt="">
+        </span>
+      </article>
     </div>
-    <div *ngIf="groups$ | async as groupList" class="card-body overflow-auto pt-2">
-      <div *ngFor="let group of groupList" class="card w-full bg-base-100 card-xs shadow-sm">
-        <div class="card-body flex-row justify-between items-center">
-          <h2 class="card-title px-4 text-2xl">{{ group.title }}</h2>
-          <div class="justify-end card-actions">
-            <button class="btn btn-primary" (click)="navigateToGroupId(group.id)">
-              <img src="/icons/right-arrow.svg" alt="right_arrow">
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </section>
 </div>

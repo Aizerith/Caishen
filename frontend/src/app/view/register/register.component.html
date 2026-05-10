@@ -1,6 +1,6 @@
-<div class="h-full flex flex-col gap-8 justify-center items-center">
-  <div class="h-full w-caishen-input-form flex flex-col gap-4 justify-center" [formGroup]="registerForm">
-    <h2 class="my-5 text-2xl font-bold">Register</h2>
+<div class="app-form-page">
+  <div class="app-form" [formGroup]="registerForm">
+    <h2 class="app-title">Inscription</h2>
     <app-caishen-custom-form-input [placeholder]="'Username'"
                                    [icon]="'/icons/username_icon.svg'"
                                    [type]="'text'"
@@ -38,8 +38,8 @@
                                    [errorMessage]="'Les mots de passe ne correspondent pas.'">
     </app-caishen-custom-form-input>
     <div class="flex justify-end">
-      <button class="btn btn-primary" [disabled]="registerForm.invalid || isRegistering" (click)="register()">Register</button>
+      <button type="button" class="btn btn-primary w-full sm:w-auto" [disabled]="registerForm.invalid || isRegistering" (click)="register()">Créer le compte</button>
     </div>
-    <a href="/login" class="text-center underline">Login</a>
+    <a href="/login" class="text-center underline">Déjà inscrit ? Se connecter</a>
   </div>
 </div>

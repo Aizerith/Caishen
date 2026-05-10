@@ -1,6 +1,8 @@
-<div class="h-full w-full">
-  <div (click)="navigateToSettings()" class="btn absolute top-1 right-1">Settings</div>
-  <div (click)="navigateBack()" class="btn absolute top-1 left-1">Retour</div>
+<div class="app-root">
+  <nav class="app-nav">
+    <button type="button" (click)="navigateBack()" class="btn btn-ghost btn-sm">Retour</button>
+    <button type="button" (click)="navigateToSettings()" class="btn btn-ghost btn-sm">Settings</button>
+  </nav>
   <router-outlet></router-outlet>
   <app-caishen-custom-snackbar></app-caishen-custom-snackbar>
 </div>

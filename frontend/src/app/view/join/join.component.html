@@ -1,30 +1,21 @@
-<div class="flex w-full h-full justify-center items-center">
-  <div class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm justify-center">
-    <div>
-      <div class="card-body overflow-auto pt-2">
-        <div class="card bg-base-100 card-xs shadow-sm p-10">
-          <ng-container *ngIf="isLogged(); else notLogged">
-            <div class="card-body items-center gap-6">
-              <h1 *ngIf="!errorMessage; else error" class="card-title text-xl text-center">Vous avez rejoint le groupe</h1>
-              <button class="btn btn-accent"><span
-                class="text-md leading-3.5" (click)="navigateToGroup()">Voir mes groupes</span></button>
-            </div>
-          </ng-container>
-        </div>
+<div class="app-page app-page-center">
+  <section class="app-panel">
+    <div class="app-content">
+      <div class="app-card flex flex-col items-center gap-5 text-center">
+        <ng-container *ngIf="isLogged(); else notLogged">
+          <h1 *ngIf="!errorMessage; else error" class="app-title">Vous avez rejoint le groupe</h1>
+          <button type="button" class="btn btn-accent w-full sm:w-auto" (click)="navigateToGroup()">Voir mes groupes</button>
+        </ng-container>
       </div>
     </div>
-  </div>
+  </section>
 </div>
 
 <ng-template #notLogged>
-  <div class="card-body items-center gap-6">
-    <h1 class="card-title text-xl text-center">Veuillez vous connecter, puis cliquez à nouveau sur le lien</h1>
-    <button class="btn btn-accent"><span
-      class="text-md leading-3.5" (click)="navigateToLogin()">Se connecter</span></button>
-  </div>
+  <h1 class="app-title">Veuillez vous connecter, puis cliquez à nouveau sur le lien</h1>
+  <button type="button" class="btn btn-accent w-full sm:w-auto" (click)="navigateToLogin()">Se connecter</button>
 </ng-template>
+
 <ng-template #error>
-  <h1 class="card-title text-xl text-center">{{ errorMessage }}</h1>
+  <h1 class="app-title text-error">{{ errorMessage }}</h1>
 </ng-template>
-
-
