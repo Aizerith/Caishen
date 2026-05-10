@@ -1,0 +1,6 @@
+START TRANSACTION;
+
+ALTER TABLE expense
+    ADD COLUMN  expense_date  DATE    NOT NULL;
+
+COMMIT;

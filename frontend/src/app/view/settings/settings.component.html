@@ -1,0 +1,104 @@
+<div class="flex w-full h-full justify-center items-center">
+  <div class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm">
+    <div class="flex justify-between items-center p-5">
+      <h1 class="card-title">Settings</h1>
+    </div>
+    <div class="h-full">
+      <div class="card-body overflow-auto pt-2 h-full">
+        <div class="card bg-base-100 card-xs shadow-sm p-10 h-full">
+          <div class="card-body flex flex-col justify-between">
+            <div class="flex flex-col gap-2">
+              <p class="flex w-full text-2xl px-1">Thèmes</p>
+              <div class="dropdown">
+                <div tabindex="0" role="button" class="btn m-1">
+                  {{ theme.value }}
+                  <svg
+                    width="12px"
+                    height="12px"
+                    class="inline-block h-2 fill-current opacity-60 px-2 w-full"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 2048 2048"
+                  >
+                    <path
+                      d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"
+                    ></path>
+                  </svg>
+                </div>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl"
+                >
+                  <li>
+                    <input
+                      type="radio"
+                      name="theme-dropdown"
+                      class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                      aria-label="Default"
+                      value="Pinky"
+                      [formControl]="theme"
+                    />
+                  </li>
+                  <li>
+                    <input
+                      type="radio"
+                      name="theme-dropdown"
+                      class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                      aria-label="Night"
+                      value="night"
+                      [formControl]="theme"
+                    />
+                  </li>
+                  <li>
+                    <input
+                      type="radio"
+                      name="theme-dropdown"
+                      class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                      aria-label="Light"
+                      value="light"
+                      [formControl]="theme"
+                    />
+                  </li>
+                  <li>
+                    <input
+                      type="radio"
+                      name="theme-dropdown"
+                      class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                      aria-label="Dark"
+                      value="dark"
+                      [formControl]="theme"
+                    />
+                  </li>
+                  <li>
+                    <input
+                      type="radio"
+                      name="theme-dropdown"
+                      class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                      aria-label="Forest"
+                      value="forest"
+                      [formControl]="theme"
+                    />
+                  </li>
+                  <li>
+                    <input
+                      type="radio"
+                      name="theme-dropdown"
+                      class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                      aria-label="Lofi"
+                      value="lofi"
+                      [formControl]="theme"
+                    />
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <p class="flex w-full mt-5 text-2xl">Déconnexion</p>
+              <button class="btn btn-error" (click)="logout()">Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

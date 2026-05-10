@@ -1,0 +1,5 @@
+
+<div *ngIf="visible" role="alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 alert alert-soft justify-center"
+     [ngClass]="!isError ? 'alert-success' : 'alert-error'">
+  <span>{{ message }}</span>
+</div>

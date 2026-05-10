@@ -1,0 +1,21 @@
+<div class="flex w-full h-full justify-center items-center">
+  <div class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm">
+    <div class="flex justify-between items-center p-5">
+      <h1 class="card-title">Groupes</h1>
+      <button class="btn btn-accent h-10 w-11" (click)="navigateToAddGroup()"><span
+        class="h-5 w-5 text-3xl leading-3.5">+</span></button>
+    </div>
+    <div *ngIf="groups$ | async as groupList" class="card-body overflow-auto pt-2">
+      <div *ngFor="let group of groupList" class="card w-full bg-base-100 card-xs shadow-sm">
+        <div class="card-body flex-row justify-between items-center">
+          <h2 class="card-title px-4 text-2xl">{{ group.title }}</h2>
+          <div class="justify-end card-actions">
+            <button class="btn btn-primary" (click)="navigateToGroupId(group.id)">
+              <img src="/icons/right-arrow.svg" alt="right_arrow">
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

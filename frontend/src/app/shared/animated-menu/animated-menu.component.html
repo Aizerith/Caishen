@@ -1,0 +1,32 @@
+<div class="viewport">
+  <div
+    class="menu"
+    cdkDrag
+    [cdkDragDisabled]="dragDisabled"
+    [cdkDragFreeDragPosition]="dragPos"
+    (cdkDragStarted)="onDragStarted()"
+    (cdkDragEnded)="onDragEnded($event)"
+    #menu
+  >
+    <div id="myMenu">
+      <div
+        class="item"
+        #itemEl
+        [style.background]="itemData[0].color"
+        (pointerdown)="onHeadPointerDown($event)"
+        (pointerup)="onHeadPointerUp($event)"
+      >
+        <i class="fi-{{ itemData[0].icon }}"></i>
+      </div>
+      <div
+        class="item"
+        #itemEl
+        *ngFor="let it of itemData.slice(1); let i = index"
+        [style.background]="it.color"
+        (click)="onItemClick(i + 1)"
+      >
+        <i class="fi-{{ it.icon }}"></i>
+      </div>
+    </div>
+  </div>
+</div>

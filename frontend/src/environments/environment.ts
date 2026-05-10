@@ -1,5 +1,6 @@
 export const environment = {
-  production: false,
-  apiUrl: '',
-  wsUrl: ''
+  API_URL: '',
+  URL: '',
+  SOCKJS_BROKER_URL: '',
+  BROKER_URL: '',
 };

@@ -1,0 +1,66 @@
+<div class="flex w-full h-full justify-center items-center">
+  <div *ngIf="groupInfo$ | async as group" class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm">
+    <div class="flex justify-between items-center p-5">
+      <h1 class="card-title">{{ group?.title }}</h1>
+      <button class="btn btn-accent"><span
+        class="text-md leading-3.5" (click)="copyInvitationLink(group!.uuid)">Lien d'invitation</span>
+      </button>
+    </div>
+    <div role="tablist" class="tabs tabs-box flex gap-1 px-10">
+      <a role="tab" class="tab flex-1" [ngClass]="{'tab-active' : currentTab === 'expense'}"
+         (click)="changeTabToExpense()">Dépenses</a>
+      <a role="tab" class="tab flex-1" [ngClass]="{'tab-active' : currentTab === 'balance'}"
+         (click)="changeTabToBalance()">Équilibre</a>
+    </div>
+    <ng-container [ngSwitch]="currentTab">
+      <div *ngSwitchCase="'expense'" class="card-body overflow-auto pt-2">
+        <div *ngFor="let expense of group.expenseList" class="card w-full bg-base-100 card-xs shadow-sm" (click)="navigateToExpense(expense)">
+          <div class="card-body flex-row justify-between items-center">
+            <div class="flex flex-col">
+              <h2 class="card-title px-4 text-2xl">{{ expense.title }}</h2>
+              <p class="card-title px-4">Payé par: <span class="text-success">{{ expense.payerName }}</span></p>
+              <p class="card-title px-4">Le {{ expense.expenseDate | date: "dd-MM-yyyy" }}</p>
+            </div>
+            <div class="text-2xl px-4">
+              {{ expense.amount }} euro
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngSwitchCase="'balance'" class="card-body overflow-auto pt-2 gap-6">
+        <div *ngIf="myBalance$ | async as myBalance" class="card w-full bg-base-100 card-xs shadow-sm py-3">
+          <div class="card-body flex-row justify-between items-center">
+            <div class="flex flex-col">
+              <h2 *ngIf="myBalance > 0; else oweMoney" class="card-title px-4 text-2xl text-success">On vous doit</h2>
+            </div>
+            <div class="text-2xl px-4" [ngClass]="myBalance > 0 ? 'text-success' : 'text-error'">
+              {{ Math.abs(myBalance) }} euro
+            </div>
+          </div>
+        </div>
+        <div class="card-body overflow-auto pt-0 px-0">
+          <h2 class="text-2xl p-1 ">Membres</h2>
+          <div *ngFor="let member of group.memberList" class="card w-full bg-base-100 card-xs shadow-sm py-3">
+            <div class="card-body flex-row justify-between items-center">
+              <div class="flex flex-col">
+                <h2 class="card-title px-4 text-2xl">{{ member.name }}</h2>
+              </div>
+              <div class="text-2xl px-4" [ngClass]=" member.expenseDelta > 0 ? 'text-success' : 'text-error'">
+                {{ member.expenseDelta }} euro
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <div *ngIf="currentTab === 'expense'" class="p-5 flex w-full justify-end">
+      <app-caishen-add-expense-modal [expenseForm]="expenseForm"
+                                     [memberList]="group!.memberList"
+                                     (onValidateExpense)="addExpense()"></app-caishen-add-expense-modal>
+    </div>
+  </div>
+</div>
+
+<ng-template #oweMoney>
+  <h2 class="card-title px-4 text-2xl text-error">Vous devez</h2>
+</ng-template>

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>backend</artifactId>
+    <artifactId>server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backend</name>
-    <description>backend</description>
+    <name>server</name>
+    <description>CaiShen backend</description>
     <url/>
     <licenses>
         <license/>
@@ -56,8 +56,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -101,7 +101,7 @@
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
+            <artifactId>flyway-mysql</artifactId>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -186,6 +186,33 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>3.1.1185</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jsonLibrary>jackson2</jsonLibrary>
+                    <classPatterns>
+                        <pattern>fr.caishen.server.web.dto.**</pattern>
+                    </classPatterns>
+                    <excludeClasses>
+                        <class>java.io.Serializable</class>
+                    </excludeClasses>
+                    <outputFile>../frontend/src/app/definitions/caishen.d.ts</outputFile>
+                    <outputKind>global</outputKind>
+                    <namespace>CaiShen</namespace>
+                    <noFileComment>true</noFileComment>
+                    <sortDeclarations>true</sortDeclarations>
+                </configuration>
             </plugin>
         </plugins>
     </build>

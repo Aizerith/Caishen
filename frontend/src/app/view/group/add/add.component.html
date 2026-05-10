@@ -1,0 +1,21 @@
+<div class="flex w-full h-full justify-center items-center">
+  <div class="card w-caishen-content h-[90%] bg-base-200 card-xl shadow-sm">
+    <div class="flex justify-between items-center p-5">
+      <h1 class="card-title">Ajouter un groupe</h1>
+    </div>
+    <div>
+      <div class="card-body overflow-auto pt-2">
+        <div class="card bg-base-100 card-xs shadow-sm p-10">
+          <div class="card-body">
+            <app-caishen-custom-form-input [placeholder]="'titre du groupe'"
+                                           [type]="'text'"
+                                           [inputForm]="getFormFromName('title')"
+                                           [hasError]="false">
+            </app-caishen-custom-form-input>
+            <button class="btn btn-primary" (click)="addNewGroup()" [disabled]="groupForm.invalid">Valider</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

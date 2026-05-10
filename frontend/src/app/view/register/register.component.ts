@@ -1,0 +1,50 @@
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { STRONG_PASSWORD_REGEX, VALID_EMAIL_REGEX, VALID_PSEUDO_REGEX } from '../../validator/validator.regex';
+import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
+import Validation from '../../validator/validation';
+import RegisterRequest = CaiShen.RegisterRequest;
+import { Router } from '@angular/router';
+import {AuthFeatureService} from '../../service/featureService/auth.feature.service';
+
+@Component({
+  selector: 'app-register',
+  imports: [ReactiveFormsModule, CaishenCustomFormInputComponent],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css',
+})
+export class RegisterComponent {
+  readonly fb: FormBuilder = inject(FormBuilder);
+  readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
+  readonly router: Router = inject(Router);
+
+  protected isRegistering: boolean = false;
+  protected registerForm: FormGroup = this.fb.group(
+    {
+      username: new FormControl<string>('', [Validators.required, Validators.pattern(VALID_PSEUDO_REGEX)]),
+      login: new FormControl<string>('', [Validators.required, Validators.pattern(VALID_EMAIL_REGEX)]),
+      password: new FormControl<string>('', [Validators.required, Validators.pattern(STRONG_PASSWORD_REGEX)]),
+      passwordConfirmation: new FormControl<string>('', [Validators.required]),
+    },
+    {
+      validators: [Validation.match('password', 'passwordConfirmation')],
+    },
+  );
+
+  private getRegisterData(): RegisterRequest {
+    return {
+      username: this.registerForm.get('username')?.value,
+      email: this.registerForm.get('login')?.value,
+      password: this.registerForm.get('password')?.value,
+    };
+  }
+
+  public getFormFromName(name: string) {
+    return this.registerForm.get(name) as FormControl<string>;
+  }
+
+  public register() {
+    this.authFeatureService
+      .registerAction(this.getRegisterData())
+  }
+}

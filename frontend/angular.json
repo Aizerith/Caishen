@@ -16,7 +16,11 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "index": "src/index.html",
             "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -25,10 +29,20 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "node_modules/jquery-ui-dist/jquery-ui.min.css",
+              "src/styles.css",
+              "https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/jquery-ui-dist/jquery-ui.min.js"
             ],
             "allowedCommonJsDependencies": [
-              "@stomp/stompjs"
+              "@stomp/stompjs",
+              "animejs",
+              "jquery",
+              "jquery-ui-dist",
+              "sockjs-client"
             ]
           },
           "configurations": {

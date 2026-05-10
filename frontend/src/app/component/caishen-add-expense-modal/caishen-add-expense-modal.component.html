@@ -1,0 +1,65 @@
+<button class="btn btn-accent" onclick="add_expense_modal.showModal()"><span
+  class="text-md leading-3.5">Ajouter une dépense</span>
+</button>
+<dialog #expenseModal id="add_expense_modal" class="modal overflow-hidden" [formGroup]="expenseForm">
+  <div class="modal-box overflow-hidden flex flex-col gap-5">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h1 class="card-title">Ajouter une dépense</h1>
+    <div class="flex flex-col gap-1">
+      <h2 class="text-md">Titre</h2>
+      <app-caishen-custom-form-input [placeholder]="'Ex: repas, ...'"
+                                     [type]="'email'"
+                                     [inputForm]="getFormFromName('title')"
+                                     [hasError]="false">
+      </app-caishen-custom-form-input>
+    </div>
+    <div class="flex flex-col gap-1">
+      <h2 class="text-md">Montant</h2>
+      <app-caishen-custom-form-input [placeholder]="'0,00'"
+                                     [type]="'number'"
+                                     [inputForm]="getFormFromName('amount')"
+                                     [hasError]="false">
+      </app-caishen-custom-form-input>
+    </div>
+    <div class="flex gap-2">
+      <div class="flex-3/5 flex flex-col gap-1">
+        <h2 class="text-md">Payé par</h2>
+        <select class="select" [formControl]="getFormFromName('payerId')">
+          <option disabled selected>Choisir un membre</option>
+          <option *ngFor="let member of memberList" [value]="member.id">
+            {{ member.name }}
+          </option>
+        </select>
+      </div>
+      <div class="flex-2/5 flex flex-col gap-1">
+        <h2 class="text-md">Quand</h2>
+        <input type="date" class="input" [formControl]="getFormFromName('expenseDate')">
+      </div>
+    </div>
+
+    <div class="flex w-full flex-col justify-between p-close gap-3">
+      <h2 class="text-md">Participants</h2>
+      <div *ngFor="let member of memberList">
+        <label class="label w-full justify-between">
+          <span class="text-accent">
+            {{ member.name }}
+          </span>
+          <input
+            type="checkbox"
+            class="checkbox"
+            [value]="member.id"
+            [checked]="isChecked(member.id)"
+            (change)="onCheckboxChange($event)"/>
+        </label>
+      </div>
+    </div>
+    <div class="w-full pb-2">
+      <button class="btn w-full" (click)="onValidate()"
+              [disabled]="expenseForm.invalid || !getFormFromName('participants').value.length">
+        Valider
+      </button>
+    </div>
+  </div>
+</dialog>
