@@ -157,7 +157,7 @@ select {
   }
 
   .app-form-page {
-    @apply flex h-full min-h-0 w-full items-center justify-center overflow-hidden px-4 py-8;
+    @apply flex flex-col h-full min-h-0 w-full items-center justify-center overflow-hidden px-4 py-8;
   }
 
   .app-form {

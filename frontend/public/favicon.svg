@@ -1,0 +1,36 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="10" y1="10" x2="54" y2="54">
+      <stop offset="0%" stop-color="#FFD34D"/>
+      <stop offset="100%" stop-color="#E6A400"/>
+    </linearGradient>
+  </defs>
+
+  <!-- C principal -->
+  <path
+    d="M44 13
+       A23 23 0 1 0 44 51"
+    fill="none"
+    stroke="url(#gold)"
+    stroke-width="12"
+    stroke-linecap="round"
+  />
+
+  <!-- Traits verticaux argent -->
+  <path
+    d="M28 22 V42 M36 22 V42"
+    stroke="#D99A00"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+
+  <!-- Partage / groupes -->
+  <circle cx="51" cy="20" r="5" fill="url(#gold)"/>
+  <circle cx="51" cy="44" r="5" fill="url(#gold)"/>
+  <path
+    d="M43 27 L49 22 M43 37 L49 42"
+    stroke="url(#gold)"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+</svg>
