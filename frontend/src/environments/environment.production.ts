@@ -1,6 +1,6 @@
 export const environment = {
-  API_URL: 'https://chen.nexariseskills.fr/api',
-  URL: 'https://chen.nexariseskills.fr/',
-  SOCKJS_BROKER_URL: 'https://chen.nexariseskills.fr/api/ws',
-  BROKER_URL: 'wss://chen.nexariseskills.fr/ws',
+  API_URL: '/api',
+  URL: 'https://caishen.laurent-chen.fr',
+  SOCKJS_BROKER_URL: '/api/ws',
+  BROKER_URL: 'wss://caishen.laurent-chen.fr/api/ws',
 };

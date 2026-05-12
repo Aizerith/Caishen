@@ -9,8 +9,6 @@ services:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-root}
       MARIADB_USER: caishen
       MARIADB_PASSWORD: ${DB_PASSWORD:-caishen}
-    ports:
-      - "3406:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     healthcheck:
@@ -32,11 +30,11 @@ services:
       SPRING_PROFILES_ACTIVE: prod
       DB_USERNAME: caishen
       DB_PASSWORD: ${DB_PASSWORD:-caishen}
-      FRONTEND_BASE_URL: http://localhost:4200
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL:-https://caishen.laurent-chen.fr}
       JWT_SECRET: ${JWT_SECRET:-change-me-change-me-change-me-change-me-change-me-change-me-change-me-change-me}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-}
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
 
   frontend:
     build:
@@ -46,7 +44,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "4200:80"
+      - "127.0.0.1:${CAISHEN_FRONTEND_PORT:-9003}:80"
 
 volumes:
   mariadb_data:

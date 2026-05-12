@@ -9,6 +9,7 @@ dist/
 # Logs
 logs/
 *.log
+.env
 
 # OS
 .DS_Store
