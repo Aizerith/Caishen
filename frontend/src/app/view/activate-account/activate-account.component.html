@@ -1,0 +1,15 @@
+<div class="app-form-page">
+  <section class="app-form">
+    <h2 class="app-title">Activation du compte</h2>
+
+    @if (status() === 'loading') {
+      <p class="text-base-content/70">Activation en cours...</p>
+    } @else if (status() === 'success') {
+      <p class="text-success">Votre compte est actif. Vous pouvez maintenant vous connecter.</p>
+      <a routerLink="/login" class="btn btn-primary w-full">Se connecter</a>
+    } @else {
+      <p class="text-error">Ce lien est invalide ou expire.</p>
+      <a routerLink="/forgot-password" class="btn btn-primary w-full">Recevoir un nouveau lien</a>
+    }
+  </section>
+</div>

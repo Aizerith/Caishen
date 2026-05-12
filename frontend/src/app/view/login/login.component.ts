@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
 import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CaishenCustomFormInputComponent],
+  imports: [ReactiveFormsModule, RouterLink, CaishenCustomFormInputComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

@@ -29,7 +29,13 @@ public class AppUserEntity {
 
     private String activationLink;
 
+    private LocalDateTime activationTokenExpiresAt;
+
     private Boolean isActivated;
+
+    private String passwordResetToken;
+
+    private LocalDateTime passwordResetTokenExpiresAt;
 
     @ManyToMany(mappedBy = "groupAppUserEntityList")
     private List<GroupEntity> userGroupEntityList;

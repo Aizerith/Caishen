@@ -1,5 +1,5 @@
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { catchError, finalize, Observable, of, switchMap, take, throwError } from 'rxjs';
+import { finalize, Observable, of, switchMap, take } from 'rxjs';
 import { AuthHttpService } from '../httpService/auth.http.service';
 import { AuthStateInterface, AuthStateService } from '../stateService/auth.state.service';
 import { UserToken } from '../../definitions/interface/user-token.interface';
@@ -108,7 +108,13 @@ export class AuthFeatureService {
       )
       .subscribe({
         next: (_) => this.router.navigate(['group']).then(),
-        error: (_) => this.notificationService.showError('Identifiants incorrecte, veuillez réessayer'),
+        error: (err) => {
+          if (err.error?.code?.includes('AccountNotActivatedException')) {
+            this.notificationService.showError('Compte non active. Verifiez vos emails.');
+            return;
+          }
+          this.notificationService.showError('Identifiants incorrects, veuillez reessayer');
+        },
       });
   }
 
@@ -143,36 +149,21 @@ export class AuthFeatureService {
     this.isRegistering.set(true);
     this.authHttpService
       .register(data)
-      .pipe(
-        switchMap((value) => {
-          const accessToken: string | null = value.token;
-          const refreshToken: string | null = value.refreshToken;
-
-          if (accessToken && refreshToken) {
-            return of({ accessToken: accessToken, refreshToken: refreshToken });
-          } else {
-            return throwError(() => new Error('Token not present'));
-          }
-        }),
-        switchMap((value) => this.loginByTokenAction(value.accessToken, value.refreshToken)),
-        switchMap((_) => this.profileStateService.getProfileAction()),
-        catchError((err) => {
-          this.authStateService.updateState({
-            hasError: err.error.message,
-          });
-          if (err.error.code.includes('UsernameAlreadyTaken')) {
-            this.notificationService.showError('Email déjà utilisé');
-          } else {
-            this.notificationService.showError("Erreur lors de l'inscription, veuillez réessayer");
-          }
-          return of();
-        }),
-        finalize(() => this.isRegistering.set(false)),
-      )
+      .pipe(finalize(() => this.isRegistering.set(false)))
       .subscribe({
         next: (_) => {
-          this.router.navigate(['group']).then();
-          this.notificationService.showSuccess('Inscription terminé');
+          this.router.navigate(['login']).then();
+          this.notificationService.showSuccess('Compte cree. Verifiez vos emails pour l activer.', 5000);
+        },
+        error: (err) => {
+          this.authStateService.updateState({
+            hasError: err.error?.message,
+          });
+          if (err.error?.code?.includes('UserAlreadyExistsException')) {
+            this.notificationService.showError('Email ou pseudo deja utilise');
+          } else {
+            this.notificationService.showError("Erreur lors de l'inscription, veuillez reessayer");
+          }
         },
       });
   }

@@ -24,6 +24,24 @@ export const routes: Routes = [
     loadComponent: () => import('./view/register/register.component').then((value) => value.RegisterComponent),
   },
   {
+    path: 'activate-account',
+    canActivate: [NotLoggedGuard],
+    loadComponent: () =>
+      import('./view/activate-account/activate-account.component').then((value) => value.ActivateAccountComponent),
+  },
+  {
+    path: 'forgot-password',
+    canActivate: [NotLoggedGuard],
+    loadComponent: () =>
+      import('./view/forgot-password/forgot-password.component').then((value) => value.ForgotPasswordComponent),
+  },
+  {
+    path: 'reset-password',
+    canActivate: [NotLoggedGuard],
+    loadComponent: () =>
+      import('./view/reset-password/reset-password.component').then((value) => value.ResetPasswordComponent),
+  },
+  {
     path: 'join/:uuid',
     loadComponent: () => import('./view/join/join.component').then((value) => value.JoinComponent),
   },

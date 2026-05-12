@@ -32,6 +32,12 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-caishen}
       FRONTEND_BASE_URL: ${FRONTEND_BASE_URL:-https://caishen.laurent-chen.fr}
       JWT_SECRET: ${JWT_SECRET:-change-me-change-me-change-me-change-me-change-me-change-me-change-me-change-me}
+      MAIL_ENABLED: ${MAIL_ENABLED:-true}
+      MAIL_HOST: ${MAIL_HOST:-smtp.mail.ovh.net}
+      MAIL_PORT: ${MAIL_PORT:-465}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-}
     expose:
       - "8080"

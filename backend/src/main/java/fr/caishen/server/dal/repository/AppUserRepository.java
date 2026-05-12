@@ -11,4 +11,12 @@ public interface AppUserRepository extends JpaRepository<AppUserEntity, Long> {
     Optional<AppUserEntity> findByLogin(String login);
 
     Optional<AppUserEntity> findByLoginOrUsername(String login, String username);
+
+    Optional<AppUserEntity> findByActivationLink(String activationLink);
+
+    Optional<AppUserEntity> findByPasswordResetToken(String passwordResetToken);
+
+    boolean existsByLogin(String login);
+
+    boolean existsByUsername(String username);
 }

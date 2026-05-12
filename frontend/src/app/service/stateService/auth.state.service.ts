@@ -1,8 +1,4 @@
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
-import { AuthHttpService } from '../httpService/auth.http.service';
-import RegisterRequest = CaiShen.RegisterRequest;
-import { NotificationsService } from '../notifications.service';
+import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
 export interface AuthStateInterface {
   accessToken: string | null;
@@ -21,9 +17,6 @@ export type LoginStatus = 'INIT_LOGIN' | 'START_LOGIN' | 'SUCCESS' | 'FAILURE' |
   providedIn: 'root',
 })
 export class AuthStateService {
-  readonly authHttpService: AuthHttpService = inject(AuthHttpService);
-  readonly notificationService: NotificationsService = inject(NotificationsService);
-
   private readonly initialState: AuthStateInterface = {
     accessToken: null,
     refreshToken: null,
@@ -51,34 +44,5 @@ export class AuthStateService {
 
   selectLoginStatus(): Signal<boolean> {
     return this.isLogged;
-  }
-
-  public registerAction(data: RegisterRequest): Observable<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
-    return this.authHttpService.register(data).pipe(
-      switchMap((value) => {
-        const accessToken: string | null = value.token;
-        const refreshToken: string | null = value.refreshToken;
-
-        if (accessToken && refreshToken) {
-          return of({ accessToken: accessToken, refreshToken: refreshToken });
-        } else {
-          return throwError(() => new Error('Token not present'));
-        }
-      }),
-      catchError((err) => {
-        this.updateState({
-          hasError: err.error.message,
-        });
-        if (err.error.code.includes('UsernameAlreadyTaken')) {
-          this.notificationService.showError('Email déjà utilisé');
-        } else {
-          this.notificationService.showError("Erreur lors de l'inscription, veuillez réessayer");
-        }
-        return of();
-      }),
-    );
   }
 }

@@ -75,6 +75,15 @@ declare namespace CaiShen {
         username: string;
     }
 
+    interface PasswordResetConfirmRequest {
+        password: string;
+        token: string;
+    }
+
+    interface PasswordResetRequest {
+        email: string;
+    }
+
     interface ProfileInfoResponse {
         id: number;
         name: string;

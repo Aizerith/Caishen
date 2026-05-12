@@ -1,15 +1,15 @@
-import {expect, test} from '@playwright/test';
-import {uniqueName} from './support/session';
+import { expect, test } from '@playwright/test';
+import { uniqueName } from './support/session';
 
 test.describe('auth flow', () => {
-  test('redirects unauthenticated users to login on protected route', async ({page}) => {
+  test('redirects unauthenticated users to login on protected route', async ({ page }) => {
     await page.goto('/group');
 
     await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByRole('heading', {name: 'Connexion'})).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Connexion' })).toBeVisible();
   });
 
-  test('registers a user and opens the group page', async ({page}) => {
+  test('registers a user and asks for email activation', async ({ page }) => {
     const suffix = Date.now();
     const username = uniqueName('E2EUser').replaceAll(' ', '-');
     const email = `e2e-${suffix}@example.com`;
@@ -20,9 +20,9 @@ test.describe('auth flow', () => {
     await page.getByPlaceholder('mail@exemple.com').fill(email);
     await page.getByPlaceholder('Password', { exact: true }).fill(password);
     await page.getByPlaceholder('Confirm password', { exact: true }).fill(password);
-    await page.getByRole('button', {name: 'Créer le compte'}).click();
+    await page.getByRole('button').click();
 
-    await expect(page).toHaveURL(/\/group$/);
-    await expect(page.getByRole('heading', {name: 'Groupes'})).toBeVisible();
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole('heading', { name: 'Connexion' })).toBeVisible();
   });
 });

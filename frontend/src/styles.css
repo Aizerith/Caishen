@@ -70,6 +70,9 @@ app-root {
 
 app-login,
 app-register,
+app-activate-account,
+app-forgot-password,
+app-reset-password,
 app-home,
 app-check,
 app-add,

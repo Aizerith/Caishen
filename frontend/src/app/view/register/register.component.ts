@@ -4,8 +4,7 @@ import { STRONG_PASSWORD_REGEX, VALID_EMAIL_REGEX, VALID_PSEUDO_REGEX } from '..
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
 import Validation from '../../validator/validation';
 import RegisterRequest = CaiShen.RegisterRequest;
-import { Router } from '@angular/router';
-import {AuthFeatureService} from '../../service/featureService/auth.feature.service';
+import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
 
 @Component({
   selector: 'app-register',
@@ -16,9 +15,7 @@ import {AuthFeatureService} from '../../service/featureService/auth.feature.serv
 export class RegisterComponent {
   readonly fb: FormBuilder = inject(FormBuilder);
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
-  readonly router: Router = inject(Router);
 
-  protected isRegistering: boolean = false;
   protected registerForm: FormGroup = this.fb.group(
     {
       username: new FormControl<string>('', [Validators.required, Validators.pattern(VALID_PSEUDO_REGEX)]),
@@ -44,7 +41,10 @@ export class RegisterComponent {
   }
 
   public register() {
-    this.authFeatureService
-      .registerAction(this.getRegisterData())
+    this.authFeatureService.registerAction(this.getRegisterData());
+  }
+
+  protected get isRegistering(): boolean {
+    return this.authFeatureService.isRegistering();
   }
 }

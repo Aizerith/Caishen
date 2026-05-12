@@ -3,6 +3,8 @@ package fr.caishen.server.web.controller;
 import fr.caishen.server.domain.services.AuthService;
 import fr.caishen.server.web.dto.LoginRequest;
 import fr.caishen.server.web.dto.LoginResponse;
+import fr.caishen.server.web.dto.PasswordResetConfirmRequest;
+import fr.caishen.server.web.dto.PasswordResetRequest;
 import fr.caishen.server.web.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +26,31 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public LoginResponse register(@RequestBody RegisterRequest data) {
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest data) {
         log.info("POST /auth/register");
-        return authService.register(data.username(), data.email(), data.password());
+        authService.register(data.username(), data.email(), data.password());
+        return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<Void> activateAccount(@RequestParam String token) {
+        log.info("GET /auth/activate");
+        authService.activateAccount(token);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<Void> requestPasswordReset(@RequestBody PasswordResetRequest data) {
+        log.info("POST /auth/password-reset/request");
+        authService.requestPasswordReset(data.email());
+        return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<Void> confirmPasswordReset(@RequestBody PasswordResetConfirmRequest data) {
+        log.info("POST /auth/password-reset/confirm");
+        authService.confirmPasswordReset(data.token(), data.password());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/refresh")

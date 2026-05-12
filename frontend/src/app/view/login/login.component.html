@@ -1,22 +1,27 @@
 <div class="app-form-page">
   <form class="app-form" [formGroup]="loginForm">
     <h2 class="app-title">Connexion</h2>
-    <app-caishen-custom-form-input [placeholder]="'mail@exemple.com'"
-                                   [icon]="'/icons/mail_icon.svg'"
-                                   [type]="'email'"
-                                   [inputForm]="getFormFromName('login')"
-                                   [hasError]="false">
-    </app-caishen-custom-form-input>
+    <app-caishen-custom-form-input
+      [placeholder]="'mail@exemple.com'"
+      [icon]="'/icons/mail_icon.svg'"
+      [type]="'email'"
+      [inputForm]="getFormFromName('login')"
+      [hasError]="false"
+    />
 
-    <app-caishen-custom-form-input [placeholder]="'Password'"
-                                   [icon]="'/icons/password_icon.svg'"
-                                   [type]="'password'"
-                                   [inputForm]="getFormFromName('password')"
-                                   [hasError]="false">
-    </app-caishen-custom-form-input>
+    <app-caishen-custom-form-input
+      [placeholder]="'Password'"
+      [icon]="'/icons/password_icon.svg'"
+      [type]="'password'"
+      [inputForm]="getFormFromName('password')"
+      [hasError]="false"
+    />
     <div class="flex justify-end">
-      <button type="button" class="btn btn-primary w-full sm:w-auto" (click)="login()" [disabled]="loginForm.invalid">Se connecter</button>
+      <button type="button" class="btn btn-primary w-full sm:w-auto" (click)="login()" [disabled]="loginForm.invalid">
+        Se connecter
+      </button>
     </div>
-    <a href="/register" class="text-center underline">Créer un compte</a>
+    <a routerLink="/forgot-password" class="text-center underline">Mot de passe oublie ?</a>
+    <a routerLink="/register" class="text-center underline">Creer un compte</a>
   </form>
 </div>
