@@ -15,7 +15,6 @@ export const routes: Routes = [
   },
   {
     path: 'settings',
-    canActivate: [IsLoggedGuard],
     loadComponent: () => import('./view/settings/settings.component').then((value) => value.SettingsComponent),
   },
   {

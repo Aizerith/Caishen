@@ -12,6 +12,7 @@ export class SettingsComponent {
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
   readonly themeService: ThemeService = inject(ThemeService);
   readonly route: Router = inject(Router);
+  protected readonly isLogged = this.authFeatureService.authStateService.isLogged;
   protected readonly themes = ['caishen', 'night', 'light', 'dark', 'forest', 'lofi'];
   protected theme: WritableSignal<string> = signal(localStorage.getItem('theme') ?? 'caishen');
 

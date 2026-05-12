@@ -29,10 +29,12 @@
         </div>
       </section>
 
-      <section class="app-card flex flex-col gap-3">
-        <h2 class="text-lg font-semibold">D&eacute;connexion</h2>
-        <button type="button" class="btn btn-error w-full sm:w-auto sm:self-start" (click)="logout()">Logout</button>
-      </section>
+      @if (isLogged()) {
+        <section class="app-card flex flex-col gap-3">
+          <h2 class="text-lg font-semibold">D&eacute;connexion</h2>
+          <button type="button" class="btn btn-error w-full sm:w-56 sm:self-start" (click)="logout()">Logout</button>
+        </section>
+      }
     </div>
   </section>
 </div>
