@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupStateService } from '../../../service/stateService/group.state.service';
-import { Observable, take, tap } from 'rxjs';
-import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { take } from 'rxjs';
+import { DatePipe } from '@angular/common';
 import { NotificationsService } from '../../../service/notifications.service';
 import { environment } from '../../../../environments/environment';
 import { CaishenAddExpenseModalComponent } from '../../../component/caishen-add-expense-modal/caishen-add-expense-modal.component';
@@ -10,44 +10,32 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import GroupResponse = CaiShen.GroupResponse;
 import ExpenseRequest = CaiShen.ExpenseRequest;
 
-import { ProfileStateService } from '../../../service/stateService/profile.state.service';
 import ExpenseResponse = CaiShen.ExpenseResponse;
 
 @Component({
   selector: 'app-check',
-  imports: [NgIf, AsyncPipe, CaishenAddExpenseModalComponent, NgForOf, NgClass, NgSwitch, NgSwitchCase, DatePipe],
+  imports: [CaishenAddExpenseModalComponent, DatePipe],
   templateUrl: './check.component.html',
   styleUrl: './check.component.css',
 })
 export class CheckComponent {
   protected readonly Math = Math;
   groupId!: number;
-  groupInfo$: Observable<GroupResponse> = new Observable();
-  myBalance$: Observable<number> = new Observable();
+  groupInfo: Signal<GroupResponse | null>;
+  myBalance: Signal<number>;
   expenseForm: FormGroup;
-  currentTab: 'expense' | 'balance' = 'expense';
-  userId!: number;
+  currentTab: WritableSignal<'expense' | 'balance'> = signal('expense');
 
   constructor(
     private activateRoute: ActivatedRoute,
     private notificationsService: NotificationsService,
     private groupStateService: GroupStateService,
-    private profileStateService: ProfileStateService,
     private router: Router,
     private fb: FormBuilder,
   ) {
-    this.profileStateService
-      .selectProfileState()
-      .pipe(
-        tap((value) => {
-          this.userId = value.info!.id;
-        }),
-        take(1),
-      )
-      .subscribe();
-    this.myBalance$ = this.groupStateService.selectMyBalance();
+    this.myBalance = this.groupStateService.selectMyBalance();
     this.groupId = this.activateRoute.snapshot.params['id'];
-    this.groupInfo$ = this.groupStateService.selectGroupInfo();
+    this.groupInfo = this.groupStateService.selectGroupInfo();
     this.groupStateService.getGroupInfoAction(this.groupId).pipe(take(1)).subscribe();
     this.expenseForm = this.fb.group({
       title: new FormControl<string>('', [Validators.required]),
@@ -95,11 +83,11 @@ export class CheckComponent {
   }
 
   changeTabToExpense() {
-    this.currentTab = 'expense';
+    this.currentTab.set('expense');
   }
 
   changeTabToBalance() {
-    this.currentTab = 'balance';
+    this.currentTab.set('balance');
   }
 
   navigateToExpense(expense: ExpenseResponse) {

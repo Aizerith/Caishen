@@ -1,8 +1,7 @@
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { AuthStateInterface, AuthStateService } from '../service/stateService/auth.state.service';
+import { AuthStateService } from '../service/stateService/auth.state.service';
 import { AuthHttpService } from '../service/httpService/auth.http.service';
 import { Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, concatMap, from, Observable, switchMap, tap, throwError } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
 import {AuthFeatureService} from '../service/featureService/auth.feature.service';
@@ -14,25 +13,13 @@ export class TokenInterceptor implements HttpInterceptor {
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
   readonly router: Router = inject(Router);
 
-  authState: AuthStateInterface | undefined;
-
-  constructor() {
-    this.authStateService
-      .selectAuthStateAsObservable()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (value) => {
-          this.authState = value;
-        },
-      });
-  }
-
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (request.url.endsWith('/refresh') || request.url.endsWith('/login')) {
       return next.handle(request);
     }
-    const accessToken: string | null = this.authState?.accessToken ?? null;
-    const refreshToken: string | null = this.authState?.refreshToken ?? null;
+    const authState = this.authStateService.authState();
+    const accessToken: string | null = authState.accessToken;
+    const refreshToken: string | null = authState.refreshToken;
     if (accessToken) {
       request = request.clone({
         setHeaders: {
@@ -60,7 +47,7 @@ export class TokenInterceptor implements HttpInterceptor {
                   switchMap(() => {
                     const updatedRequest = request.clone({
                       setHeaders: {
-                        Authorization: `Bearer ${this.authState?.accessToken}`,
+                        Authorization: `Bearer ${this.authStateService.authState().accessToken}`,
                       },
                     });
                     return next.handle(updatedRequest);

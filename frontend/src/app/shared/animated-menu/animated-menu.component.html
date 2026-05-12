@@ -18,15 +18,16 @@
       >
         <i class="fi-{{ itemData[0].icon }}"></i>
       </div>
-      <div
-        class="item"
-        #itemEl
-        *ngFor="let it of itemData.slice(1); let i = index"
-        [style.background]="it.color"
-        (click)="onItemClick(i + 1)"
-      >
-        <i class="fi-{{ it.icon }}"></i>
-      </div>
+      @for (it of itemData.slice(1); track it.icon; let i = $index) {
+        <div
+          class="item"
+          #itemEl
+          [style.background]="it.color"
+          (click)="onItemClick(i + 1)"
+        >
+          <i class="fi-{{ it.icon }}"></i>
+        </div>
+      }
     </div>
   </div>
 </div>

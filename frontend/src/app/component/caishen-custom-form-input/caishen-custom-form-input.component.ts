@@ -1,10 +1,9 @@
 import {Component, Input} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {NgClass, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-caishen-custom-form-input',
-  imports: [NgIf, ReactiveFormsModule, NgClass],
+  imports: [ReactiveFormsModule],
   templateUrl: './caishen-custom-form-input.component.html',
   styleUrl: './caishen-custom-form-input.component.css',
 })

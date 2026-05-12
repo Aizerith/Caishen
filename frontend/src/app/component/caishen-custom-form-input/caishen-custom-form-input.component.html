@@ -1,8 +1,7 @@
-<label class="input w-full"
-       [ngClass]="{
-        'input-error': hasError,
-      }">
-  <img *ngIf="icon" class="h-[1em] opacity-50" [src]="icon" alt="form icon">
+<label class="input w-full" [class.input-error]="hasError">
+  @if (icon) {
+    <img class="h-[1em] opacity-50" [src]="icon" alt="form icon">
+  }
   <input
     [type]="type"
     [placeholder]="placeholder"
@@ -10,6 +9,8 @@
     required
   />
 </label>
-<p *ngIf="hasError" class="validator-hint text-error whitespace-pre-line">
-  {{ errorMessage }}
-</p>
+@if (hasError) {
+  <p class="validator-hint text-error whitespace-pre-line">
+    {{ errorMessage }}
+  </p>
+}

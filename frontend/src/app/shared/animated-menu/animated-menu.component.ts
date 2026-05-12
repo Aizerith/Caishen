@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
 import anime from 'animejs/lib/anime.es.js';
 
@@ -8,7 +7,7 @@ type MenuStatus = 'open' | 'closed';
 @Component({
   selector: 'app-animated-menu',
   standalone: true,
-  imports: [CommonModule, DragDropModule],
+  imports: [DragDropModule],
   templateUrl: './animated-menu.component.html',
   styleUrls: ['./animated-menu.component.scss'],
 })

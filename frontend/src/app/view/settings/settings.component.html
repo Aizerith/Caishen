@@ -6,37 +6,31 @@
 
     <div class="app-content">
       <section class="app-card flex flex-col gap-3">
-        <h2 class="text-lg font-semibold">Thèmes</h2>
+        <h2 class="text-lg font-semibold">Th&egrave;mes</h2>
         <div class="dropdown w-full">
           <button type="button" tabindex="0" class="btn w-full justify-between sm:w-56">
-            {{ theme.value }}
-            <span class="text-sm opacity-60">⌄</span>
+            {{ theme() }}
+            <span class="text-sm opacity-60">v</span>
           </button>
           <ul tabindex="0" class="dropdown-content z-10 mt-2 w-full rounded-box bg-base-300 p-2 shadow-2xl sm:w-56">
-            <li>
-              <input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Caishen" value="caishen" [formControl]="theme" />
-            </li>
-            <li>
-              <input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Night" value="night" [formControl]="theme" />
-            </li>
-            <li>
-              <input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Light" value="light" [formControl]="theme" />
-            </li>
-            <li>
-              <input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark" value="dark" [formControl]="theme" />
-            </li>
-            <li>
-              <input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Forest" value="forest" [formControl]="theme" />
-            </li>
-            <li>
-              <input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Lofi" value="lofi" [formControl]="theme" />
-            </li>
+            @for (themeName of themes; track themeName) {
+              <li>
+                <input
+                  type="radio"
+                  name="theme-dropdown"
+                  class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                  [attr.aria-label]="themeName[0].toUpperCase() + themeName.slice(1)"
+                  [value]="themeName"
+                  [checked]="theme() === themeName"
+                  (change)="changeTheme(themeName)" />
+              </li>
+            }
           </ul>
         </div>
       </section>
 
       <section class="app-card flex flex-col gap-3">
-        <h2 class="text-lg font-semibold">Déconnexion</h2>
+        <h2 class="text-lg font-semibold">D&eacute;connexion</h2>
         <button type="button" class="btn btn-error w-full sm:w-auto sm:self-start" (click)="logout()">Logout</button>
       </section>
     </div>

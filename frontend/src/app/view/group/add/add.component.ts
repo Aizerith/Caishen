@@ -6,7 +6,6 @@ import GroupInfoRequest = CaiShen.GroupInfoRequest;
 import { NotificationsService } from '../../../service/notifications.service';
 import { Router } from '@angular/router';
 import { ProfileStateService } from '../../../service/stateService/profile.state.service';
-import {take, tap} from 'rxjs';
 
 @Component({
   selector: 'app-add',
@@ -16,7 +15,7 @@ import {take, tap} from 'rxjs';
 })
 export class AddComponent {
   groupForm: FormGroup;
-  userId!: number;
+  userId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -29,13 +28,7 @@ export class AddComponent {
       title: new FormControl<string>('', [Validators.required]),
       members: this.fb.array([]),
     });
-    this.profileStateService
-      .selectProfileState()
-      .pipe(
-        tap((value) => (this.userId = value.info!.id)),
-        take(1),
-      )
-      .subscribe();
+    this.userId = this.profileStateService.getMyId();
   }
 
   public getFormFromName(name: string) {
@@ -43,6 +36,11 @@ export class AddComponent {
   }
 
   addNewGroup() {
+    if (!this.userId) {
+      this.notification.showError("Impossible de crÃ©er le groupe sans utilisateur connectÃ©");
+      return;
+    }
+
     const data: GroupInfoRequest = {
       title: this.groupForm.get('title')?.value,
       members: [this.userId],

@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import {NgClass, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-caishen-custom-snackbar',
-  imports: [NgIf, NgClass],
   templateUrl: './caishen-custom-snackbar.component.html',
   styleUrl: './caishen-custom-snackbar.component.css',
 })

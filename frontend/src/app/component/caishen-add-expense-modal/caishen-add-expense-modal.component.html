@@ -1,14 +1,14 @@
 <button type="button" class="btn btn-accent w-full sm:w-auto sm:min-w-64" onclick="add_expense_modal.showModal()">
-  Ajouter une dépense
+  Ajouter une d&eacute;pense
 </button>
 
 <dialog #expenseModal id="add_expense_modal" class="modal" [formGroup]="expenseForm">
   <div class="modal-box flex max-h-[90dvh] w-[calc(100vw-1.5rem)] max-w-xl flex-col gap-5 overflow-y-auto">
     <form method="dialog">
-      <button type="submit" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      <button type="submit" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button>
     </form>
 
-    <h1 class="app-title pr-8">Ajouter une dépense</h1>
+    <h1 class="app-title pr-8">Ajouter une d&eacute;pense</h1>
 
     <div class="flex flex-col gap-1">
       <h2 class="text-sm font-semibold">Titre</h2>
@@ -30,12 +30,14 @@
 
     <div class="grid gap-3 sm:grid-cols-5">
       <div class="flex flex-col gap-1 sm:col-span-3">
-        <h2 class="text-sm font-semibold">Payé par</h2>
+        <h2 class="text-sm font-semibold">Pay&eacute; par</h2>
         <select class="select w-full" [formControl]="getFormFromName('payerId')">
           <option disabled selected>Choisir un membre</option>
-          <option *ngFor="let member of memberList" [value]="member.id">
-            {{ member.name }}
-          </option>
+          @for (member of memberList; track member.id) {
+            <option [value]="member.id">
+              {{ member.name }}
+            </option>
+          }
         </select>
       </div>
       <div class="flex flex-col gap-1 sm:col-span-2">
@@ -46,17 +48,19 @@
 
     <div class="flex w-full flex-col gap-3">
       <h2 class="text-sm font-semibold">Participants</h2>
-      <label *ngFor="let member of memberList" class="label min-h-11 w-full items-center justify-between rounded-box border border-base-300 bg-base-100 px-3">
-        <span class="font-medium">
-          {{ member.name }}
-        </span>
-        <input
-          type="checkbox"
-          class="checkbox checkbox-primary checkbox-sm shrink-0"
-          [value]="member.id"
-          [checked]="isChecked(member.id)"
-          (change)="onCheckboxChange($event)"/>
-      </label>
+      @for (member of memberList; track member.id) {
+        <label class="label min-h-11 w-full items-center justify-between rounded-box border border-base-300 bg-base-100 px-3">
+          <span class="font-medium">
+            {{ member.name }}
+          </span>
+          <input
+            type="checkbox"
+            class="checkbox checkbox-primary checkbox-sm shrink-0"
+            [value]="member.id"
+            [checked]="isChecked(member.id)"
+            (change)="onCheckboxChange($event)"/>
+        </label>
+      }
     </div>
 
     <button type="button" class="btn btn-primary w-full" (click)="onValidate()"

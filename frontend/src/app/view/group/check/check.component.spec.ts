@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 
 import { CheckComponent } from './check.component';
 import { GroupStateService } from '../../../service/stateService/group.state.service';
 import { NotificationsService } from '../../../service/notifications.service';
-import { ProfileStateService } from '../../../service/stateService/profile.state.service';
 
 describe('CheckComponent', () => {
   let component: CheckComponent;
@@ -48,17 +48,10 @@ describe('CheckComponent', () => {
           },
         },
         {
-          provide: ProfileStateService,
-          useValue: {
-            selectProfileState: vi.fn().mockReturnValue(of({ info: { id: 1 } })),
-            getMyId: vi.fn().mockReturnValue(1),
-          },
-        },
-        {
           provide: GroupStateService,
           useValue: {
-            selectMyBalance: vi.fn().mockReturnValue(of(0)),
-            selectGroupInfo: vi.fn().mockReturnValue(of(groupInfo)),
+            selectMyBalance: vi.fn().mockReturnValue(signal(0)),
+            selectGroupInfo: vi.fn().mockReturnValue(signal(groupInfo)),
             getGroupInfoAction: vi.fn().mockReturnValue(of(groupInfo)),
             addExpense: vi.fn().mockReturnValue(of(groupInfo)),
           },

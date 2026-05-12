@@ -2,20 +2,18 @@
   <section class="app-panel">
     <div class="app-content">
       <div class="app-card flex flex-col items-center gap-5 text-center">
-        <ng-container *ngIf="isLogged(); else notLogged">
-          <h1 *ngIf="!errorMessage; else error" class="app-title">Vous avez rejoint le groupe</h1>
-          <button type="button" class="btn btn-accent w-full sm:w-auto" (click)="navigateToGroup()">Voir mes groupes</button>
-        </ng-container>
+        @if (isLogged()) {
+          @if (errorMessage) {
+            <h1 class="app-title text-error">{{ errorMessage }}</h1>
+          } @else {
+            <h1 class="app-title">Vous avez rejoint le groupe</h1>
+            <button type="button" class="btn btn-accent w-full sm:w-auto" (click)="navigateToGroup()">Voir mes groupes</button>
+          }
+        } @else {
+          <h1 class="app-title">Veuillez vous connecter, puis cliquez &agrave; nouveau sur le lien</h1>
+          <button type="button" class="btn btn-accent w-full sm:w-auto" (click)="navigateToLogin()">Se connecter</button>
+        }
       </div>
     </div>
   </section>
 </div>
-
-<ng-template #notLogged>
-  <h1 class="app-title">Veuillez vous connecter, puis cliquez à nouveau sur le lien</h1>
-  <button type="button" class="btn btn-accent w-full sm:w-auto" (click)="navigateToLogin()">Se connecter</button>
-</ng-template>
-
-<ng-template #error>
-  <h1 class="app-title text-error">{{ errorMessage }}</h1>
-</ng-template>

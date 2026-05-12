@@ -1,66 +1,78 @@
 <div class="app-page">
-  <section *ngIf="groupInfo$ | async as group" class="app-panel">
-    <header class="app-panel-header app-panel-header-inline">
-      <h1 class="app-title min-w-0 break-words">{{ group?.title }}</h1>
-      <button type="button" class="btn btn-accent btn-sm shrink-0" (click)="copyInvitationLink(group!.uuid)">
-        Lien d'invitation
-      </button>
-    </header>
+  @if (groupInfo(); as group) {
+    <section class="app-panel">
+      <header class="app-panel-header app-panel-header-inline">
+        <h1 class="app-title min-w-0 break-words">{{ group.title }}</h1>
+        <button type="button" class="btn btn-accent btn-sm shrink-0" (click)="copyInvitationLink(group.uuid)">
+          Lien d'invitation
+        </button>
+      </header>
 
-    <div role="tablist" class="tabs tabs-box mx-4 mt-4 grid shrink-0 grid-cols-2">
-      <button type="button" role="tab" class="tab" [ngClass]="{'tab-active' : currentTab === 'expense'}"
-              (click)="changeTabToExpense()">Dépenses</button>
-      <button type="button" role="tab" class="tab" [ngClass]="{'tab-active' : currentTab === 'balance'}"
-              (click)="changeTabToBalance()">Équilibre</button>
-    </div>
-
-    <ng-container [ngSwitch]="currentTab">
-      <div *ngSwitchCase="'expense'" class="app-content app-content-with-tabs">
-        <article *ngFor="let expense of group.expenseList"
-                 role="button"
-                 tabindex="0"
-                 class="app-card app-row cursor-pointer"
-                 (click)="navigateToExpense(expense)"
-                 (keydown.enter)="navigateToExpense(expense)">
-          <div class="min-w-0">
-            <h2 class="app-row-title">{{ expense.title }}</h2>
-            <p class="app-row-meta">Payé par <span class="text-success">{{ expense.payerName }}</span></p>
-            <p class="app-row-meta">Le {{ expense.expenseDate | date: "dd-MM-yyyy" }}</p>
-          </div>
-          <div class="app-amount">
-            {{ expense.amount }} euro
-          </div>
-        </article>
+      <div role="tablist" class="tabs tabs-box mx-4 mt-4 grid shrink-0 grid-cols-2">
+        <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'expense'"
+                (click)="changeTabToExpense()">D&eacute;penses</button>
+        <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'balance'"
+                (click)="changeTabToBalance()">&Eacute;quilibre</button>
       </div>
 
-      <div *ngSwitchCase="'balance'" class="app-content app-content-with-tabs">
-        <div *ngIf="myBalance$ | async as myBalance" class="app-card app-row">
-          <h2 *ngIf="myBalance > 0; else oweMoney" class="app-row-title text-success">On vous doit</h2>
-          <div class="app-amount" [ngClass]="myBalance > 0 ? 'text-success' : 'text-error'">
-            {{ Math.abs(myBalance) }} euro
+      @switch (currentTab()) {
+        @case ('expense') {
+          <div class="app-content app-content-with-tabs">
+            @for (expense of group.expenseList; track expense.id) {
+              <article
+                role="button"
+                tabindex="0"
+                class="app-card app-row cursor-pointer"
+                (click)="navigateToExpense(expense)"
+                (keydown.enter)="navigateToExpense(expense)">
+                <div class="min-w-0">
+                  <h2 class="app-row-title">{{ expense.title }}</h2>
+                  <p class="app-row-meta">Pay&eacute; par <span class="text-success">{{ expense.payerName }}</span></p>
+                  <p class="app-row-meta">Le {{ expense.expenseDate | date: "dd-MM-yyyy" }}</p>
+                </div>
+                <div class="app-amount">
+                  {{ expense.amount }} euro
+                </div>
+              </article>
+            }
           </div>
-        </div>
+        }
 
-        <section class="flex flex-col gap-3">
-          <h2 class="text-lg font-semibold">Membres</h2>
-          <div *ngFor="let member of group.memberList" class="app-card app-row">
-            <h3 class="app-row-title">{{ member.name }}</h3>
-            <div class="app-amount" [ngClass]=" member.expenseDelta > 0 ? 'text-success' : 'text-error'">
-              {{ member.expenseDelta }} euro
+        @case ('balance') {
+          <div class="app-content app-content-with-tabs">
+            <div class="app-card app-row">
+              @if (myBalance() > 0) {
+                <h2 class="app-row-title text-success">On vous doit</h2>
+              } @else {
+                <h2 class="app-row-title text-error">Vous devez</h2>
+              }
+              <div class="app-amount" [class.text-success]="myBalance() > 0" [class.text-error]="myBalance() <= 0">
+                {{ Math.abs(myBalance()) }} euro
+              </div>
             </div>
+
+            <section class="flex flex-col gap-3">
+              <h2 class="text-lg font-semibold">Membres</h2>
+              @for (member of group.memberList; track member.id) {
+                <div class="app-card app-row">
+                  <h3 class="app-row-title">{{ member.name }}</h3>
+                  <div class="app-amount" [class.text-success]="member.expenseDelta > 0" [class.text-error]="member.expenseDelta <= 0">
+                    {{ member.expenseDelta }} euro
+                  </div>
+                </div>
+              }
+            </section>
           </div>
-        </section>
-      </div>
-    </ng-container>
+        }
+      }
 
-    <footer *ngIf="currentTab === 'expense'" class="shrink-0 border-t border-base-300 bg-base-200 p-4 sm:p-5">
-      <app-caishen-add-expense-modal [expenseForm]="expenseForm"
-                                     [memberList]="group!.memberList"
-                                     (onValidateExpense)="addExpense()"></app-caishen-add-expense-modal>
-    </footer>
-  </section>
+      @if (currentTab() === 'expense') {
+        <footer class="shrink-0 border-t border-base-300 bg-base-200 p-4 sm:p-5">
+          <app-caishen-add-expense-modal [expenseForm]="expenseForm"
+                                         [memberList]="group.memberList"
+                                         (onValidateExpense)="addExpense()"></app-caishen-add-expense-modal>
+        </footer>
+      }
+    </section>
+  }
 </div>
-
-<ng-template #oweMoney>
-  <h2 class="app-row-title text-error">Vous devez</h2>
-</ng-template>

@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 import { AuthHttpService } from '../httpService/auth.http.service';
 import RegisterRequest = CaiShen.RegisterRequest;
 import { NotificationsService } from '../notifications.service';
@@ -24,7 +24,7 @@ export class AuthStateService {
   readonly authHttpService: AuthHttpService = inject(AuthHttpService);
   readonly notificationService: NotificationsService = inject(NotificationsService);
 
-  private state: AuthStateInterface = {
+  private readonly initialState: AuthStateInterface = {
     accessToken: null,
     refreshToken: null,
     username: null,
@@ -35,39 +35,28 @@ export class AuthStateService {
     hasError: false,
   };
 
-  private authStateSubject: BehaviorSubject<AuthStateInterface> = new BehaviorSubject<AuthStateInterface>(this.state);
-  private _authState: WritableSignal<AuthStateInterface> = signal(this.state);
+  private _authState: WritableSignal<AuthStateInterface> = signal(this.initialState);
+  readonly isLogged: Signal<boolean> = computed(() => this._authState().loginStatus === 'LOGGED');
 
   get authState(): WritableSignal<AuthStateInterface> {
     return this._authState;
   }
 
   updateState(newState: Partial<AuthStateInterface>): void {
-    this.state = {
-      ...this.state,
+    this._authState.update((state) => ({
+      ...state,
       ...newState,
-    };
-    this.authStateSubject.next(this.state);
-    this._authState.set(this.state);
-  }
-
-  selectAuthStateAsObservable(): Observable<AuthStateInterface> {
-    return this.authStateSubject.asObservable();
+    }));
   }
 
   selectLoginStatus(): Signal<boolean> {
-    return computed(() => this._authState().loginStatus === 'LOGGED');
+    return this.isLogged;
   }
 
   public registerAction(data: RegisterRequest): Observable<{
     accessToken: string;
     refreshToken: string;
   }> {
-    const newState: AuthStateInterface = {
-      ...this.state,
-    };
-    this.updateState(newState);
-
     return this.authHttpService.register(data).pipe(
       switchMap((value) => {
         const accessToken: string | null = value.token;
@@ -81,7 +70,6 @@ export class AuthStateService {
       }),
       catchError((err) => {
         this.updateState({
-          ...this.state,
           hasError: err.error.message,
         });
         if (err.error.code.includes('UsernameAlreadyTaken')) {

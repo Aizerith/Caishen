@@ -8,18 +8,20 @@
         <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>
       </button>
     </header>
-    <div *ngIf="groups$ | async as groupList" class="app-content">
-      <article *ngFor="let group of groupList"
-               role="button"
-               tabindex="0"
-               class="app-card app-row cursor-pointer"
-               (click)="navigateToGroupId(group.id)"
-               (keydown.enter)="navigateToGroupId(group.id)">
-        <h2 class="app-row-title">{{ group.title }}</h2>
-        <span class="btn btn-primary btn-square self-end sm:self-auto">
-          <img src="/icons/right-arrow.svg" alt="">
-        </span>
-      </article>
+    <div class="app-content">
+      @for (group of groups(); track group.id) {
+        <article
+          role="button"
+          tabindex="0"
+          class="app-card app-row cursor-pointer"
+          (click)="navigateToGroupId(group.id)"
+          (keydown.enter)="navigateToGroupId(group.id)">
+          <h2 class="app-row-title">{{ group.title }}</h2>
+          <span class="btn btn-primary btn-square self-end sm:self-auto">
+            <img src="/icons/right-arrow.svg" alt="">
+          </span>
+        </article>
+      }
     </div>
   </section>
 </div>

@@ -1,5 +1,4 @@
 import {Component, inject, Signal} from '@angular/core';
-import { NgIf } from '@angular/common';
 import { take } from 'rxjs';
 import { AuthStateService } from '../../service/stateService/auth.state.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +6,6 @@ import { ProfileStateService } from '../../service/stateService/profile.state.se
 
 @Component({
   selector: 'app-join',
-  imports: [NgIf],
   templateUrl: './join.component.html',
   styleUrl: './join.component.css',
 })

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import GroupResponse = CaiShen.GroupResponse;
 import { GroupHttpService } from '../httpService/group.http.service';
 import ExpenseRequest = CaiShen.ExpenseRequest;
@@ -14,14 +14,20 @@ export interface GroupStateInterface {
   providedIn: 'root',
 })
 export class GroupStateService {
-  private state: GroupStateInterface = {
+  private readonly initialState: GroupStateInterface = {
     groupInfo: null,
     hasError: false,
   };
 
-  private groupStateSubject: BehaviorSubject<GroupStateInterface> = new BehaviorSubject<GroupStateInterface>(
-    this.state,
-  );
+  private groupState: WritableSignal<GroupStateInterface> = signal(this.initialState);
+  readonly groupInfo: Signal<GroupResponse | null> = computed(() => this.groupState().groupInfo);
+  readonly myBalance: Signal<number> = computed(() => {
+    const memberList = this.groupState().groupInfo?.memberList;
+    const myId = this.profileStateService.profile()?.id;
+
+    const me = memberList?.find((member) => member.id === myId);
+    return me?.expenseDelta ?? 0;
+  });
 
   constructor(
     private groupHttpService: GroupHttpService,
@@ -29,31 +35,22 @@ export class GroupStateService {
   ) {}
 
   private updateState(newState: GroupStateInterface): void {
-    this.state = newState;
-    this.groupStateSubject.next(this.state);
+    this.groupState.set(newState);
   }
 
-  public selectGroupInfo(): Observable<GroupResponse> {
-    return this.groupStateSubject.asObservable().pipe(map((value) => value.groupInfo!));
+  public selectGroupInfo(): Signal<GroupResponse | null> {
+    return this.groupInfo;
   }
 
-  public selectMyBalance(): Observable<number> {
-    return this.groupStateSubject.asObservable().pipe(
-      map((state) => {
-        const memberList = state.groupInfo?.memberList;
-        const myId = this.profileStateService.getMyId();
-
-        const me = memberList?.find((member) => member.id === myId);
-        return me?.expenseDelta ?? 0;
-      }),
-    );
+  public selectMyBalance(): Signal<number> {
+    return this.myBalance;
   }
 
   public getGroupInfoAction(id: number): Observable<GroupResponse> {
     return this.groupHttpService.getGroupInfo(id).pipe(
       tap((value) => {
         const newState: GroupStateInterface = {
-          ...this.state,
+          ...this.groupState(),
           groupInfo: value,
         };
         this.updateState(newState);
@@ -65,7 +62,7 @@ export class GroupStateService {
     return this.groupHttpService.addExpense(data).pipe(
       tap((value) => {
         const newState: GroupStateInterface = {
-          ...this.state,
+          ...this.groupState(),
           groupInfo: value,
         };
         this.updateState(newState);

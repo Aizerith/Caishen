@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import UserGroupResponse = CaiShen.UserGroupResponse;
 import { ProfileHttpService } from '../httpService/profile.http.service';
 import ProfileInfoResponse = CaiShen.ProfileInfoResponse;
@@ -12,58 +12,67 @@ export interface ProfileStateInterface {
   providedIn: 'root',
 })
 export class ProfileStateService {
-  private state: ProfileStateInterface = {
+  private readonly initialState: ProfileStateInterface = {
     info: null,
   };
 
-  private profileStateSubject: BehaviorSubject<ProfileStateInterface> = new BehaviorSubject<ProfileStateInterface>(
-    this.state,
-  );
+  private profileState: WritableSignal<ProfileStateInterface> = signal(this.initialState);
+  readonly profile: Signal<ProfileInfoResponse | null> = computed(() => this.profileState().info);
+  readonly groups: Signal<UserGroupResponse[]> = computed(() => this.profileState().info?.userGroups ?? []);
 
   constructor(private profileHttpService: ProfileHttpService) {}
 
   private updateState(newState: ProfileStateInterface): void {
-    this.state = newState;
-    this.profileStateSubject.next(this.state);
+    this.profileState.set(newState);
   }
 
-  public selectProfileState(): Observable<ProfileStateInterface> {
-    return this.profileStateSubject.asObservable();
+  public selectProfileState(): Signal<ProfileStateInterface> {
+    return this.profileState.asReadonly();
   }
 
-  public selectProfileGroups(): Observable<UserGroupResponse[] | null> {
-    return this.profileStateSubject.asObservable().pipe(map((value) => value.info?.userGroups ?? null));
+  public selectProfileGroups(): Signal<UserGroupResponse[]> {
+    return this.groups;
   }
 
   public getMyId() {
-    return this.state.info!.id;
+    return this.profileState().info?.id ?? null;
   }
 
   public getProfileAction(): Observable<ProfileInfoResponse> {
     return this.profileHttpService.getProfileInfo().pipe(
       tap((value) => {
-        this.state = {
+        this.updateState({
           info: value,
-        };
-        this.updateState(this.state);
+        });
       }),
     );
   }
 
   public updateGroup(data: UserGroupResponse) {
-    this.state.info?.userGroups.push(data);
-    this.updateState(this.state);
+    const info = this.profileState().info;
+    if (!info) {
+      return;
+    }
+
+    this.updateState({
+      info: {
+        ...info,
+        userGroups: [...info.userGroups, data],
+      },
+    });
   }
 
   public joinGroupAction(uuid: string): Observable<UserGroupResponse> {
     return this.profileHttpService.joinGroup(uuid).pipe(
       tap((value) => {
-        if (!this.state.info?.userGroups.some((userGroup) => value.id === userGroup.id)) {
-          this.state.info?.userGroups.push(value);
-          const newState: ProfileStateInterface = {
-            ...this.state,
-          };
-          this.updateState(newState);
+        const info = this.profileState().info;
+        if (info && !info.userGroups.some((userGroup) => value.id === userGroup.id)) {
+          this.updateState({
+            info: {
+              ...info,
+              userGroups: [...info.userGroups, value],
+            },
+          });
         }
       }),
     );

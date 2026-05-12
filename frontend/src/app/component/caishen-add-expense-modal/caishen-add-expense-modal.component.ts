@@ -2,11 +2,10 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CaishenCustomFormInputComponent } from '../caishen-custom-form-input/caishen-custom-form-input.component';
 import GroupMemberResponse = CaiShen.GroupMemberResponse;
-import { NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-caishen-add-expense-modal',
-  imports: [CaishenCustomFormInputComponent, NgForOf, ReactiveFormsModule],
+  imports: [CaishenCustomFormInputComponent, ReactiveFormsModule],
   templateUrl: './caishen-add-expense-modal.component.html',
   styleUrl: './caishen-add-expense-modal.component.css',
 })

@@ -1,32 +1,36 @@
 <div class="app-page">
-  <section *ngIf="expenseInfo()" class="app-panel">
-    <header class="app-panel-header">
-      <div class="min-w-0">
-        <h1 class="app-title">{{ expenseInfo()?.title }}</h1>
-        <p class="app-row-meta">Le {{ expenseInfo()?.expenseDate | date: "dd-MM-yyyy" }}</p>
+  @if (expenseInfo(); as expense) {
+    <section class="app-panel">
+      <header class="app-panel-header">
+        <div class="min-w-0">
+          <h1 class="app-title">{{ expense.title }}</h1>
+          <p class="app-row-meta">Le {{ expense.expenseDate | date: "dd-MM-yyyy" }}</p>
+        </div>
+      </header>
+
+      <div class="app-content gap-6">
+        <section class="flex flex-col gap-3">
+          <h2 class="text-lg font-semibold">Pay&eacute; par</h2>
+          <div class="app-card app-row">
+            <h3 class="app-row-title">{{ expense.payerName }}</h3>
+            <div class="app-amount text-success">
+              {{ expense.amount }} euro
+            </div>
+          </div>
+        </section>
+
+        <section class="flex flex-col gap-3">
+          <h2 class="text-lg font-semibold">Participants</h2>
+          @for (participant of expense.participantDTOList; track participant.username) {
+            <div class="app-card app-row">
+              <h3 class="app-row-title">{{ participant.username }}</h3>
+              <div class="app-amount text-warning">
+                {{ participant.amount }} euro
+              </div>
+            </div>
+          }
+        </section>
       </div>
-    </header>
-
-    <div class="app-content gap-6">
-      <section class="flex flex-col gap-3">
-        <h2 class="text-lg font-semibold">Payé par</h2>
-        <div class="app-card app-row">
-          <h3 class="app-row-title">{{ expenseInfo()?.payerName }}</h3>
-          <div class="app-amount text-success">
-            {{ expenseInfo()?.amount }} euro
-          </div>
-        </div>
-      </section>
-
-      <section class="flex flex-col gap-3">
-        <h2 class="text-lg font-semibold">Participants</h2>
-        <div *ngFor="let participant of expenseInfo()?.participantDTOList" class="app-card app-row">
-          <h3 class="app-row-title">{{ participant.username }}</h3>
-          <div class="app-amount text-warning">
-            {{ participant.amount }} euro
-          </div>
-        </div>
-      </section>
-    </div>
-  </section>
+    </section>
+  }
 </div>
