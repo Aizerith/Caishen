@@ -11,7 +11,7 @@ test.describe('auth flow', () => {
 
   test('registers a user and asks for email activation', async ({ page }) => {
     const suffix = Date.now();
-    const username = uniqueName('E2EUser').replaceAll(' ', '-');
+    const username = uniqueName('E2EUser').replace(/\s+/g, '-');
     const email = `e2e-${suffix}@example.com`;
     const password = 'Admin123!';
 
