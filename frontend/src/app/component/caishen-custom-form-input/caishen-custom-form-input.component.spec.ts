@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 
 import { CaishenCustomFormInputComponent } from './caishen-custom-form-input.component';
 
@@ -14,6 +15,7 @@ describe('CaishenCustomFormInputComponent', () => {
 
     fixture = TestBed.createComponent(CaishenCustomFormInputComponent);
     component = fixture.componentInstance;
+    component.inputForm = new FormControl('', { nonNullable: true });
     fixture.detectChanges();
   });
 

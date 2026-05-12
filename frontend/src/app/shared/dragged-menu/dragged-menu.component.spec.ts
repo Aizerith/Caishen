@@ -14,6 +14,7 @@ describe('DraggedMenuComponent', () => {
 
     fixture = TestBed.createComponent(DraggedMenuComponent);
     component = fixture.componentInstance;
+    vi.spyOn(component, 'initMenu').mockImplementation(() => {});
     fixture.detectChanges();
   });
 
