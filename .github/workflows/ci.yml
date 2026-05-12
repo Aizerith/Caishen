@@ -13,21 +13,6 @@ jobs:
     name: Backend Tests
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: boilerplate_db
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres -d boilerplate_db"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,16 +63,15 @@ jobs:
       - frontend-tests
 
     services:
-      postgres:
-        image: postgres:16
+      mariadb:
+        image: mariadb:11.8
         env:
-          POSTGRES_DB: boilerplate_db
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          MARIADB_DATABASE: caishen
+          MARIADB_ROOT_PASSWORD: root
         ports:
-          - 5432:5432
+          - 3406:3306
         options: >-
-          --health-cmd="pg_isready -U postgres -d boilerplate_db"
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -137,7 +121,7 @@ jobs:
       - name: Wait for backend
         run: |
           for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:8080/api/health > /dev/null; then
+            if curl -sS -o /dev/null http://127.0.0.1:8080/test/hello; then
               exit 0
             fi
             sleep 2
