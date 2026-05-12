@@ -6,10 +6,11 @@ import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-
 import { AuthHttpService } from '../../service/httpService/auth.http.service';
 import Validation from '../../validator/validation';
 import { STRONG_PASSWORD_REGEX } from '../../validator/validator.regex';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [ReactiveFormsModule, RouterLink, CaishenCustomFormInputComponent],
+  imports: [ReactiveFormsModule, RouterLink, CaishenCustomFormInputComponent, TranslocoPipe],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css',
 })

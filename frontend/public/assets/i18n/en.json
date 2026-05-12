@@ -1,0 +1,105 @@
+{
+  "common": {
+    "back": "Back",
+    "settings": "Settings",
+    "validate": "Validate",
+    "emailPlaceholder": "email@example.com",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "usernamePlaceholder": "Username",
+    "euro": "€"
+  },
+  "theme": {
+    "caishen": "Caishen",
+    "night": "Night",
+    "light": "Light",
+    "dark": "Dark",
+    "forest": "Forest",
+    "lofi": "Lofi"
+  },
+  "language": {
+    "title": "Language",
+    "fr": "French",
+    "en": "English"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginButton": "Sign in",
+    "forgotPasswordLink": "Forgot password?",
+    "createAccountLink": "Create an account",
+    "registerTitle": "Sign up",
+    "registerButton": "Create account",
+    "alreadyRegistered": "Already registered? Sign in",
+    "accountNotActivated": "Account not activated. Check your emails.",
+    "invalidCredentials": "Incorrect credentials, please try again.",
+    "registerSuccess": "Account created. Check your emails to activate it.",
+    "alreadyUsed": "Email or username already used.",
+    "registerError": "Registration failed, please try again.",
+    "errors": {
+      "username": "Must contain 3 to 30 characters\nOnly letters, numbers, spaces or hyphens.",
+      "email": "The email address is invalid.",
+      "password": "Must contain at least one lowercase letter, one uppercase letter, 8 to 20 characters and no spaces.",
+      "passwordConfirmation": "Passwords do not match."
+    }
+  },
+  "password": {
+    "forgotTitle": "Forgot password",
+    "sentMessage": "If an account exists with this address, an email has been sent.",
+    "backToLogin": "Back to sign in",
+    "receiveLink": "Receive link",
+    "newTitle": "New password",
+    "invalidLink": "This link is invalid or expired.",
+    "receiveNewLink": "Receive a new link",
+    "changeButton": "Change password"
+  },
+  "activation": {
+    "title": "Account activation",
+    "loading": "Activating account...",
+    "success": "Your account is active. You can now sign in.",
+    "invalid": "This link is invalid or expired."
+  },
+  "settings": {
+    "title": "Settings",
+    "themes": "Themes",
+    "logoutTitle": "Sign out",
+    "logoutButton": "Sign out"
+  },
+  "groups": {
+    "title": "Groups",
+    "add": "Add a group",
+    "addAria": "Add a group",
+    "titlePlaceholder": "Group title",
+    "created": "Group \"{{ title }}\" has been added.",
+    "createError": "Could not create group \"{{ title }}\".",
+    "createWithoutUser": "Cannot create a group without a signed-in user."
+  },
+  "group": {
+    "invitationLink": "Invitation link",
+    "expenses": "Expenses",
+    "balance": "Balance",
+    "paidBy": "Paid by",
+    "datePrefix": "On",
+    "owedToYou": "You are owed",
+    "youOwe": "You owe",
+    "members": "Members",
+    "invitationCopied": "Invitation link copied to clipboard."
+  },
+  "expense": {
+    "add": "Add an expense",
+    "title": "Title",
+    "titlePlaceholder": "E.g.: meal, ...",
+    "amount": "Amount",
+    "paidBy": "Paid by",
+    "chooseMember": "Choose a member",
+    "when": "When",
+    "participants": "Participants",
+    "created": "Expense \"{{ title }}\" added.",
+    "createError": "Could not add expense \"{{ title }}\"."
+  },
+  "join": {
+    "joined": "You have joined the group.",
+    "seeGroups": "See my groups",
+    "loginThenClick": "Please sign in, then click the link again.",
+    "login": "Sign in"
+  }
+}

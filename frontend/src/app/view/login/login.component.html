@@ -1,9 +1,9 @@
-<div class="flex flex-col h-full min-h-0 w-full items-center overflow-hidden px-4 py-8">
-  <img class="h-56 w-56" src="logo_caishen.png" alt="logo">
+<div class="flex h-full min-h-0 w-full flex-col items-center overflow-hidden px-4 py-8">
+  <img class="h-56 w-56" src="logo_caishen.png" alt="Caishen">
   <form class="app-form" [formGroup]="loginForm">
-    <h2 class="app-title">Connexion</h2>
+    <h2 class="app-title">{{ 'auth.loginTitle' | transloco }}</h2>
     <app-caishen-custom-form-input
-      [placeholder]="'mail@exemple.com'"
+      [placeholder]="'common.emailPlaceholder' | transloco"
       [icon]="'/icons/mail_icon.svg'"
       [type]="'email'"
       [inputForm]="getFormFromName('login')"
@@ -11,21 +11,18 @@
     />
 
     <app-caishen-custom-form-input
-      [placeholder]="'Password'"
+      [placeholder]="'common.passwordPlaceholder' | transloco"
       [icon]="'/icons/password_icon.svg'"
       [type]="'password'"
       [inputForm]="getFormFromName('password')"
       [hasError]="false"
     />
-    <div class="flex justify-end">
-      <button type="button" class="btn btn-primary w-full sm:w-auto" (click)="login()" [disabled]="loginForm.invalid">
-        Se connecter
-      </button>
-    </div>
-    <div class="flex justify-between">
-      <a routerLink="/forgot-password" class="text-center underline">Mot de passe oublie ?</a>
-      <a routerLink="/register" class="text-center underline">Creer un compte</a>
+    <button type="button" class="btn btn-primary w-full" (click)="login()" [disabled]="loginForm.invalid">
+      {{ 'auth.loginButton' | transloco }}
+    </button>
+    <div class="flex justify-between gap-3">
+      <a routerLink="/forgot-password" class="text-center underline">{{ 'auth.forgotPasswordLink' | transloco }}</a>
+      <a routerLink="/register" class="text-center underline">{{ 'auth.createAccountLink' | transloco }}</a>
     </div>
   </form>
 </div>
-

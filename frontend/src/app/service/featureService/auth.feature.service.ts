@@ -8,6 +8,7 @@ import { NotificationsService } from '../notifications.service';
 import { ProfileStateService } from '../stateService/profile.state.service';
 import { Router } from '@angular/router';
 import RegisterRequest = CaiShen.RegisterRequest;
+import { TranslocoService } from '@jsverse/transloco';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class AuthFeatureService {
   readonly authStateService: AuthStateService = inject(AuthStateService);
   readonly notificationService: NotificationsService = inject(NotificationsService);
   readonly profileStateService: ProfileStateService = inject(ProfileStateService);
+  readonly translocoService: TranslocoService = inject(TranslocoService);
   readonly router: Router = inject(Router);
   isLogin: WritableSignal<Boolean> = signal(false);
   isRegistering: WritableSignal<boolean> = signal(false);
@@ -110,10 +112,10 @@ export class AuthFeatureService {
         next: (_) => this.router.navigate(['group']).then(),
         error: (err) => {
           if (err.error?.code?.includes('AccountNotActivatedException')) {
-            this.notificationService.showError('Compte non active. Verifiez vos emails.');
+            this.notificationService.showError(this.translocoService.translate('auth.accountNotActivated'));
             return;
           }
-          this.notificationService.showError('Identifiants incorrects, veuillez reessayer');
+          this.notificationService.showError(this.translocoService.translate('auth.invalidCredentials'));
         },
       });
   }
@@ -153,16 +155,16 @@ export class AuthFeatureService {
       .subscribe({
         next: (_) => {
           this.router.navigate(['login']).then();
-          this.notificationService.showSuccess('Compte cree. Verifiez vos emails pour l activer.', 5000);
+          this.notificationService.showSuccess(this.translocoService.translate('auth.registerSuccess'), 5000);
         },
         error: (err) => {
           this.authStateService.updateState({
             hasError: err.error?.message,
           });
           if (err.error?.code?.includes('UserAlreadyExistsException')) {
-            this.notificationService.showError('Email ou pseudo deja utilise');
+            this.notificationService.showError(this.translocoService.translate('auth.alreadyUsed'));
           } else {
-            this.notificationService.showError("Erreur lors de l'inscription, veuillez reessayer");
+            this.notificationService.showError(this.translocoService.translate('auth.registerError'));
           }
         },
       });

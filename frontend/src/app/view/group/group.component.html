@@ -1,8 +1,8 @@
 <div class="app-page">
   <section class="app-panel">
     <header class="app-panel-header app-panel-header-inline">
-      <h1 class="app-title">Groupes</h1>
-      <button type="button" class="btn btn-accent btn-square relative p-0" aria-label="Ajouter un groupe"
+      <h1 class="app-title">{{ 'groups.title' | transloco }}</h1>
+      <button type="button" class="btn btn-accent btn-square relative p-0" [attr.aria-label]="'groups.addAria' | transloco"
               (click)="navigateToAddGroup()">
         <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>
         <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>

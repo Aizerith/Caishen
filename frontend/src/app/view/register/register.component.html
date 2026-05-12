@@ -1,45 +1,44 @@
 <div class="app-form-page">
   <div class="app-form" [formGroup]="registerForm">
-    <h2 class="app-title">Inscription</h2>
-    <app-caishen-custom-form-input [placeholder]="'Username'"
-                                   [icon]="'/icons/username_icon.svg'"
-                                   [type]="'text'"
-                                   [inputForm]="getFormFromName('username')"
-                                   [hasError]="(registerForm.get('username')?.errors?.['required']
-                                   || registerForm.get('username')?.errors?.['pattern']) && registerForm.get('username')?.touched"
-                                   [errorMessage]="'Doit contenir de 3 à 30 caractères\nAvec seulement des lettres, chiffres ou tirets'">
-    </app-caishen-custom-form-input>
+    <h2 class="app-title">{{ 'auth.registerTitle' | transloco }}</h2>
+    <app-caishen-custom-form-input
+      [placeholder]="'common.usernamePlaceholder' | transloco"
+      [icon]="'/icons/username_icon.svg'"
+      [type]="'text'"
+      [inputForm]="getFormFromName('username')"
+      [hasError]="(registerForm.get('username')?.errors?.['required'] || registerForm.get('username')?.errors?.['pattern']) && registerForm.get('username')?.touched"
+      [errorMessage]="'auth.errors.username' | transloco"
+    />
 
-    <app-caishen-custom-form-input [placeholder]="'mail@exemple.com'"
-                                   [icon]="'/icons/mail_icon.svg'"
-                                   [type]="'email'"
-                                   [inputForm]="getFormFromName('login')"
-                                   [hasError]="(registerForm.get('login')?.errors?.['required']
-                                   || registerForm.get('login')?.errors?.['pattern']) && registerForm.get('login')?.touched"
-                                   [errorMessage]="'L\'adresse E-mail est invalide'">
-    </app-caishen-custom-form-input>
+    <app-caishen-custom-form-input
+      [placeholder]="'common.emailPlaceholder' | transloco"
+      [icon]="'/icons/mail_icon.svg'"
+      [type]="'email'"
+      [inputForm]="getFormFromName('login')"
+      [hasError]="(registerForm.get('login')?.errors?.['required'] || registerForm.get('login')?.errors?.['pattern']) && registerForm.get('login')?.touched"
+      [errorMessage]="'auth.errors.email' | transloco"
+    />
 
-    <app-caishen-custom-form-input [placeholder]="'Password'"
-                                   [icon]="'/icons/password_icon.svg'"
-                                   [type]="'password'"
-                                   [inputForm]="getFormFromName('password')"
-                                   [hasError]="(registerForm.get('password')?.errors?.['required']
-                                   || registerForm.get('password')?.errors?.['pattern']) && registerForm.get('password')?.touched"
-                                   [errorMessage]="'Doit contenir au moins une lettre majuscule et une lettre minuscule, et doit être composé de 8 à 20 caractères et aucun espace.'">
-    </app-caishen-custom-form-input>
+    <app-caishen-custom-form-input
+      [placeholder]="'common.passwordPlaceholder' | transloco"
+      [icon]="'/icons/password_icon.svg'"
+      [type]="'password'"
+      [inputForm]="getFormFromName('password')"
+      [hasError]="(registerForm.get('password')?.errors?.['required'] || registerForm.get('password')?.errors?.['pattern']) && registerForm.get('password')?.touched"
+      [errorMessage]="'auth.errors.password' | transloco"
+    />
 
-    <app-caishen-custom-form-input [placeholder]="'Confirm password'"
-                                   [icon]="'/icons/password_icon.svg'"
-                                   [type]="'password'"
-                                   [inputForm]="getFormFromName('passwordConfirmation')"
-                                   [hasError]="(registerForm.get('passwordConfirmation')?.errors?.['required']
-                                   || registerForm.get('passwordConfirmation')?.errors?.['matching'])
-                                   && registerForm.get('passwordConfirmation')?.touched"
-                                   [errorMessage]="'Les mots de passe ne correspondent pas.'">
-    </app-caishen-custom-form-input>
-    <div class="flex justify-end">
-      <button type="button" class="btn btn-primary w-full sm:w-auto" [disabled]="registerForm.invalid || isRegistering" (click)="register()">Créer le compte</button>
-    </div>
-    <a href="/login" class="text-center underline">Déjà inscrit ? Se connecter</a>
+    <app-caishen-custom-form-input
+      [placeholder]="'common.confirmPasswordPlaceholder' | transloco"
+      [icon]="'/icons/password_icon.svg'"
+      [type]="'password'"
+      [inputForm]="getFormFromName('passwordConfirmation')"
+      [hasError]="(registerForm.get('passwordConfirmation')?.errors?.['required'] || registerForm.get('passwordConfirmation')?.errors?.['matching']) && registerForm.get('passwordConfirmation')?.touched"
+      [errorMessage]="'auth.errors.passwordConfirmation' | transloco"
+    />
+    <button type="button" class="btn btn-primary w-full" [disabled]="registerForm.invalid || isRegistering" (click)="register()">
+      {{ 'auth.registerButton' | transloco }}
+    </button>
+    <a href="/login" class="text-center underline">{{ 'auth.alreadyRegistered' | transloco }}</a>
   </div>
 </div>

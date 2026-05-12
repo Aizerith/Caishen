@@ -1,15 +1,15 @@
 <div class="app-page app-page-center">
   <section class="app-panel">
     <header class="app-panel-header">
-      <h1 class="app-title">Settings</h1>
+      <h1 class="app-title">{{ 'settings.title' | transloco }}</h1>
     </header>
 
     <div class="app-content">
       <section class="app-card flex flex-col gap-3">
-        <h2 class="text-lg font-semibold">Th&egrave;mes</h2>
+        <h2 class="text-lg font-semibold">{{ 'settings.themes' | transloco }}</h2>
         <div class="dropdown w-full">
           <button type="button" tabindex="0" class="btn w-full justify-between sm:w-56">
-            {{ theme() }}
+            {{ ('theme.' + theme()) | transloco }}
             <span class="text-sm opacity-60">v</span>
           </button>
           <ul tabindex="0" class="dropdown-content z-10 mt-2 w-full rounded-box bg-base-300 p-2 shadow-2xl sm:w-56">
@@ -19,7 +19,7 @@
                   type="radio"
                   name="theme-dropdown"
                   class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                  [attr.aria-label]="themeName[0].toUpperCase() + themeName.slice(1)"
+                  [attr.aria-label]="('theme.' + themeName) | transloco"
                   [value]="themeName"
                   [checked]="theme() === themeName"
                   (change)="changeTheme(themeName)" />
@@ -29,10 +29,34 @@
         </div>
       </section>
 
+      <section class="app-card flex flex-col gap-3">
+        <h2 class="text-lg font-semibold">{{ 'language.title' | transloco }}</h2>
+        <div class="dropdown w-full">
+          <button type="button" tabindex="0" class="btn w-full justify-between sm:w-56">
+            {{ 'language.' + language() | transloco }}
+            <span class="text-sm opacity-60">v</span>
+          </button>
+          <ul tabindex="0" class="dropdown-content z-10 mt-2 w-full rounded-box bg-base-300 p-2 shadow-2xl sm:w-56">
+            @for (lang of languages; track lang) {
+              <li>
+                <button type="button"
+                        class="btn btn-sm btn-block btn-ghost justify-start"
+                        [class.btn-primary]="language() === lang"
+                        (click)="changeLanguage(lang)">
+                  {{ 'language.' + lang | transloco }}
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+
       @if (isLogged()) {
         <section class="app-card flex flex-col gap-3">
-          <h2 class="text-lg font-semibold">D&eacute;connexion</h2>
-          <button type="button" class="btn btn-error w-full sm:w-56 sm:self-start" (click)="logout()">Logout</button>
+          <h2 class="text-lg font-semibold">{{ 'settings.logoutTitle' | transloco }}</h2>
+          <button type="button" class="btn btn-error w-full sm:w-56 sm:self-start" (click)="logout()">
+            {{ 'settings.logoutButton' | transloco }}
+          </button>
         </section>
       }
     </div>

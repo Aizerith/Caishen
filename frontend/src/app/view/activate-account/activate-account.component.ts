@@ -2,12 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { take } from 'rxjs';
 import { AuthHttpService } from '../../service/httpService/auth.http.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 type ActivationStatus = 'loading' | 'success' | 'error';
 
 @Component({
   selector: 'app-activate-account',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoPipe],
   templateUrl: './activate-account.component.html',
   styleUrl: './activate-account.component.css',
 })

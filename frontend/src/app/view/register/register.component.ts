@@ -5,10 +5,11 @@ import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-
 import Validation from '../../validator/validation';
 import RegisterRequest = CaiShen.RegisterRequest;
 import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, CaishenCustomFormInputComponent],
+  imports: [ReactiveFormsModule, CaishenCustomFormInputComponent, TranslocoPipe],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })

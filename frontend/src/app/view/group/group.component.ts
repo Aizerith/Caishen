@@ -2,9 +2,11 @@ import { Component, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 import UserGroupResponse = CaiShen.UserGroupResponse;
 import {ProfileStateService} from '../../service/stateService/profile.state.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-home',
+  imports: [TranslocoPipe],
   templateUrl: './group.component.html',
   styleUrl: './group.component.css',
 })

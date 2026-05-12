@@ -1,5 +1,5 @@
 <button type="button" class="btn btn-accent w-full sm:w-auto sm:min-w-64" onclick="add_expense_modal.showModal()">
-  Ajouter une d&eacute;pense
+  {{ 'expense.add' | transloco }}
 </button>
 
 <dialog #expenseModal id="add_expense_modal" class="modal" [formGroup]="expenseForm">
@@ -8,11 +8,11 @@
       <button type="submit" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button>
     </form>
 
-    <h1 class="app-title pr-8">Ajouter une d&eacute;pense</h1>
+    <h1 class="app-title pr-8">{{ 'expense.add' | transloco }}</h1>
 
     <div class="flex flex-col gap-1">
-      <h2 class="text-sm font-semibold">Titre</h2>
-      <app-caishen-custom-form-input [placeholder]="'Ex: repas, ...'"
+      <h2 class="text-sm font-semibold">{{ 'expense.title' | transloco }}</h2>
+      <app-caishen-custom-form-input [placeholder]="'expense.titlePlaceholder' | transloco"
                                      [type]="'text'"
                                      [inputForm]="getFormFromName('title')"
                                      [hasError]="false">
@@ -20,7 +20,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <h2 class="text-sm font-semibold">Montant</h2>
+      <h2 class="text-sm font-semibold">{{ 'expense.amount' | transloco }}</h2>
       <app-caishen-custom-form-input [placeholder]="'0,00'"
                                      [type]="'number'"
                                      [inputForm]="getFormFromName('amount')"
@@ -30,9 +30,9 @@
 
     <div class="grid gap-3 sm:grid-cols-5">
       <div class="flex flex-col gap-1 sm:col-span-3">
-        <h2 class="text-sm font-semibold">Pay&eacute; par</h2>
+        <h2 class="text-sm font-semibold">{{ 'expense.paidBy' | transloco }}</h2>
         <select class="select w-full" [formControl]="getFormFromName('payerId')">
-          <option disabled selected>Choisir un membre</option>
+          <option disabled selected>{{ 'expense.chooseMember' | transloco }}</option>
           @for (member of memberList; track member.id) {
             <option [value]="member.id">
               {{ member.name }}
@@ -41,13 +41,13 @@
         </select>
       </div>
       <div class="flex flex-col gap-1 sm:col-span-2">
-        <h2 class="text-sm font-semibold">Quand</h2>
+        <h2 class="text-sm font-semibold">{{ 'expense.when' | transloco }}</h2>
         <input type="date" class="input w-full" [formControl]="getFormFromName('expenseDate')">
       </div>
     </div>
 
     <div class="flex w-full flex-col gap-3">
-      <h2 class="text-sm font-semibold">Participants</h2>
+      <h2 class="text-sm font-semibold">{{ 'expense.participants' | transloco }}</h2>
       @for (member of memberList; track member.id) {
         <label class="label min-h-11 w-full items-center justify-between rounded-box border border-base-300 bg-base-100 px-3">
           <span class="font-medium">
@@ -65,7 +65,7 @@
 
     <button type="button" class="btn btn-primary w-full" (click)="onValidate()"
             [disabled]="expenseForm.invalid || !getFormFromName('participants').value.length">
-      Valider
+      {{ 'common.validate' | transloco }}
     </button>
   </div>
 </dialog>

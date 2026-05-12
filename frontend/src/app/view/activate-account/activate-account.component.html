@@ -1,15 +1,15 @@
 <div class="app-form-page">
   <section class="app-form">
-    <h2 class="app-title">Activation du compte</h2>
+    <h2 class="app-title">{{ 'activation.title' | transloco }}</h2>
 
     @if (status() === 'loading') {
-      <p class="text-base-content/70">Activation en cours...</p>
+      <p class="text-base-content/70">{{ 'activation.loading' | transloco }}</p>
     } @else if (status() === 'success') {
-      <p class="text-success">Votre compte est actif. Vous pouvez maintenant vous connecter.</p>
-      <a routerLink="/login" class="btn btn-primary w-full">Se connecter</a>
+      <p class="text-success">{{ 'activation.success' | transloco }}</p>
+      <a routerLink="/login" class="btn btn-primary w-full">{{ 'auth.loginButton' | transloco }}</a>
     } @else {
-      <p class="text-error">Ce lien est invalide ou expire.</p>
-      <a routerLink="/forgot-password" class="btn btn-primary w-full">Recevoir un nouveau lien</a>
+      <p class="text-error">{{ 'activation.invalid' | transloco }}</p>
+      <a routerLink="/forgot-password" class="btn btn-primary w-full">{{ 'password.receiveNewLink' | transloco }}</a>
     }
   </section>
 </div>

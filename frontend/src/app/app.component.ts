@@ -10,10 +10,11 @@ import { ThemeService } from './service/theme.service';
 import { WebSocketService } from './web-socket/web-socket.service';
 import { GroupStateService } from './service/stateService/group.state.service';
 import { AuthFeatureService } from './service/featureService/auth.feature.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ReactiveFormsModule, CaishenCustomSnackbarComponent],
+  imports: [RouterOutlet, ReactiveFormsModule, CaishenCustomSnackbarComponent, TranslocoPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

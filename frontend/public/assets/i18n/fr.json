@@ -1,0 +1,105 @@
+{
+  "common": {
+    "back": "Retour",
+    "settings": "Paramètres",
+    "validate": "Valider",
+    "emailPlaceholder": "mail@exemple.com",
+    "passwordPlaceholder": "Mot de passe",
+    "confirmPasswordPlaceholder": "Confirmer le mot de passe",
+    "usernamePlaceholder": "Nom d'utilisateur",
+    "euro": "€"
+  },
+  "theme": {
+    "caishen": "Caishen",
+    "night": "Nuit",
+    "light": "Clair",
+    "dark": "Sombre",
+    "forest": "Forêt",
+    "lofi": "Lofi"
+  },
+  "language": {
+    "title": "Langue",
+    "fr": "Français",
+    "en": "Anglais"
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "loginButton": "Se connecter",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "createAccountLink": "Créer un compte",
+    "registerTitle": "Inscription",
+    "registerButton": "Créer le compte",
+    "alreadyRegistered": "Déjà inscrit ? Se connecter",
+    "accountNotActivated": "Compte non activé. Vérifiez vos e-mails.",
+    "invalidCredentials": "Identifiants incorrects, veuillez réessayer.",
+    "registerSuccess": "Compte créé. Vérifiez vos e-mails pour l'activer.",
+    "alreadyUsed": "E-mail ou pseudo déjà utilisé.",
+    "registerError": "Erreur lors de l'inscription, veuillez réessayer.",
+    "errors": {
+      "username": "Doit contenir de 3 à 30 caractères\nAvec seulement des lettres, chiffres ou tirets.",
+      "email": "L'adresse e-mail est invalide.",
+      "password": "Doit contenir au moins une minuscule, une majuscule, 8 à 20 caractères et aucun espace.",
+      "passwordConfirmation": "Les mots de passe ne correspondent pas."
+    }
+  },
+  "password": {
+    "forgotTitle": "Mot de passe oublié",
+    "sentMessage": "Si un compte existe avec cette adresse, un e-mail vient d'être envoyé.",
+    "backToLogin": "Retour à la connexion",
+    "receiveLink": "Recevoir le lien",
+    "newTitle": "Nouveau mot de passe",
+    "invalidLink": "Ce lien est invalide ou expiré.",
+    "receiveNewLink": "Recevoir un nouveau lien",
+    "changeButton": "Modifier le mot de passe"
+  },
+  "activation": {
+    "title": "Activation du compte",
+    "loading": "Activation en cours...",
+    "success": "Votre compte est actif. Vous pouvez maintenant vous connecter.",
+    "invalid": "Ce lien est invalide ou expiré."
+  },
+  "settings": {
+    "title": "Paramètres",
+    "themes": "Thèmes",
+    "logoutTitle": "Déconnexion",
+    "logoutButton": "Se déconnecter"
+  },
+  "groups": {
+    "title": "Groupes",
+    "add": "Ajouter un groupe",
+    "addAria": "Ajouter un groupe",
+    "titlePlaceholder": "Titre du groupe",
+    "created": "Le groupe \"{{ title }}\" a été ajouté.",
+    "createError": "Erreur lors de la création du groupe \"{{ title }}\".",
+    "createWithoutUser": "Impossible de créer le groupe sans utilisateur connecté."
+  },
+  "group": {
+    "invitationLink": "Lien d'invitation",
+    "expenses": "Dépenses",
+    "balance": "Équilibre",
+    "paidBy": "Payé par",
+    "datePrefix": "Le",
+    "owedToYou": "On vous doit",
+    "youOwe": "Vous devez",
+    "members": "Membres",
+    "invitationCopied": "Lien d'invitation copié dans le presse-papiers."
+  },
+  "expense": {
+    "add": "Ajouter une dépense",
+    "title": "Titre",
+    "titlePlaceholder": "Ex. : repas, ...",
+    "amount": "Montant",
+    "paidBy": "Payé par",
+    "chooseMember": "Choisir un membre",
+    "when": "Quand",
+    "participants": "Participants",
+    "created": "Ajout de la dépense \"{{ title }}\".",
+    "createError": "Erreur lors de l'ajout de la dépense \"{{ title }}\"."
+  },
+  "join": {
+    "joined": "Vous avez rejoint le groupe.",
+    "seeGroups": "Voir mes groupes",
+    "loginThenClick": "Veuillez vous connecter, puis cliquez à nouveau sur le lien.",
+    "login": "Se connecter"
+  }
+}

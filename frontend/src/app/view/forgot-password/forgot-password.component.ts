@@ -5,10 +5,11 @@ import { finalize, take } from 'rxjs';
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
 import { AuthHttpService } from '../../service/httpService/auth.http.service';
 import { VALID_EMAIL_REGEX } from '../../validator/validator.regex';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-forgot-password',
-  imports: [ReactiveFormsModule, RouterLink, CaishenCustomFormInputComponent],
+  imports: [ReactiveFormsModule, RouterLink, CaishenCustomFormInputComponent, TranslocoPipe],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css',
 })

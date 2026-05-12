@@ -6,10 +6,11 @@ import GroupInfoRequest = CaiShen.GroupInfoRequest;
 import { NotificationsService } from '../../../service/notifications.service';
 import { Router } from '@angular/router';
 import { ProfileStateService } from '../../../service/stateService/profile.state.service';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-add',
-  imports: [CaishenCustomFormInputComponent],
+  imports: [CaishenCustomFormInputComponent, TranslocoPipe],
   templateUrl: './add.component.html',
   styleUrl: './add.component.css',
 })
@@ -23,6 +24,7 @@ export class AddComponent {
     private profileStateService: ProfileStateService,
     private notification: NotificationsService,
     private router: Router,
+    private translocoService: TranslocoService,
   ) {
     this.groupForm = this.fb.group({
       title: new FormControl<string>('', [Validators.required]),
@@ -37,7 +39,7 @@ export class AddComponent {
 
   addNewGroup() {
     if (!this.userId) {
-      this.notification.showError("Impossible de crÃ©er le groupe sans utilisateur connectÃ©");
+      this.notification.showError(this.translocoService.translate('groups.createWithoutUser'));
       return;
     }
 
@@ -47,11 +49,11 @@ export class AddComponent {
     };
     this.groupHttpService.addGroup(data).subscribe({
       next: (value) => {
-        this.notification.showSuccess(`Le groupe ${data.title} à été ajouté`);
+        this.notification.showSuccess(this.translocoService.translate('groups.created', { title: data.title }));
         this.router.navigate(['group']).then();
         this.profileStateService.updateGroup(value);
       },
-      error: (_) => this.notification.showError(`Erreur lors de la création du groupe ${data.title}`),
+      error: (_) => this.notification.showError(this.translocoService.translate('groups.createError', { title: data.title })),
     });
   }
 }

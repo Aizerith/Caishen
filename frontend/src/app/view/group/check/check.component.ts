@@ -1,20 +1,20 @@
-import { Component, Signal, signal, WritableSignal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { GroupStateService } from '../../../service/stateService/group.state.service';
-import { take } from 'rxjs';
 import { DatePipe } from '@angular/common';
-import { NotificationsService } from '../../../service/notifications.service';
+import { Component, Signal, signal, WritableSignal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { take } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CaishenAddExpenseModalComponent } from '../../../component/caishen-add-expense-modal/caishen-add-expense-modal.component';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import GroupResponse = CaiShen.GroupResponse;
+import { NotificationsService } from '../../../service/notifications.service';
+import { GroupStateService } from '../../../service/stateService/group.state.service';
 import ExpenseRequest = CaiShen.ExpenseRequest;
-
 import ExpenseResponse = CaiShen.ExpenseResponse;
+import GroupResponse = CaiShen.GroupResponse;
 
 @Component({
   selector: 'app-check',
-  imports: [CaishenAddExpenseModalComponent, DatePipe],
+  imports: [CaishenAddExpenseModalComponent, DatePipe, TranslocoPipe],
   templateUrl: './check.component.html',
   styleUrl: './check.component.css',
 })
@@ -32,6 +32,7 @@ export class CheckComponent {
     private groupStateService: GroupStateService,
     private router: Router,
     private fb: FormBuilder,
+    private translocoService: TranslocoService,
   ) {
     this.myBalance = this.groupStateService.selectMyBalance();
     this.groupId = this.activateRoute.snapshot.params['id'];
@@ -49,7 +50,7 @@ export class CheckComponent {
   copyInvitationLink(uuid: string) {
     navigator.clipboard
       .writeText(environment.URL + '/join/' + uuid)
-      .then((_) => this.notificationsService.showSuccess("Lien d'invitation copié dans le presse papier"));
+      .then(() => this.notificationsService.showSuccess(this.translocoService.translate('group.invitationCopied')));
   }
 
   private getExpenseRequestFromForm(): ExpenseRequest {
@@ -64,21 +65,16 @@ export class CheckComponent {
   }
 
   addExpense() {
-    this.notificationsService.showSuccess('Ajout de la dépense ' + '"' + this.expenseForm.get('title')?.value + '"');
+    const title = this.expenseForm.get('title')?.value;
     this.groupStateService
       .addExpense(this.getExpenseRequestFromForm())
       .pipe(take(1))
       .subscribe({
-        next: (_) => {
-          this.notificationsService.showSuccess(
-            'Ajout de la dépense ' + '"' + this.expenseForm.get('title')?.value + '"',
-          );
+        next: () => {
+          this.notificationsService.showSuccess(this.translocoService.translate('expense.created', { title }));
           this.expenseForm.reset();
         },
-        error: (_) =>
-          this.notificationsService.showError(
-            "Erreur lors de l'ajout de la dépense " + '"' + this.expenseForm.get('title')?.value + '"',
-          ),
+        error: () => this.notificationsService.showError(this.translocoService.translate('expense.createError', { title })),
       });
   }
 

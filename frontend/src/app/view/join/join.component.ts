@@ -3,9 +3,11 @@ import { take } from 'rxjs';
 import { AuthStateService } from '../../service/stateService/auth.state.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileStateService } from '../../service/stateService/profile.state.service';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-join',
+  imports: [TranslocoPipe],
   templateUrl: './join.component.html',
   styleUrl: './join.component.css',
 })

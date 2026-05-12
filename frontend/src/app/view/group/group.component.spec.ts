@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GroupComponent } from './group.component';
+import { translocoTestingModule } from '../../testing/transloco-testing';
 
 describe('HomeComponent', () => {
   let component: GroupComponent;
@@ -8,7 +9,7 @@ describe('HomeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GroupComponent]
+      imports: [GroupComponent, translocoTestingModule]
     })
     .compileComponents();
 

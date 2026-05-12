@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { JoinComponent } from './join.component';
 import { AuthStateService } from '../../service/stateService/auth.state.service';
 import { ProfileStateService } from '../../service/stateService/profile.state.service';
+import { translocoTestingModule } from '../../testing/transloco-testing';
 
 describe('JoinComponent', () => {
   let component: JoinComponent;
@@ -13,7 +14,7 @@ describe('JoinComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [JoinComponent],
+      imports: [JoinComponent, translocoTestingModule],
       providers: [
         {
           provide: ActivatedRoute,

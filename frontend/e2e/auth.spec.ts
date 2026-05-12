@@ -16,10 +16,10 @@ test.describe('auth flow', () => {
     const password = 'Admin123!';
 
     await page.goto('/register');
-    await page.getByPlaceholder('Username').fill(username);
+    await page.getByPlaceholder("Nom d'utilisateur").fill(username);
     await page.getByPlaceholder('mail@exemple.com').fill(email);
-    await page.getByPlaceholder('Password', { exact: true }).fill(password);
-    await page.getByPlaceholder('Confirm password', { exact: true }).fill(password);
+    await page.getByPlaceholder('Mot de passe', { exact: true }).fill(password);
+    await page.getByPlaceholder('Confirmer le mot de passe', { exact: true }).fill(password);
     await page.getByRole('button').click();
 
     await expect(page).toHaveURL(/\/login$/);

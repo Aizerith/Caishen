@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CaishenAddExpenseModalComponent } from './caishen-add-expense-modal.component';
+import { translocoTestingModule } from '../../testing/transloco-testing';
 
 describe('CaishenAddExpenseModalComponent', () => {
   let component: CaishenAddExpenseModalComponent;
@@ -9,7 +10,7 @@ describe('CaishenAddExpenseModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CaishenAddExpenseModalComponent]
+      imports: [CaishenAddExpenseModalComponent, translocoTestingModule]
     })
     .compileComponents();
 

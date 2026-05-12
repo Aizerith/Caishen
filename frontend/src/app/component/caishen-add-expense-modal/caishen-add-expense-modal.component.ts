@@ -2,10 +2,11 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CaishenCustomFormInputComponent } from '../caishen-custom-form-input/caishen-custom-form-input.component';
 import GroupMemberResponse = CaiShen.GroupMemberResponse;
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-caishen-add-expense-modal',
-  imports: [CaishenCustomFormInputComponent, ReactiveFormsModule],
+  imports: [CaishenCustomFormInputComponent, ReactiveFormsModule, TranslocoPipe],
   templateUrl: './caishen-add-expense-modal.component.html',
   styleUrl: './caishen-add-expense-modal.component.css',
 })

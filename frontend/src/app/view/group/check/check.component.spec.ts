@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { CheckComponent } from './check.component';
 import { GroupStateService } from '../../../service/stateService/group.state.service';
 import { NotificationsService } from '../../../service/notifications.service';
+import { translocoTestingModule } from '../../../testing/transloco-testing';
 
 describe('CheckComponent', () => {
   let component: CheckComponent;
@@ -22,7 +23,7 @@ describe('CheckComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CheckComponent],
+      imports: [CheckComponent, translocoTestingModule],
       providers: [
         {
           provide: ActivatedRoute,
