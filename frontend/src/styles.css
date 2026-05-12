@@ -145,7 +145,7 @@ select {
   }
 
   .app-row-title {
-    @apply min-w-0 wrap-break-words text-lg font-semibold leading-tight sm:text-xl;
+    @apply min-w-0 break-words text-lg font-semibold leading-tight sm:text-xl;
   }
 
   .app-row-meta {
