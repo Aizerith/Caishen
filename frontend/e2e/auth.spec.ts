@@ -18,8 +18,8 @@ test.describe('auth flow', () => {
     await page.goto('/register');
     await page.getByPlaceholder('Username').fill(username);
     await page.getByPlaceholder('mail@exemple.com').fill(email);
-    await page.getByPlaceholder('Password').fill(password);
-    await page.getByPlaceholder('Confirm password').fill(password);
+    await page.getByPlaceholder('Password', { exact: true }).fill(password);
+    await page.getByPlaceholder('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', {name: 'Créer le compte'}).click();
 
     await expect(page).toHaveURL(/\/group$/);
