@@ -29,6 +29,12 @@ export const routes: Routes = [
       import('./view/activate-account/activate-account.component').then((value) => value.ActivateAccountComponent),
   },
   {
+    path: 'resend-activation',
+    canActivate: [NotLoggedGuard],
+    loadComponent: () =>
+      import('./view/resend-activation/resend-activation.component').then((value) => value.ResendActivationComponent),
+  },
+  {
     path: 'forgot-password',
     canActivate: [NotLoggedGuard],
     loadComponent: () =>

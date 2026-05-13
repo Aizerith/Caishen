@@ -10,6 +10,10 @@ declare namespace CaiShen {
         status: HttpStatus;
     }
 
+    interface AccountActivationRequest {
+        email: string;
+    }
+
     interface ExpenseInfoResponse {
         amount: number;
         expenseDate: Date;

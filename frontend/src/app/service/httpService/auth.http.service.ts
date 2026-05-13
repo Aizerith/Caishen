@@ -6,6 +6,7 @@ import LoginRequest = CaiShen.LoginRequest;
 import LoginResponse = CaiShen.LoginResponse;
 import PasswordResetRequest = CaiShen.PasswordResetRequest;
 import PasswordResetConfirmRequest = CaiShen.PasswordResetConfirmRequest;
+import AccountActivationRequest = CaiShen.AccountActivationRequest;
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +32,11 @@ export class AuthHttpService {
     return this.http.get<void>(`${this.baseUrl}/auth/activate`, {
       params: { token },
     });
+  }
+
+  public requestAccountActivation(email: string) {
+    const data: AccountActivationRequest = { email };
+    return this.http.post<void>(`${this.baseUrl}/auth/activation/request`, data);
   }
 
   public requestPasswordReset(email: string) {

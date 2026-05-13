@@ -27,6 +27,7 @@
     "loginButton": "Se connecter",
     "forgotPasswordLink": "Mot de passe oublié ?",
     "createAccountLink": "Créer un compte",
+    "resendActivationLink": "Renvoyer l'e-mail d'activation",
     "registerTitle": "Inscription",
     "registerButton": "Créer le compte",
     "alreadyRegistered": "Déjà inscrit ? Se connecter",
@@ -56,7 +57,11 @@
     "title": "Activation du compte",
     "loading": "Activation en cours...",
     "success": "Votre compte est actif. Vous pouvez maintenant vous connecter.",
-    "invalid": "Ce lien est invalide ou expiré."
+    "invalid": "Ce lien est invalide ou expiré.",
+    "resendTitle": "Renvoyer l'e-mail d'activation",
+    "resendHelp": "Saisissez l'adresse e-mail utilisée à l'inscription. Si le compte n'est pas encore activé, un nouveau lien valable 24 heures sera envoyé.",
+    "resendButton": "Renvoyer le lien",
+    "resendSentMessage": "Si un compte non activé existe avec cette adresse, un nouvel e-mail vient d'être envoyé."
   },
   "settings": {
     "title": "Paramètres",

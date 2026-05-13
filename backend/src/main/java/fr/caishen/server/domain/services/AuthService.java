@@ -73,6 +73,16 @@ public class AuthService {
         user.setActivationTokenExpiresAt(null);
     }
 
+    public void requestAccountActivation(String email) {
+        appUserRepository.findByLogin(email)
+                .filter(user -> !Boolean.TRUE.equals(user.getIsActivated()))
+                .ifPresent(user -> {
+                    user.setActivationLink(generateToken());
+                    user.setActivationTokenExpiresAt(LocalDateTime.now().plusHours(24));
+                    mailService.sendAccountActivationEmail(user);
+                });
+    }
+
     public void requestPasswordReset(String email) {
         appUserRepository.findByLogin(email)
                 .filter(user -> Boolean.TRUE.equals(user.getIsActivated()))

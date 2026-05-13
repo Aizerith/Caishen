@@ -1,0 +1,29 @@
+<div class="app-form-page">
+  <form class="app-form" [formGroup]="activationForm">
+    <h2 class="app-title">{{ 'activation.resendTitle' | transloco }}</h2>
+
+    @if (isSent()) {
+      <p class="text-base-content/70">
+        {{ 'activation.resendSentMessage' | transloco }}
+      </p>
+      <a routerLink="/login" class="btn btn-primary w-full">{{ 'password.backToLogin' | transloco }}</a>
+    } @else {
+      <p class="text-base-content/70">
+        {{ 'activation.resendHelp' | transloco }}
+      </p>
+      <app-caishen-custom-form-input
+        [placeholder]="'common.emailPlaceholder' | transloco"
+        [icon]="'/icons/mail_icon.svg'"
+        [type]="'email'"
+        [inputForm]="getFormFromName('email')"
+        [hasError]="(activationForm.get('email')?.errors?.['required'] || activationForm.get('email')?.errors?.['pattern']) && activationForm.get('email')?.touched"
+        [errorMessage]="'auth.errors.email' | transloco"
+      />
+
+      <button type="button" class="btn btn-primary w-full" [disabled]="activationForm.invalid || isLoading()" (click)="requestAccountActivation()">
+        {{ 'activation.resendButton' | transloco }}
+      </button>
+      <a routerLink="/login" class="text-center underline">{{ 'password.backToLogin' | transloco }}</a>
+    }
+  </form>
+</div>

@@ -1,6 +1,7 @@
 package fr.caishen.server.web.controller;
 
 import fr.caishen.server.domain.services.AuthService;
+import fr.caishen.server.web.dto.AccountActivationRequest;
 import fr.caishen.server.web.dto.LoginRequest;
 import fr.caishen.server.web.dto.LoginResponse;
 import fr.caishen.server.web.dto.PasswordResetConfirmRequest;
@@ -37,6 +38,13 @@ public class AuthController {
         log.info("GET /auth/activate");
         authService.activateAccount(token);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/activation/request")
+    public ResponseEntity<Void> requestAccountActivation(@RequestBody AccountActivationRequest data) {
+        log.info("POST /auth/activation/request");
+        authService.requestAccountActivation(data.email());
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/password-reset/request")
