@@ -26,6 +26,9 @@ public class CaishenGroupService {
     private final ExpenseRepository expenseRepository;
     private final WebSocketService webSocketService;
 
+    private record ParticipantShare(Long participantId, BigDecimal amount) {
+    }
+
     public UserGroupResponse createGroup(String title, List<Long> members) {
         GroupEntity group = new GroupEntity();
         group.setTitle(title);
@@ -115,20 +118,24 @@ public class CaishenGroupService {
     }
 
     private BigDecimal getMember1ExpenseDelta(Long id, ExpenseEntity expense) {
-        List<Long> participantsIdList = getExpenseParticipants(expense);
+        List<ParticipantShare> participantShares = getExpenseParticipantShares(expense);
 
-        if (!Objects.equals(id, expense.getPayerId()) && !participantsIdList.contains(id)) {
+        BigDecimal participantShare = participantShares.stream()
+                .filter(share -> Objects.equals(share.participantId(), id))
+                .map(ParticipantShare::amount)
+                .findFirst()
+                .orElse(BigDecimal.ZERO.setScale(2, RoundingMode.UNNECESSARY));
+
+        if (!Objects.equals(id, expense.getPayerId()) && participantShare.signum() == 0) {
             return BigDecimal.ZERO;
         }
 
-        BigDecimal amount = expense.getAmount();
-        BigDecimal participantsCount = BigDecimal.valueOf(participantsIdList.size());
-        BigDecimal share = amount.divide(participantsCount, 2, RoundingMode.HALF_UP);
+        BigDecimal amount = normalizeMoney(expense.getAmount());
 
         if (Objects.equals(id, expense.getPayerId())) {
-            return participantsIdList.contains(id) ? amount.subtract(share) : amount;
+            return amount.subtract(participantShare);
         } else {
-            return share.negate();
+            return participantShare.negate();
         }
     }
 
@@ -138,24 +145,49 @@ public class CaishenGroupService {
                 .collect(Collectors.toList());
     }
 
+    private List<ParticipantShare> getExpenseParticipantShares(ExpenseEntity expense) {
+        List<Long> participantsIdList = getExpenseParticipants(expense);
+        long amountInCents = normalizeMoney(expense.getAmount()).movePointRight(2).longValueExact();
+        long baseShareInCents = amountInCents / participantsIdList.size();
+        long remainderInCents = amountInCents % participantsIdList.size();
+        int extraCentOffset = expense.getId() == null ? 0 : Math.floorMod(expense.getId().intValue(), participantsIdList.size());
+
+        List<ParticipantShare> shares = new ArrayList<>();
+        for (int index = 0; index < participantsIdList.size(); index++) {
+            boolean receivesExtraCent = Math.floorMod(index - extraCentOffset, participantsIdList.size()) < remainderInCents;
+            long shareInCents = baseShareInCents + (receivesExtraCent ? 1 : 0);
+            shares.add(new ParticipantShare(participantsIdList.get(index), BigDecimal.valueOf(shareInCents, 2)));
+        }
+        return shares;
+    }
+
+    private BigDecimal normalizeMoney(BigDecimal amount) {
+        return amount.setScale(2, RoundingMode.HALF_UP);
+    }
+
     public ExpenseInfoResponse getExpenseInfo(Long id) {
         ExpenseEntity expense = expenseRepository.findById(id).orElse(null);
         if (expense == null) {
             return null;
         }
-        List<Long> participantsIdList = getExpenseParticipants(expense);
+        List<ParticipantShare> participantShares = getExpenseParticipantShares(expense);
+        List<Long> participantsIdList = participantShares.stream()
+                .map(ParticipantShare::participantId)
+                .toList();
         List<AppUserEntity> participantList = appUserRepository.findAllById(participantsIdList);
-        BigDecimal amount = expense.getAmount();
-        BigDecimal participantsCount = BigDecimal.valueOf(participantsIdList.size());
-        BigDecimal share = amount.divide(participantsCount, 2, RoundingMode.HALF_UP);
+        Map<Long, AppUserEntity> participantsById = participantList.stream()
+                .collect(Collectors.toMap(AppUserEntity::getId, participant -> participant));
 
         return new ExpenseInfoResponse(
                 expense.getId(),
                 expense.getTitle(),
                 expense.getAmount(),
-                participantList
+                participantShares
                         .stream()
-                        .map(appUserEntity -> new ParticipantDTO(appUserEntity.getUsername(), share))
+                        .map(share -> {
+                            AppUserEntity participant = participantsById.get(share.participantId());
+                            return new ParticipantDTO(participant.getUsername(), share.amount());
+                        })
                         .collect(Collectors.toList()),
                 Objects.requireNonNull(appUserRepository.findById(expense.getPayerId()).orElse(null)).getUsername(),
                 expense.getExpenseDate()
