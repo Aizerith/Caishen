@@ -5,11 +5,16 @@ import { environment } from '../../environments/environment';
 export function rxStompConfigFactory(): RxStompConfig {
   return {
     webSocketFactory: () => new SockJS(environment.SOCKJS_BROKER_URL),
-    connectHeaders: {
-      access_token: localStorage.getItem('access_token') || '',
+    beforeConnect: (client) => {
+      client.configure({
+        connectHeaders: {
+          access_token: localStorage.getItem('access_token') || '',
+        },
+      });
     },
-    heartbeatIncoming: 0,
-    heartbeatOutgoing: 20000,
-    reconnectDelay: 5000,
+    heartbeatIncoming: 10000,
+    heartbeatOutgoing: 10000,
+    reconnectDelay: 2000,
+    connectionTimeout: 8000,
   };
 }
