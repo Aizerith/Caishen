@@ -1,16 +1,17 @@
 package fr.caishen.server.domain.services;
 
-import fr.caishen.server.dal.entity.AppUserEntity;
-import fr.caishen.server.dal.entity.ExpenseEntity;
-import fr.caishen.server.dal.entity.GroupEntity;
+import fr.caishen.server.dal.entity.*;
 import fr.caishen.server.dal.repository.AppUserRepository;
+import fr.caishen.server.dal.repository.ExpenseHistoryRepository;
 import fr.caishen.server.dal.repository.ExpenseRepository;
 import fr.caishen.server.dal.repository.GroupRepository;
+import fr.caishen.server.domain.exception.GroupAccessDeniedException;
 import fr.caishen.server.domain.exception.UserAlreadyInGroupException;
 import fr.caishen.server.web.dto.*;
 import fr.caishen.server.websocket.service.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,6 +25,7 @@ public class CaishenGroupService {
     private final GroupRepository groupRepository;
     private final AuthService authService;
     private final ExpenseRepository expenseRepository;
+    private final ExpenseHistoryRepository expenseHistoryRepository;
     private final WebSocketService webSocketService;
 
     private record ParticipantShare(Long participantId, BigDecimal amount) {
@@ -43,6 +45,7 @@ public class CaishenGroupService {
         if (group == null) {
             return null;
         }
+        requireCurrentUserMemberOf(group);
         return getGroupResponse(group);
     }
 
@@ -65,6 +68,7 @@ public class CaishenGroupService {
         );
     }
 
+    @Transactional
     public GroupResponse createExpense(ExpenseRequest data) {
         if (data.participant().isEmpty()) {
             return null;
@@ -73,6 +77,8 @@ public class CaishenGroupService {
         if (group == null) {
             return null;
         }
+        AppUserEntity currentUser = requireCurrentUserMemberOf(group);
+        validateExpenseMembers(group, data);
 
         ExpenseEntity expense = new ExpenseEntity();
         expense.setTitle(data.title());
@@ -83,9 +89,55 @@ public class CaishenGroupService {
         expense.setGroupEntity(group);
         expense.setExpenseDate(expense.getExpenseDate());
 
-        expenseRepository.save(expense);
-        group.getGroupAppUserEntityList().forEach(appUserEntity -> webSocketService.sendNotificationToUser(appUserEntity.getLogin(), group.getId()));
+        expense = expenseRepository.save(expense);
+        recordExpenseHistory(expense, ExpenseHistoryAction.CREATED, currentUser);
+        notifyGroupMembers(group);
         return getGroupResponse(group);
+    }
+
+    @Transactional
+    public GroupResponse updateExpense(Long id, ExpenseRequest data) {
+        if (data.participant().isEmpty()) {
+            return null;
+        }
+        ExpenseEntity expense = expenseRepository.findById(id).orElse(null);
+        if (expense == null) {
+            return null;
+        }
+
+        GroupEntity group = expense.getGroupEntity();
+        AppUserEntity currentUser = requireCurrentUserMemberOf(group);
+        validateExpenseMembers(group, data);
+        expense.setTitle(data.title());
+        expense.setAmount(data.amount());
+        expense.setPayerId(data.payerId());
+        expense.setExpenseDate(data.expenseDate());
+        expense.setParticipant(data.participant().trim());
+
+        expenseRepository.save(expense);
+        recordExpenseHistory(expense, ExpenseHistoryAction.UPDATED, currentUser);
+        notifyGroupMembers(group);
+        return getGroupResponse(group);
+    }
+
+    @Transactional
+    public GroupResponse deleteExpense(Long id) {
+        ExpenseEntity expense = expenseRepository.findById(id).orElse(null);
+        if (expense == null) {
+            return null;
+        }
+
+        GroupEntity group = expense.getGroupEntity();
+        AppUserEntity currentUser = requireCurrentUserMemberOf(group);
+        recordExpenseHistory(expense, ExpenseHistoryAction.DELETED, currentUser);
+        group.getGroupExpenseEntityList().removeIf(groupExpense -> Objects.equals(groupExpense.getId(), id));
+        expenseRepository.delete(expense);
+        notifyGroupMembers(group);
+        return getGroupResponse(group);
+    }
+
+    private void notifyGroupMembers(GroupEntity group) {
+        group.getGroupAppUserEntityList().forEach(appUserEntity -> webSocketService.sendNotificationToUser(appUserEntity.getLogin(), group.getId()));
     }
 
     private GroupResponse getGroupResponse(GroupEntity group) {
@@ -170,6 +222,7 @@ public class CaishenGroupService {
         if (expense == null) {
             return null;
         }
+        requireCurrentUserMemberOf(expense.getGroupEntity());
         List<ParticipantShare> participantShares = getExpenseParticipantShares(expense);
         List<Long> participantsIdList = participantShares.stream()
                 .map(ParticipantShare::participantId)
@@ -191,6 +244,84 @@ public class CaishenGroupService {
                         .collect(Collectors.toList()),
                 Objects.requireNonNull(appUserRepository.findById(expense.getPayerId()).orElse(null)).getUsername(),
                 expense.getExpenseDate()
+        );
+    }
+
+    public List<ExpenseHistoryResponse> getGroupExpenseHistory(Long groupId) {
+        GroupEntity group = groupRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return List.of();
+        }
+        requireCurrentUserMemberOf(group);
+        return expenseHistoryRepository.findByGroupIdOrderByCreatedAtDesc(groupId)
+                .stream()
+                .map(this::toExpenseHistoryResponse)
+                .toList();
+    }
+
+    public List<ExpenseHistoryResponse> getExpenseHistory(Long expenseId) {
+        ExpenseEntity expense = expenseRepository.findById(expenseId).orElse(null);
+        if (expense == null) {
+            return List.of();
+        }
+        requireCurrentUserMemberOf(expense.getGroupEntity());
+        return expenseHistoryRepository.findByExpenseIdOrderByCreatedAtDesc(expenseId)
+                .stream()
+                .map(this::toExpenseHistoryResponse)
+                .toList();
+    }
+
+    private AppUserEntity getCurrentAppUser() {
+        return appUserRepository.findByLogin(authService.getCurrentUser().getUsername()).orElseThrow();
+    }
+
+    private AppUserEntity requireCurrentUserMemberOf(GroupEntity group) {
+        AppUserEntity currentUser = getCurrentAppUser();
+        boolean isMember = group.getGroupAppUserEntityList().stream()
+                .anyMatch(member -> Objects.equals(member.getId(), currentUser.getId()));
+        if (!isMember) {
+            throw new GroupAccessDeniedException();
+        }
+        return currentUser;
+    }
+
+    private void validateExpenseMembers(GroupEntity group, ExpenseRequest data) {
+        Set<Long> groupMemberIds = group.getGroupAppUserEntityList().stream()
+                .map(AppUserEntity::getId)
+                .collect(Collectors.toSet());
+        Set<Long> participantIds = Arrays.stream(data.participant().trim().split(" "))
+                .filter(participant -> !participant.isBlank())
+                .map(Long::parseLong)
+                .collect(Collectors.toSet());
+        if (!groupMemberIds.contains(data.payerId()) || !groupMemberIds.containsAll(participantIds)) {
+            throw new GroupAccessDeniedException();
+        }
+    }
+
+    private void recordExpenseHistory(ExpenseEntity expense, ExpenseHistoryAction action, AppUserEntity actor) {
+        ExpenseHistoryEntity history = new ExpenseHistoryEntity();
+        history.setGroupId(expense.getGroupEntity().getId());
+        history.setExpenseId(expense.getId());
+        history.setExpenseTitle(expense.getTitle());
+        history.setAction(action);
+        history.setActorId(actor.getId());
+        history.setActorName(actor.getUsername());
+        history.setAmount(normalizeMoney(expense.getAmount()));
+        history.setCreatedAt(java.time.LocalDateTime.now());
+        expenseHistoryRepository.save(history);
+    }
+
+    private ExpenseHistoryResponse toExpenseHistoryResponse(ExpenseHistoryEntity history) {
+        return new ExpenseHistoryResponse(
+                history.getId(),
+                history.getGroupId(),
+                history.getExpenseId(),
+                history.getExpenseTitle(),
+                history.getAction(),
+                history.getActorId(),
+                history.getActorName(),
+                history.getAmount(),
+                history.getCreatedAt()
         );
     }
 }

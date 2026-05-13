@@ -1,6 +1,7 @@
 {
   "common": {
     "back": "Retour",
+    "cancel": "Annuler",
     "settings": "Paramètres",
     "validate": "Valider",
     "emailPlaceholder": "mail@exemple.com",
@@ -93,6 +94,7 @@
     "invitationLink": "Lien d'invitation",
     "expenses": "Dépenses",
     "balance": "Équilibre",
+    "history": "Historique",
     "paidBy": "Payé par",
     "datePrefix": "Le",
     "owedToYou": "On vous doit",
@@ -102,6 +104,9 @@
   },
   "expense": {
     "add": "Ajouter une dépense",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
     "title": "Titre",
     "titlePlaceholder": "Ex. : repas, ...",
     "amount": "Montant",
@@ -110,7 +115,18 @@
     "when": "Quand",
     "participants": "Participants",
     "created": "Ajout de la dépense \"{{ title }}\".",
-    "createError": "Erreur lors de l'ajout de la dépense \"{{ title }}\"."
+    "createError": "Erreur lors de l'ajout de la dépense \"{{ title }}\".",
+    "updated": "Dépense modifiée.",
+    "updateError": "Erreur lors de la modification de la dépense.",
+    "deleted": "Dépense supprimée.",
+    "deleteError": "Erreur lors de la suppression de la dépense.",
+    "deleteConfirm": "Supprimer cette dépense ?",
+    "noHistory": "Aucun historique pour le moment.",
+    "historyActions": {
+      "CREATED": "Dépense créée",
+      "UPDATED": "Dépense modifiée",
+      "DELETED": "Dépense supprimée"
+    }
   },
   "join": {
     "joined": "Vous avez rejoint le groupe.",

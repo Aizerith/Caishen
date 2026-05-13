@@ -1,0 +1,7 @@
+package fr.caishen.server.dal.entity;
+
+public enum ExpenseHistoryAction {
+    CREATED,
+    UPDATED,
+    DELETED
+}

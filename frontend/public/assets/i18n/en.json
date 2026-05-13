@@ -1,6 +1,7 @@
 {
   "common": {
     "back": "Back",
+    "cancel": "Cancel",
     "settings": "Settings",
     "validate": "Validate",
     "emailPlaceholder": "email@example.com",
@@ -93,6 +94,7 @@
     "invitationLink": "Invitation link",
     "expenses": "Expenses",
     "balance": "Balance",
+    "history": "History",
     "paidBy": "Paid by",
     "datePrefix": "On",
     "owedToYou": "You are owed",
@@ -102,6 +104,9 @@
   },
   "expense": {
     "add": "Add an expense",
+    "edit": "Edit",
+    "save": "Save",
+    "delete": "Delete",
     "title": "Title",
     "titlePlaceholder": "E.g.: meal, ...",
     "amount": "Amount",
@@ -110,7 +115,18 @@
     "when": "When",
     "participants": "Participants",
     "created": "Expense \"{{ title }}\" added.",
-    "createError": "Could not add expense \"{{ title }}\"."
+    "createError": "Could not add expense \"{{ title }}\".",
+    "updated": "Expense updated.",
+    "updateError": "Could not update expense.",
+    "deleted": "Expense deleted.",
+    "deleteError": "Could not delete expense.",
+    "deleteConfirm": "Delete this expense?",
+    "noHistory": "No history yet.",
+    "historyActions": {
+      "CREATED": "Expense created",
+      "UPDATED": "Expense updated",
+      "DELETED": "Expense deleted"
+    }
   },
   "join": {
     "joined": "You have joined the group.",

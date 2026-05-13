@@ -1,6 +1,7 @@
 package fr.caishen.server.web.advice;
 
 import fr.caishen.server.domain.exception.AccountNotActivatedException;
+import fr.caishen.server.domain.exception.GroupAccessDeniedException;
 import fr.caishen.server.domain.exception.InvalidAuthTokenException;
 import fr.caishen.server.domain.exception.UserAlreadyExistsException;
 import fr.caishen.server.domain.exception.UserAlreadyInGroupException;
@@ -38,6 +39,17 @@ public class ControllerExceptionHandler {
                         "Compte non active. Verifiez vos emails.",
                         LocalDateTime.now(),
                         List.of("AccountNotActivatedException")));
+    }
+
+    @ExceptionHandler(GroupAccessDeniedException.class)
+    public ResponseEntity<?> groupAccessDeniedException(GroupAccessDeniedException e) {
+        log.error("Group access denied : {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ErrorResponse(
+                        HttpStatus.FORBIDDEN,
+                        "Vous ne faites pas partie de ce groupe.",
+                        LocalDateTime.now(),
+                        List.of("GroupAccessDeniedException")));
     }
 
     @ExceptionHandler(InvalidAuthTokenException.class)

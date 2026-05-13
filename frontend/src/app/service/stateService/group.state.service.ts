@@ -4,9 +4,11 @@ import GroupResponse = CaiShen.GroupResponse;
 import { GroupHttpService } from '../httpService/group.http.service';
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import { ProfileStateService } from './profile.state.service';
+import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
 
 export interface GroupStateInterface {
   groupInfo: GroupResponse | null;
+  expenseHistory: ExpenseHistoryResponse[];
   hasError: Boolean;
 }
 
@@ -16,11 +18,13 @@ export interface GroupStateInterface {
 export class GroupStateService {
   private readonly initialState: GroupStateInterface = {
     groupInfo: null,
+    expenseHistory: [],
     hasError: false,
   };
 
   private groupState: WritableSignal<GroupStateInterface> = signal(this.initialState);
   readonly groupInfo: Signal<GroupResponse | null> = computed(() => this.groupState().groupInfo);
+  readonly expenseHistory: Signal<ExpenseHistoryResponse[]> = computed(() => this.groupState().expenseHistory);
   readonly myBalance: Signal<number> = computed(() => {
     const memberList = this.groupState().groupInfo?.memberList;
     const myId = this.profileStateService.profile()?.id;
@@ -46,6 +50,10 @@ export class GroupStateService {
     return this.myBalance;
   }
 
+  public selectExpenseHistory(): Signal<ExpenseHistoryResponse[]> {
+    return this.expenseHistory;
+  }
+
   public getGroupInfoAction(id: number): Observable<GroupResponse> {
     return this.groupHttpService.getGroupInfo(id).pipe(
       tap((value) => {
@@ -64,6 +72,42 @@ export class GroupStateService {
         const newState: GroupStateInterface = {
           ...this.groupState(),
           groupInfo: value,
+        };
+        this.updateState(newState);
+      }),
+    );
+  }
+
+  public updateExpense(id: number, data: ExpenseRequest) {
+    return this.groupHttpService.updateExpense(id, data).pipe(
+      tap((value) => {
+        const newState: GroupStateInterface = {
+          ...this.groupState(),
+          groupInfo: value,
+        };
+        this.updateState(newState);
+      }),
+    );
+  }
+
+  public deleteExpense(id: number) {
+    return this.groupHttpService.deleteExpense(id).pipe(
+      tap((value) => {
+        const newState: GroupStateInterface = {
+          ...this.groupState(),
+          groupInfo: value,
+        };
+        this.updateState(newState);
+      }),
+    );
+  }
+
+  public getGroupExpenseHistoryAction(groupId: number): Observable<ExpenseHistoryResponse[]> {
+    return this.groupHttpService.getGroupExpenseHistory(groupId).pipe(
+      tap((value) => {
+        const newState: GroupStateInterface = {
+          ...this.groupState(),
+          expenseHistory: value,
         };
         this.updateState(newState);
       }),

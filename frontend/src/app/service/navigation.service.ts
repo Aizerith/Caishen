@@ -51,7 +51,7 @@ export class NavigationService {
     return this.history[this.history.length - 1] ?? '/group';
   }
 
-  private replaceCurrentRoute(url: string): void {
+  replaceCurrentRoute(url: string): void {
     if (this.history.length === 0) {
       this.history.push(url);
     } else {

@@ -11,6 +11,7 @@ import { GroupStateService } from '../../../service/stateService/group.state.ser
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import ExpenseResponse = CaiShen.ExpenseResponse;
 import GroupResponse = CaiShen.GroupResponse;
+import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
 
 @Component({
   selector: 'app-check',
@@ -22,9 +23,10 @@ export class CheckComponent {
   protected readonly Math = Math;
   groupId!: number;
   groupInfo: Signal<GroupResponse | null>;
+  expenseHistory: Signal<ExpenseHistoryResponse[]>;
   myBalance: Signal<number>;
   expenseForm: FormGroup;
-  currentTab: WritableSignal<'expense' | 'balance'> = signal('expense');
+  currentTab: WritableSignal<'expense' | 'balance' | 'history'> = signal('expense');
 
   constructor(
     private activateRoute: ActivatedRoute,
@@ -35,6 +37,7 @@ export class CheckComponent {
     private translocoService: TranslocoService,
   ) {
     this.myBalance = this.groupStateService.selectMyBalance();
+    this.expenseHistory = this.groupStateService.selectExpenseHistory();
     this.groupId = this.activateRoute.snapshot.params['id'];
     this.groupInfo = this.groupStateService.selectGroupInfo();
     this.groupStateService.getGroupInfoAction(this.groupId).pipe(take(1)).subscribe();
@@ -84,6 +87,15 @@ export class CheckComponent {
 
   changeTabToBalance() {
     this.currentTab.set('balance');
+  }
+
+  changeTabToHistory() {
+    this.currentTab.set('history');
+    this.groupStateService.getGroupExpenseHistoryAction(this.groupId).pipe(take(1)).subscribe();
+  }
+
+  getHistoryTranslationKey(action: CaiShen.ExpenseHistoryAction) {
+    return `expense.historyActions.${action}`;
   }
 
   navigateToExpense(expense: ExpenseResponse) {

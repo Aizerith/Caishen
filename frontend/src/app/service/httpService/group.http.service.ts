@@ -6,6 +6,7 @@ import UserGroupResponse = CaiShen.UserGroupResponse;
 import GroupResponse = CaiShen.GroupResponse;
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import ExpenseInfoResponse = CaiShen.ExpenseInfoResponse;
+import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,23 @@ export class GroupHttpService {
     return this.http.post<GroupResponse>(`${this.baseUrl}/group/expenses`, data);
   }
 
+  updateExpense(id: number, data: ExpenseRequest) {
+    return this.http.put<GroupResponse>(`${this.baseUrl}/group/expenses/${id}`, data);
+  }
+
+  deleteExpense(id: number) {
+    return this.http.delete<GroupResponse>(`${this.baseUrl}/group/expenses/${id}`);
+  }
+
   getExpenseInfoById(id: number) {
     return this.http.get<ExpenseInfoResponse>(`${this.baseUrl}/group/expenses/${id}`);
+  }
+
+  getGroupExpenseHistory(groupId: number) {
+    return this.http.get<ExpenseHistoryResponse[]>(`${this.baseUrl}/group/${groupId}/expenses/history`);
+  }
+
+  getExpenseHistory(expenseId: number) {
+    return this.http.get<ExpenseHistoryResponse[]>(`${this.baseUrl}/group/expenses/${expenseId}/history`);
   }
 }

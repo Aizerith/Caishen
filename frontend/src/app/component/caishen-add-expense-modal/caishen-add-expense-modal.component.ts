@@ -14,6 +14,10 @@ export class CaishenAddExpenseModalComponent {
   @ViewChild('expenseModal') modalRef!: ElementRef<HTMLDialogElement>;
   @Input({ required: true }) expenseForm!: FormGroup;
   @Input({ required: true }) memberList!: GroupMemberResponse[];
+  @Input() triggerLabel = 'expense.add';
+  @Input() titleLabel = 'expense.add';
+  @Input() submitLabel = 'common.validate';
+  @Input() triggerButtonClass = 'btn btn-accent w-full sm:w-auto sm:min-w-64';
   @Output() onValidateExpense: EventEmitter<void> = new EventEmitter();
 
   getFormFromName(name: string) {
@@ -28,6 +32,10 @@ export class CaishenAddExpenseModalComponent {
 
     this.modalRef.nativeElement.close();
     this.onValidateExpense.emit();
+  }
+
+  openModal() {
+    this.modalRef.nativeElement.showModal();
   }
 
   closeModal() {

@@ -1,5 +1,5 @@
-<button type="button" class="btn btn-accent w-full sm:w-auto sm:min-w-64" onclick="add_expense_modal.showModal()">
-  {{ 'expense.add' | transloco }}
+<button type="button" [class]="triggerButtonClass" (click)="openModal()">
+  {{ triggerLabel | transloco }}
 </button>
 
 <dialog #expenseModal id="add_expense_modal" class="modal">
@@ -8,7 +8,7 @@
         (ngSubmit)="onValidate()">
     <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="closeModal()">x</button>
 
-    <h1 class="app-title pr-8">{{ 'expense.add' | transloco }}</h1>
+    <h1 class="app-title pr-8">{{ titleLabel | transloco }}</h1>
 
     <div class="flex flex-col gap-1">
       <h2 class="text-sm font-semibold">{{ 'expense.title' | transloco }}</h2>
@@ -65,7 +65,7 @@
 
     <button type="submit" class="btn btn-primary w-full"
             [disabled]="expenseForm.invalid || !getFormFromName('participants').value.length">
-      {{ 'common.validate' | transloco }}
+      {{ submitLabel | transloco }}
     </button>
   </form>
 </dialog>

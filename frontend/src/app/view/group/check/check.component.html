@@ -8,11 +8,13 @@
         </button>
       </header>
 
-      <div role="tablist" class="tabs tabs-box mx-4 mt-4 grid shrink-0 grid-cols-2">
+      <div role="tablist" class="tabs tabs-box mx-4 mt-4 grid shrink-0 grid-cols-3">
         <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'expense'"
                 (click)="changeTabToExpense()">{{ 'group.expenses' | transloco }}</button>
         <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'balance'"
                 (click)="changeTabToBalance()">{{ 'group.balance' | transloco }}</button>
+        <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'history'"
+                (click)="changeTabToHistory()">{{ 'group.history' | transloco }}</button>
       </div>
 
       @switch (currentTab()) {
@@ -62,6 +64,25 @@
                 </div>
               }
             </section>
+          </div>
+        }
+
+        @case ('history') {
+          <div class="app-content app-content-with-tabs">
+            @for (history of expenseHistory(); track history.id) {
+              <article class="app-card app-row">
+                <div class="min-w-0">
+                  <h2 class="app-row-title">{{ getHistoryTranslationKey(history.action) | transloco }}</h2>
+                  <p class="app-row-meta">{{ history.expenseTitle }} - {{ history.actorName }}</p>
+                  <p class="app-row-meta">{{ history.createdAt | date: "dd-MM-yyyy HH:mm" }}</p>
+                </div>
+                <div class="app-amount">
+                  {{ history.amount }} {{ 'common.euro' | transloco }}
+                </div>
+              </article>
+            } @empty {
+              <p class="text-base-content/70">{{ 'expense.noHistory' | transloco }}</p>
+            }
           </div>
         }
       }

@@ -6,6 +6,22 @@
           <h1 class="app-title">{{ expense.title }}</h1>
           <p class="app-row-meta">{{ 'group.datePrefix' | transloco }} {{ expense.expenseDate | date: "dd-MM-yyyy" }}</p>
         </div>
+        <div class="flex shrink-0 flex-wrap justify-end gap-2">
+          @if (groupInfo(); as group) {
+            <app-caishen-add-expense-modal
+              [expenseForm]="editExpenseForm"
+              [memberList]="group.memberList"
+              [triggerLabel]="'expense.edit'"
+              [titleLabel]="'expense.edit'"
+              [submitLabel]="'expense.save'"
+              [triggerButtonClass]="'btn btn-primary btn-sm'"
+              (onValidateExpense)="updateExpense()">
+            </app-caishen-add-expense-modal>
+          }
+          <button type="button" class="btn btn-error btn-sm" (click)="openDeleteModal()">
+            {{ 'expense.delete' | transloco }}
+          </button>
+        </div>
       </header>
 
       <div class="app-content gap-6">
@@ -32,5 +48,23 @@
         </section>
       </div>
     </section>
+
+    <dialog #deleteModal class="modal">
+      <div class="modal-box flex flex-col gap-4">
+        <h2 class="text-lg font-semibold">{{ 'expense.delete' | transloco }}</h2>
+        <p class="text-base-content/70">{{ 'expense.deleteConfirm' | transloco }}</p>
+        <div class="modal-action">
+          <button type="button" class="btn btn-ghost" (click)="closeDeleteModal()">
+            {{ 'common.cancel' | transloco }}
+          </button>
+          <button type="button" class="btn btn-error" (click)="deleteExpense()">
+            {{ 'expense.delete' | transloco }}
+          </button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>{{ 'common.cancel' | transloco }}</button>
+      </form>
+    </dialog>
   }
 </div>

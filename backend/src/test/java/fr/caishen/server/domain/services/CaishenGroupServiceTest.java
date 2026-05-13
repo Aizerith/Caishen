@@ -4,6 +4,7 @@ import fr.caishen.server.dal.entity.AppUserEntity;
 import fr.caishen.server.dal.entity.ExpenseEntity;
 import fr.caishen.server.dal.entity.GroupEntity;
 import fr.caishen.server.dal.repository.AppUserRepository;
+import fr.caishen.server.dal.repository.ExpenseHistoryRepository;
 import fr.caishen.server.dal.repository.ExpenseRepository;
 import fr.caishen.server.dal.repository.GroupRepository;
 import fr.caishen.server.web.dto.GroupMemberResponse;
@@ -25,12 +26,15 @@ class CaishenGroupServiceTest {
     private final AppUserRepository appUserRepository = mock(AppUserRepository.class);
     private final GroupRepository groupRepository = mock(GroupRepository.class);
     private final ExpenseRepository expenseRepository = mock(ExpenseRepository.class);
+    private final ExpenseHistoryRepository expenseHistoryRepository = mock(ExpenseHistoryRepository.class);
+    private final AuthService authService = mock(AuthService.class);
     private final WebSocketService webSocketService = mock(WebSocketService.class);
     private final CaishenGroupService service = new CaishenGroupService(
             appUserRepository,
             groupRepository,
-            null,
+            authService,
             expenseRepository,
+            expenseHistoryRepository,
             webSocketService
     );
 
@@ -43,6 +47,7 @@ class CaishenGroupServiceTest {
 
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
         when(appUserRepository.findById(1L)).thenReturn(Optional.of(shen));
+        mockCurrentUser(shen);
 
         GroupResponse response = service.getGroupInfo(1L);
 
@@ -62,6 +67,7 @@ class CaishenGroupServiceTest {
 
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
         when(appUserRepository.findById(1L)).thenReturn(Optional.of(shen));
+        mockCurrentUser(shen);
 
         GroupResponse response = service.getGroupInfo(1L);
 
@@ -87,6 +93,7 @@ class CaishenGroupServiceTest {
         group.setUuid("group-uuid");
         group.setGroupAppUserEntityList(users);
         group.setGroupExpenseEntityList(expenses);
+        expenses.forEach(expense -> expense.setGroupEntity(group));
         return group;
     }
 
@@ -113,5 +120,10 @@ class CaishenGroupServiceTest {
                 .findFirst()
                 .orElseThrow()
                 .expenseDelta();
+    }
+
+    private void mockCurrentUser(AppUserEntity user) {
+        when(authService.getCurrentUser()).thenReturn(new org.springframework.security.core.userdetails.User(user.getLogin(), "", List.of()));
+        when(appUserRepository.findByLogin(user.getLogin())).thenReturn(Optional.of(user));
     }
 }
