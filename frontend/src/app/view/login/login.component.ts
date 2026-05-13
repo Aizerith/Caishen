@@ -25,6 +25,11 @@ export class LoginComponent {
   }
 
   login() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
     this.authFeatureService.loginAction(this.loginForm.get('login')?.value, this.loginForm.get('password')?.value);
   }
 }

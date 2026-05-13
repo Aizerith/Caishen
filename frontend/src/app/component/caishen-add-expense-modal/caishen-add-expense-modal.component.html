@@ -2,11 +2,11 @@
   {{ 'expense.add' | transloco }}
 </button>
 
-<dialog #expenseModal id="add_expense_modal" class="modal" [formGroup]="expenseForm">
-  <div class="modal-box flex max-h-[90dvh] w-[calc(100vw-1.5rem)] max-w-xl flex-col gap-5 overflow-y-auto">
-    <form method="dialog">
-      <button type="submit" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">x</button>
-    </form>
+<dialog #expenseModal id="add_expense_modal" class="modal">
+  <form class="modal-box flex max-h-[90dvh] w-[calc(100vw-1.5rem)] max-w-xl flex-col gap-5 overflow-y-auto"
+        [formGroup]="expenseForm"
+        (ngSubmit)="onValidate()">
+    <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" (click)="closeModal()">x</button>
 
     <h1 class="app-title pr-8">{{ 'expense.add' | transloco }}</h1>
 
@@ -63,9 +63,9 @@
       }
     </div>
 
-    <button type="button" class="btn btn-primary w-full" (click)="onValidate()"
+    <button type="submit" class="btn btn-primary w-full"
             [disabled]="expenseForm.invalid || !getFormFromName('participants').value.length">
       {{ 'common.validate' | transloco }}
     </button>
-  </div>
+  </form>
 </dialog>

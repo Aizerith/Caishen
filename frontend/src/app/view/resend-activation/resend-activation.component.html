@@ -1,5 +1,5 @@
 <div class="app-form-page">
-  <form class="app-form" [formGroup]="activationForm">
+  <form class="app-form" [formGroup]="activationForm" (ngSubmit)="requestAccountActivation()">
     <h2 class="app-title">{{ 'activation.resendTitle' | transloco }}</h2>
 
     @if (isSent()) {
@@ -20,7 +20,7 @@
         [errorMessage]="'auth.errors.email' | transloco"
       />
 
-      <button type="button" class="btn btn-primary w-full" [disabled]="activationForm.invalid || isLoading()" (click)="requestAccountActivation()">
+      <button type="submit" class="btn btn-primary w-full" [disabled]="activationForm.invalid || isLoading()">
         {{ 'activation.resendButton' | transloco }}
       </button>
       <a routerLink="/login" class="text-center underline">{{ 'password.backToLogin' | transloco }}</a>

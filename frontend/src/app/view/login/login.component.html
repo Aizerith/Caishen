@@ -1,6 +1,6 @@
 <div class="flex h-full min-h-0 w-full flex-col items-center overflow-hidden px-4 py-8">
   <img class="h-56 w-56" src="logo_caishen.png" alt="Caishen">
-  <form class="app-form" [formGroup]="loginForm">
+  <form class="app-form" [formGroup]="loginForm" (ngSubmit)="login()">
     <h2 class="app-title">{{ 'auth.loginTitle' | transloco }}</h2>
     <app-caishen-custom-form-input
       [placeholder]="'common.emailPlaceholder' | transloco"
@@ -17,7 +17,7 @@
       [inputForm]="getFormFromName('password')"
       [hasError]="false"
     />
-    <button type="button" class="btn btn-primary w-full" (click)="login()" [disabled]="loginForm.invalid">
+    <button type="submit" class="btn btn-primary w-full" [disabled]="loginForm.invalid">
       {{ 'auth.loginButton' | transloco }}
     </button>
     <div class="flex justify-between gap-3">

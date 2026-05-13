@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CaishenCustomFormInputComponent } from '../../../component/caishen-custom-form-input/caishen-custom-form-input.component';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GroupHttpService } from '../../../service/httpService/group.http.service';
 import GroupInfoRequest = CaiShen.GroupInfoRequest;
 import { NotificationsService } from '../../../service/notifications.service';
@@ -10,7 +10,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-add',
-  imports: [CaishenCustomFormInputComponent, TranslocoPipe],
+  imports: [CaishenCustomFormInputComponent, ReactiveFormsModule, TranslocoPipe],
   templateUrl: './add.component.html',
   styleUrl: './add.component.css',
 })
@@ -38,6 +38,11 @@ export class AddComponent {
   }
 
   addNewGroup() {
+    if (this.groupForm.invalid) {
+      this.groupForm.markAllAsTouched();
+      return;
+    }
+
     if (!this.userId) {
       this.notification.showError(this.translocoService.translate('groups.createWithoutUser'));
       return;

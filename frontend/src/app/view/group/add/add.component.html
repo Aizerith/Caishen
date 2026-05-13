@@ -4,14 +4,14 @@
       <h1 class="app-title">{{ 'groups.add' | transloco }}</h1>
     </header>
     <div class="app-content">
-      <div class="app-card flex flex-col gap-4">
+      <form class="app-card flex flex-col gap-4" [formGroup]="groupForm" (ngSubmit)="addNewGroup()">
         <app-caishen-custom-form-input [placeholder]="'groups.titlePlaceholder' | transloco"
                                        [type]="'text'"
                                        [inputForm]="getFormFromName('title')"
                                        [hasError]="false">
         </app-caishen-custom-form-input>
-        <button type="button" class="btn btn-primary w-full sm:w-auto sm:self-end" (click)="addNewGroup()" [disabled]="groupForm.invalid">{{ 'common.validate' | transloco }}</button>
-      </div>
+        <button type="submit" class="btn btn-primary w-full sm:w-auto sm:self-end" [disabled]="groupForm.invalid">{{ 'common.validate' | transloco }}</button>
+      </form>
     </div>
   </section>
 </div>

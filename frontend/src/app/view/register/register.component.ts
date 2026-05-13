@@ -42,6 +42,11 @@ export class RegisterComponent {
   }
 
   public register() {
+    if (this.registerForm.invalid || this.isRegistering) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
     this.authFeatureService.registerAction(this.getRegisterData());
   }
 

@@ -1,5 +1,5 @@
 <div class="app-form-page">
-  <div class="app-form" [formGroup]="registerForm">
+  <form class="app-form" [formGroup]="registerForm" (ngSubmit)="register()">
     <h2 class="app-title">{{ 'auth.registerTitle' | transloco }}</h2>
     <app-caishen-custom-form-input
       [placeholder]="'common.usernamePlaceholder' | transloco"
@@ -36,9 +36,9 @@
       [hasError]="(registerForm.get('passwordConfirmation')?.errors?.['required'] || registerForm.get('passwordConfirmation')?.errors?.['matching']) && registerForm.get('passwordConfirmation')?.touched"
       [errorMessage]="'auth.errors.passwordConfirmation' | transloco"
     />
-    <button type="button" class="btn btn-primary w-full" [disabled]="registerForm.invalid || isRegistering" (click)="register()">
+    <button type="submit" class="btn btn-primary w-full" [disabled]="registerForm.invalid || isRegistering">
       {{ 'auth.registerButton' | transloco }}
     </button>
     <a href="/login" class="text-center underline">{{ 'auth.alreadyRegistered' | transloco }}</a>
-  </div>
+  </form>
 </div>

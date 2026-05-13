@@ -21,8 +21,17 @@ export class CaishenAddExpenseModalComponent {
   }
 
   onValidate() {
+    if (this.expenseForm.invalid || !this.getFormFromName('participants').value.length) {
+      this.expenseForm.markAllAsTouched();
+      return;
+    }
+
     this.modalRef.nativeElement.close();
     this.onValidateExpense.emit();
+  }
+
+  closeModal() {
+    this.modalRef.nativeElement.close();
   }
 
   onCheckboxChange(event: Event) {
