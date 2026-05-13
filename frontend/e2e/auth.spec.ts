@@ -20,7 +20,7 @@ test.describe('auth flow', () => {
     await page.getByPlaceholder('mail@exemple.com').fill(email);
     await page.getByPlaceholder('Mot de passe', { exact: true }).fill(password);
     await page.getByPlaceholder('Confirmer le mot de passe', { exact: true }).fill(password);
-    await page.getByRole('button').click();
+    await page.getByRole('button', { name: 'Créer le compte' }).click();
 
     await expect(page).toHaveURL(/\/login$/);
     await expect(page.getByRole('heading', { name: 'Connexion' })).toBeVisible();
