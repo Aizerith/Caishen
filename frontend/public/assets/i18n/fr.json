@@ -22,6 +22,17 @@
     "fr": "Français",
     "en": "Anglais"
   },
+  "pwa": {
+    "installTitle": "Installer Caishen",
+    "installMessage": "Ajoutez l'application à votre écran d'accueil pour y accéder plus vite.",
+    "installButton": "Installer",
+    "installShortButton": "Installer",
+    "dismissInstallButton": "Masquer l'installation",
+    "updateTitle": "Mise à jour disponible",
+    "updateMessage": "Une nouvelle version de Caishen est prête.",
+    "updateButton": "Mettre à jour",
+    "laterButton": "Plus tard"
+  },
   "auth": {
     "loginTitle": "Connexion",
     "loginButton": "Se connecter",

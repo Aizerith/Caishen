@@ -6,6 +6,7 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
 import { TokenInterceptor } from './interceptor/token.interceptor';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoHttpLoader } from './transloco-loader';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,10 @@ export const appConfig: ApplicationConfig = {
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader,
+    }),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
     }),
     {
       provide: HTTP_INTERCEPTORS,

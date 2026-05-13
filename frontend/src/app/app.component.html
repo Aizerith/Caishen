@@ -1,8 +1,50 @@
 <div class="app-root">
   <nav class="app-nav">
-    <button type="button" (click)="navigateBack()" class="btn btn-ghost btn-sm">{{ 'common.back' | transloco }}</button>
-    <button type="button" (click)="navigateToSettings()" class="btn btn-ghost btn-sm">{{ 'common.settings' | transloco }}</button>
+    <button type="button" (click)="navigateBack()" class="btn btn-ghost btn-sm app-nav-icon-button" [attr.aria-label]="'common.back' | transloco">
+      <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"></path>
+        <path d="m12 19-7-7 7-7"></path>
+      </svg>
+    </button>
+    <div class="flex items-center gap-1">
+      @if (installPrompt()) {
+        <button type="button" (click)="installApp()" class="btn btn-ghost btn-sm app-nav-icon-button" [attr.aria-label]="'pwa.installShortButton' | transloco">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12"></path>
+            <path d="m7 10 5 5 5-5"></path>
+            <path d="M5 21h14"></path>
+          </svg>
+        </button>
+      }
+      <button type="button" (click)="navigateToSettings()" class="btn btn-ghost btn-sm app-nav-icon-button" [attr.aria-label]="'common.settings' | transloco">
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path>
+          <path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.06.06a2.1 2.1 0 1 1-2.97 2.97l-.06-.06a1.8 1.8 0 0 0-1.98-.36 1.8 1.8 0 0 0-1.08 1.65V21a2.1 2.1 0 1 1-4.2 0v-.09a1.8 1.8 0 0 0-1.17-1.65 1.8 1.8 0 0 0-1.98.36l-.06.06a2.1 2.1 0 1 1-2.97-2.97l.06-.06a1.8 1.8 0 0 0 .36-1.98 1.8 1.8 0 0 0-1.65-1.08H3a2.1 2.1 0 1 1 0-4.2h.09A1.8 1.8 0 0 0 4.74 8.2a1.8 1.8 0 0 0-.36-1.98l-.06-.06a2.1 2.1 0 1 1 2.97-2.97l.06.06a1.8 1.8 0 0 0 1.98.36H9.4A1.8 1.8 0 0 0 10.5 2V2a2.1 2.1 0 1 1 4.2 0v.09a1.8 1.8 0 0 0 1.08 1.65 1.8 1.8 0 0 0 1.98-.36l.06-.06a2.1 2.1 0 1 1 2.97 2.97l-.06.06a1.8 1.8 0 0 0-.36 1.98v.08A1.8 1.8 0 0 0 22 9.5h.09a2.1 2.1 0 1 1 0 4.2H22a1.8 1.8 0 0 0-1.65 1.08Z"></path>
+        </svg>
+      </button>
+    </div>
   </nav>
   <router-outlet></router-outlet>
+  @if (installPrompt() && showInstallBanner()) {
+    <section class="app-pwa-banner" role="status">
+      <div>
+        <p class="font-semibold">{{ 'pwa.installTitle' | transloco }}</p>
+        <p class="text-sm opacity-70">{{ 'pwa.installMessage' | transloco }}</p>
+      </div>
+      <button type="button" class="btn btn-primary btn-sm" (click)="installApp()">{{ 'pwa.installButton' | transloco }}</button>
+    </section>
+  }
+  @if (updateAvailable()) {
+    <section class="app-pwa-banner" role="status">
+      <div>
+        <p class="font-semibold">{{ 'pwa.updateTitle' | transloco }}</p>
+        <p class="text-sm opacity-70">{{ 'pwa.updateMessage' | transloco }}</p>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" class="btn btn-ghost btn-sm" (click)="dismissUpdate()">{{ 'pwa.laterButton' | transloco }}</button>
+        <button type="button" class="btn btn-primary btn-sm" (click)="updateApp()">{{ 'pwa.updateButton' | transloco }}</button>
+      </div>
+    </section>
+  }
   <app-caishen-custom-snackbar></app-caishen-custom-snackbar>
 </div>

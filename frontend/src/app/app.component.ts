@@ -1,4 +1,4 @@
-import { Component, effect, inject, Signal, ViewChild } from '@angular/core';
+import { Component, effect, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CaishenCustomSnackbarComponent } from './component/caishen-custom-snackbar/caishen-custom-snackbar.component';
@@ -11,6 +11,13 @@ import { WebSocketService } from './web-socket/web-socket.service';
 import { GroupStateService } from './service/stateService/group.state.service';
 import { AuthFeatureService } from './service/featureService/auth.feature.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
+import { filter } from 'rxjs/operators';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 @Component({
   selector: 'app-root',
@@ -29,8 +36,12 @@ export class AppComponent {
   readonly webSocketService: WebSocketService = inject(WebSocketService);
   readonly groupStateService: GroupStateService = inject(GroupStateService);
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
+  readonly swUpdate: SwUpdate = inject(SwUpdate);
 
   protected theme: Signal<string> = this.themeService.theme;
+  protected installPrompt: WritableSignal<BeforeInstallPromptEvent | null> = signal(null);
+  protected showInstallBanner: WritableSignal<boolean> = signal(false);
+  protected updateAvailable: WritableSignal<boolean> = signal(false);
 
   constructor() {
     this.webSocketService
@@ -41,6 +52,19 @@ export class AppComponent {
     effect(() => {
       document.documentElement.setAttribute('data-theme', this.theme());
     });
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      this.installPrompt.set(event as BeforeInstallPromptEvent);
+      this.showInstallBanner.set(true);
+      window.setTimeout(() => this.showInstallBanner.set(false), 6000);
+    });
+
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates
+        .pipe(filter((event): event is VersionReadyEvent => event.type === 'VERSION_READY'))
+        .subscribe(() => this.updateAvailable.set(true));
+    }
   }
 
   ngOnInit() {
@@ -64,6 +88,32 @@ export class AppComponent {
 
   navigateBack() {
     this.navigationService.back();
+  }
+
+  async installApp(): Promise<void> {
+    const prompt = this.installPrompt();
+    if (!prompt) {
+      return;
+    }
+    await prompt.prompt();
+    await prompt.userChoice;
+    this.installPrompt.set(null);
+    this.showInstallBanner.set(false);
+  }
+
+  dismissInstallPrompt(): void {
+    this.showInstallBanner.set(false);
+  }
+
+  async updateApp(): Promise<void> {
+    if (this.swUpdate.isEnabled) {
+      await this.swUpdate.activateUpdate();
+    }
+    window.location.reload();
+  }
+
+  dismissUpdate(): void {
+    this.updateAvailable.set(false);
   }
 
 }

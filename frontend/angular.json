@@ -43,7 +43,8 @@
               "jquery",
               "jquery-ui-dist",
               "sockjs-client"
-            ]
+            ],
+            "serviceWorker": "ngsw-config.json"
           },
           "configurations": {
             "production": {

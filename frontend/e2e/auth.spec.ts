@@ -2,6 +2,13 @@ import { expect, test } from '@playwright/test';
 import { uniqueName } from './support/session';
 
 test.describe('auth flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    });
+  });
+
   test('redirects unauthenticated users to login on protected route', async ({ page }) => {
     await page.goto('/group');
 
