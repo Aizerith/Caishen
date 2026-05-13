@@ -8,11 +8,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
+  border: 1px solid var(--color-base-300);
   border-radius: 0.5rem;
-  background: oklch(var(--b1));
+  background: var(--color-base-100);
+  color: var(--color-base-content);
   padding: 1rem;
-  box-shadow: 0 18px 45px color-mix(in oklab, currentColor 18%, transparent);
+  box-shadow: 0 18px 45px color-mix(in oklab, var(--color-base-content) 18%, transparent);
 }
 
 @media (max-width: 640px) {
