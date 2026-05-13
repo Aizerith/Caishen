@@ -50,6 +50,7 @@ export class AppComponent {
         switchMap((value) => {
           const groupId = Number(value);
           return forkJoin([
+            this.profileStateService.getProfileAction(),
             this.groupStateService.getGroupInfoAction(groupId),
             this.groupStateService.getGroupExpenseHistoryAction(groupId),
           ]);
@@ -66,6 +67,13 @@ export class AppComponent {
       this.installPrompt.set(event as BeforeInstallPromptEvent);
       this.showInstallBanner.set(true);
       window.setTimeout(() => this.showInstallBanner.set(false), 6000);
+    });
+
+    window.addEventListener('focus', () => this.refreshProfileWhenLogged());
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.refreshProfileWhenLogged();
+      }
     });
 
     if (this.swUpdate.isEnabled) {
@@ -89,6 +97,14 @@ export class AppComponent {
 
   ngAfterViewInit() {
     this.notificationService.register(this.snackbar);
+  }
+
+  private refreshProfileWhenLogged(): void {
+    if (!this.authFeatureService.authStateService.isLogged()) {
+      return;
+    }
+
+    this.profileStateService.getProfileAction().pipe(take(1)).subscribe();
   }
 
   navigateToSettings() {

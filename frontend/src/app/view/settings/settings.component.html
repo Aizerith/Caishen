@@ -53,6 +53,27 @@
 
       @if (isLogged()) {
         <section class="app-card flex flex-col gap-3">
+          <h2 class="text-lg font-semibold">{{ 'settings.notificationsTitle' | transloco }}</h2>
+          <p class="text-sm opacity-70">{{ 'settings.notificationsHelp' | transloco }}</p>
+          <label class="label min-h-11 w-full items-center justify-between rounded-box border border-base-300 bg-base-100 px-3 sm:w-80">
+            <span class="font-medium">{{ 'settings.pushNotifications' | transloco }}</span>
+            <input
+              type="checkbox"
+              class="toggle toggle-primary"
+              [checked]="pushNotificationService.isEnabled()"
+              [disabled]="!pushNotificationService.isSupported() || !pushNotificationService.isConfigured()"
+              (change)="togglePushNotifications()" />
+          </label>
+          @if (!pushNotificationService.isSupported()) {
+            <p class="text-sm text-warning">{{ 'settings.pushNotSupported' | transloco }}</p>
+          } @else if (!pushNotificationService.isConfigured()) {
+            <p class="text-sm text-warning">{{ 'settings.pushNotConfigured' | transloco }}</p>
+          }
+        </section>
+      }
+
+      @if (isLogged()) {
+        <section class="app-card flex flex-col gap-3">
           <h2 class="text-lg font-semibold">{{ 'settings.logoutTitle' | transloco }}</h2>
           <button type="button" class="btn btn-error w-full sm:w-56 sm:self-start" (click)="logout()">
             {{ 'settings.logoutButton' | transloco }}

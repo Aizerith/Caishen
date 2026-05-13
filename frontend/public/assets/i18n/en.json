@@ -78,6 +78,11 @@
   "settings": {
     "title": "Settings",
     "themes": "Themes",
+    "notificationsTitle": "Notifications",
+    "notificationsHelp": "Receive a notification when a member joins the group or when an expense changes.",
+    "pushNotifications": "Push notifications",
+    "pushNotSupported": "Push notifications are not available in this browser.",
+    "pushNotConfigured": "Push notifications are not configured on the server yet.",
     "logoutTitle": "Sign out",
     "logoutButton": "Sign out"
   },

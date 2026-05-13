@@ -78,6 +78,11 @@
   "settings": {
     "title": "Paramètres",
     "themes": "Thèmes",
+    "notificationsTitle": "Notifications",
+    "notificationsHelp": "Recevez une notification quand un membre rejoint le groupe ou quand une dépense change.",
+    "pushNotifications": "Notifications push",
+    "pushNotSupported": "Les notifications push ne sont pas disponibles sur ce navigateur.",
+    "pushNotConfigured": "Les notifications push ne sont pas encore configurées côté serveur.",
     "logoutTitle": "Déconnexion",
     "logoutButton": "Se déconnecter"
   },

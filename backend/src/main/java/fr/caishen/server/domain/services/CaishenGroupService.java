@@ -27,6 +27,7 @@ public class CaishenGroupService {
     private final ExpenseRepository expenseRepository;
     private final ExpenseHistoryRepository expenseHistoryRepository;
     private final WebSocketService webSocketService;
+    private final PushNotificationService pushNotificationService;
 
     private record ParticipantShare(Long participantId, BigDecimal amount) {
     }
@@ -62,6 +63,12 @@ public class CaishenGroupService {
         group = groupRepository.save(group);
         recordMemberJoinedHistory(group, appUser);
         notifyGroupMembers(group);
+        pushNotificationService.notifyUsers(
+                getGroupMembersExcept(group, appUser),
+                "Caishen",
+                appUser.getUsername() + " a rejoint le groupe " + group.getTitle(),
+                "/group/" + group.getId()
+        );
         return new UserGroupResponse(
                 group.getTitle(),
                 group.getId()
@@ -92,6 +99,7 @@ public class CaishenGroupService {
         expense = expenseRepository.save(expense);
         recordExpenseHistory(expense, ExpenseHistoryAction.CREATED, currentUser);
         notifyGroupMembers(group);
+        notifyExpenseChanged(group, currentUser, "Dépense ajoutée", expense);
         return getGroupResponse(group);
     }
 
@@ -117,6 +125,7 @@ public class CaishenGroupService {
         expenseRepository.save(expense);
         recordExpenseHistory(expense, ExpenseHistoryAction.UPDATED, currentUser);
         notifyGroupMembers(group);
+        notifyExpenseChanged(group, currentUser, "Dépense modifiée", expense);
         return getGroupResponse(group);
     }
 
@@ -133,11 +142,31 @@ public class CaishenGroupService {
         group.getGroupExpenseEntityList().removeIf(groupExpense -> Objects.equals(groupExpense.getId(), id));
         expenseRepository.delete(expense);
         notifyGroupMembers(group);
+        notifyExpenseChanged(group, currentUser, "Dépense supprimée", expense, "/group/" + group.getId());
         return getGroupResponse(group);
     }
 
     private void notifyGroupMembers(GroupEntity group) {
         group.getGroupAppUserEntityList().forEach(appUserEntity -> webSocketService.sendNotificationToUser(appUserEntity.getLogin(), group.getId()));
+    }
+
+    private void notifyExpenseChanged(GroupEntity group, AppUserEntity actor, String title, ExpenseEntity expense) {
+        notifyExpenseChanged(group, actor, title, expense, "/group/" + group.getId() + "/expense/" + expense.getId());
+    }
+
+    private void notifyExpenseChanged(GroupEntity group, AppUserEntity actor, String title, ExpenseEntity expense, String url) {
+        pushNotificationService.notifyUsers(
+                getGroupMembersExcept(group, actor),
+                title,
+                actor.getUsername() + " - " + expense.getTitle() + " (" + normalizeMoney(expense.getAmount()) + " €)",
+                url
+        );
+    }
+
+    private List<AppUserEntity> getGroupMembersExcept(GroupEntity group, AppUserEntity actor) {
+        return group.getGroupAppUserEntityList().stream()
+                .filter(member -> !Objects.equals(member.getId(), actor.getId()))
+                .toList();
     }
 
     private GroupResponse getGroupResponse(GroupEntity group) {

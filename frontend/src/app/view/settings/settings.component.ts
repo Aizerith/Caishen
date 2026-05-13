@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ThemeService } from '../../service/theme.service';
 import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { PushNotificationService } from '../../service/push-notification.service';
 
 @Component({
   selector: 'app-settings',
@@ -14,6 +15,7 @@ export class SettingsComponent {
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
   readonly themeService: ThemeService = inject(ThemeService);
   readonly translocoService: TranslocoService = inject(TranslocoService);
+  readonly pushNotificationService: PushNotificationService = inject(PushNotificationService);
   readonly route: Router = inject(Router);
   protected readonly isLogged = this.authFeatureService.authStateService.isLogged;
   protected readonly themes = ['caishen', 'night', 'light', 'dark', 'forest', 'lofi'];
@@ -23,6 +25,7 @@ export class SettingsComponent {
 
   ngOnInit() {
     this.changeTheme(this.theme());
+    this.pushNotificationService.init();
   }
 
   changeTheme(theme: string): void {
@@ -41,5 +44,14 @@ export class SettingsComponent {
     this.authFeatureService.logoutAction().subscribe({
       next: (_) => this.route.navigate(['login']).then(),
     });
+  }
+
+  async togglePushNotifications(): Promise<void> {
+    if (this.pushNotificationService.isEnabled()) {
+      await this.pushNotificationService.disable();
+      return;
+    }
+
+    await this.pushNotificationService.enable();
   }
 }

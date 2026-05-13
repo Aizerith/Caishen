@@ -29,13 +29,15 @@ class CaishenGroupServiceTest {
     private final ExpenseHistoryRepository expenseHistoryRepository = mock(ExpenseHistoryRepository.class);
     private final AuthService authService = mock(AuthService.class);
     private final WebSocketService webSocketService = mock(WebSocketService.class);
+    private final PushNotificationService pushNotificationService = mock(PushNotificationService.class);
     private final CaishenGroupService service = new CaishenGroupService(
             appUserRepository,
             groupRepository,
             authService,
             expenseRepository,
             expenseHistoryRepository,
-            webSocketService
+            webSocketService,
+            pushNotificationService
     );
 
     @Test
