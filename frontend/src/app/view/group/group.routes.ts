@@ -13,13 +13,18 @@ export const groupRoutes: Route[] = [
     loadComponent: () => import('./add/add.component').then((value) => value.AddComponent),
   },
   {
-    path: ':id',
+    path: ':groupId/expense/:expenseId',
     canActivate: [IsLoggedGuard],
-    loadComponent: () => import('./check/check.component').then((value) => value.CheckComponent),
+    loadComponent: () => import('./expense/expense.component').then((value) => value.ExpenseComponent),
   },
   {
     path: 'expense/:id',
     canActivate: [IsLoggedGuard],
     loadComponent: () => import('./expense/expense.component').then((value) => value.ExpenseComponent),
+  },
+  {
+    path: ':id',
+    canActivate: [IsLoggedGuard],
+    loadComponent: () => import('./check/check.component').then((value) => value.CheckComponent),
   },
 ];

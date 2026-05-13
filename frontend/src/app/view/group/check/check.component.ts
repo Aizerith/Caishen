@@ -87,6 +87,6 @@ export class CheckComponent {
   }
 
   navigateToExpense(expense: ExpenseResponse) {
-    this.router.navigate(['group', 'expense', expense.id]).then();
+    this.router.navigate(['group', this.groupId, 'expense', expense.id]).then();
   }
 }

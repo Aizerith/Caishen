@@ -1,4 +1,4 @@
-import {Component, inject, Signal} from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { take } from 'rxjs';
 import { ExpenseStateService } from '../../../service/stateService/expense.state.service';
@@ -13,13 +13,13 @@ import { TranslocoPipe } from '@jsverse/transloco';
   styleUrl: './expense.component.css',
 })
 export class ExpenseComponent {
-  readonly expenseStateService: ExpenseStateService = inject(ExpenseStateService)
-  readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute)
+  readonly expenseStateService: ExpenseStateService = inject(ExpenseStateService);
+  readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
 
   protected expenseInfo: Signal<ExpenseInfoResponse | null> = this.expenseStateService.selectExpenseInfo();
 
-  constructor(
-  ) {
-    this.expenseStateService.getExpenseInfoAction(this.activatedRoute.snapshot.params['id']).pipe(take(1)).subscribe();
+  constructor() {
+    const expenseId = this.activatedRoute.snapshot.params['expenseId'] ?? this.activatedRoute.snapshot.params['id'];
+    this.expenseStateService.getExpenseInfoAction(expenseId).pipe(take(1)).subscribe();
   }
 }

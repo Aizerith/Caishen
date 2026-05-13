@@ -69,6 +69,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.themeService.start();
+    this.navigationService.start();
     this.authFeatureService
       .initLoginAction()
       .pipe(
