@@ -53,7 +53,9 @@ describe('CheckComponent', () => {
           useValue: {
             selectMyBalance: vi.fn().mockReturnValue(signal(0)),
             selectGroupInfo: vi.fn().mockReturnValue(signal(groupInfo)),
+            selectExpenseHistory: vi.fn().mockReturnValue(signal([])),
             getGroupInfoAction: vi.fn().mockReturnValue(of(groupInfo)),
+            getGroupExpenseHistoryAction: vi.fn().mockReturnValue(of([])),
             addExpense: vi.fn().mockReturnValue(of(groupInfo)),
           },
         },
