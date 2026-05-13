@@ -60,8 +60,8 @@ public class CaishenGroupService {
         }
         group.getGroupAppUserEntityList().add(appUser);
         group = groupRepository.save(group);
-        GroupEntity finalGroup = group;
-        group.getGroupAppUserEntityList().forEach(appUserEntity -> webSocketService.sendNotificationToUser(appUserEntity.getLogin(), finalGroup.getId()));
+        recordMemberJoinedHistory(group, appUser);
+        notifyGroupMembers(group);
         return new UserGroupResponse(
                 group.getTitle(),
                 group.getId()
@@ -307,6 +307,16 @@ public class CaishenGroupService {
         history.setActorId(actor.getId());
         history.setActorName(actor.getUsername());
         history.setAmount(normalizeMoney(expense.getAmount()));
+        history.setCreatedAt(java.time.LocalDateTime.now());
+        expenseHistoryRepository.save(history);
+    }
+
+    private void recordMemberJoinedHistory(GroupEntity group, AppUserEntity actor) {
+        ExpenseHistoryEntity history = new ExpenseHistoryEntity();
+        history.setGroupId(group.getId());
+        history.setAction(ExpenseHistoryAction.MEMBER_JOINED);
+        history.setActorId(actor.getId());
+        history.setActorName(actor.getUsername());
         history.setCreatedAt(java.time.LocalDateTime.now());
         expenseHistoryRepository.save(history);
     }

@@ -125,7 +125,8 @@
     "historyActions": {
       "CREATED": "Dépense créée",
       "UPDATED": "Dépense modifiée",
-      "DELETED": "Dépense supprimée"
+      "DELETED": "Dépense supprimée",
+      "MEMBER_JOINED": "Membre ajouté"
     }
   },
   "join": {

@@ -5,7 +5,7 @@ import { CaishenCustomSnackbarComponent } from './component/caishen-custom-snack
 import { NotificationsService } from './service/notifications.service';
 import { NavigationService } from './service/navigation.service';
 import { ProfileStateService } from './service/stateService/profile.state.service';
-import { switchMap, take } from 'rxjs';
+import { forkJoin, switchMap, take } from 'rxjs';
 import { ThemeService } from './service/theme.service';
 import { WebSocketService } from './web-socket/web-socket.service';
 import { GroupStateService } from './service/stateService/group.state.service';
@@ -46,7 +46,15 @@ export class AppComponent {
   constructor() {
     this.webSocketService
       .watchNotifications()
-      .pipe(switchMap((value) => this.groupStateService.getGroupInfoAction(Number(value))))
+      .pipe(
+        switchMap((value) => {
+          const groupId = Number(value);
+          return forkJoin([
+            this.groupStateService.getGroupInfoAction(groupId),
+            this.groupStateService.getGroupExpenseHistoryAction(groupId),
+          ]);
+        }),
+      )
       .subscribe();
 
     effect(() => {

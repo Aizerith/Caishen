@@ -1,0 +1,8 @@
+START TRANSACTION;
+
+ALTER TABLE expense_history
+    MODIFY COLUMN expense_id BIGINT NULL,
+    MODIFY COLUMN expense_title VARCHAR(255) NULL,
+    MODIFY COLUMN amount DECIMAL(10, 2) NULL;
+
+COMMIT;

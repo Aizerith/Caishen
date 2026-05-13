@@ -17,10 +17,8 @@ public class ExpenseHistoryEntity {
     @Column(nullable = false)
     private Long groupId;
 
-    @Column(nullable = false)
     private Long expenseId;
 
-    @Column(nullable = false)
     private String expenseTitle;
 
     @Column(nullable = false)
@@ -33,7 +31,6 @@ public class ExpenseHistoryEntity {
     @Column(nullable = false)
     private String actorName;
 
-    @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(nullable = false)

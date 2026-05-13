@@ -125,7 +125,8 @@
     "historyActions": {
       "CREATED": "Expense created",
       "UPDATED": "Expense updated",
-      "DELETED": "Expense deleted"
+      "DELETED": "Expense deleted",
+      "MEMBER_JOINED": "Member joined"
     }
   },
   "join": {
