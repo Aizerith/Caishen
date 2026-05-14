@@ -77,6 +77,7 @@ public class PushNotificationService {
 
     public void notifyUsers(List<AppUserEntity> users, String title, String body, String url) {
         if (!isConfigured() || users.isEmpty()) {
+            log.info("Push notification skipped: configured={}, userCount={}", isConfigured(), users.size());
             return;
         }
 
@@ -84,6 +85,16 @@ public class PushNotificationService {
         List<PushSubscriptionEntity> subscriptions = pushSubscriptionRepository.findByUserIdInAndEnabledTrue(userIds);
         log.info("Sending push notification '{}' to {} subscription(s)", title, subscriptions.size());
         subscriptions.forEach(subscription -> send(subscription, title, body, url));
+    }
+
+    public void sendTestToCurrentUser() {
+        AppUserEntity currentUser = getCurrentAppUser();
+        notifyUsers(
+                List.of(currentUser),
+                "Caishen",
+                "Notification de test",
+                "/settings"
+        );
     }
 
     private void send(PushSubscriptionEntity subscription, String title, String body, String url) {

@@ -21,6 +21,7 @@ export class PushNotificationService {
   private readonly swPush = inject(SwPush);
   private readonly baseUrl = environment.API_URL;
   private readonly storageKey = 'push_notifications_enabled';
+  private readonly publicKeyStorageKey = 'push_notifications_public_key';
 
   readonly isEnabled = signal(localStorage.getItem(this.storageKey) === 'true');
   readonly isSupported = signal(this.swPush.isEnabled && 'Notification' in window);
@@ -36,6 +37,17 @@ export class PushNotificationService {
     }
 
     const subscription = await firstValueFrom(this.swPush.subscription.pipe(catchError(() => of(null))));
+    if (subscription && localStorage.getItem(this.publicKeyStorageKey) !== config.publicKey) {
+      await subscription.unsubscribe();
+      localStorage.setItem(this.storageKey, 'false');
+      this.isEnabled.set(false);
+      return;
+    }
+
+    if (subscription && localStorage.getItem(this.storageKey) === 'true') {
+      await this.registerSubscription(subscription);
+    }
+
     this.isEnabled.set(!!subscription && localStorage.getItem(this.storageKey) === 'true');
   }
 
@@ -48,9 +60,15 @@ export class PushNotificationService {
       return;
     }
 
+    const existingSubscription = await firstValueFrom(this.swPush.subscription.pipe(catchError(() => of(null))));
+    if (existingSubscription) {
+      await existingSubscription.unsubscribe();
+    }
+
     const subscription = await this.swPush.requestSubscription({ serverPublicKey: config.publicKey });
-    await firstValueFrom(this.http.post<void>(`${this.baseUrl}/push/subscriptions`, this.toPayload(subscription)));
+    await this.registerSubscription(subscription);
     localStorage.setItem(this.storageKey, 'true');
+    localStorage.setItem(this.publicKeyStorageKey, config.publicKey);
     this.isEnabled.set(true);
   }
 
@@ -74,12 +92,20 @@ export class PushNotificationService {
     return this.swPush.messages;
   }
 
+  async sendTestNotification(): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${this.baseUrl}/push/test`, {}));
+  }
+
   private async getPublicKey(): Promise<PushPublicKeyResponse> {
     return firstValueFrom(
       this.http
         .get<PushPublicKeyResponse>(`${this.baseUrl}/push/public-key`)
         .pipe(catchError(() => of({ enabled: false, publicKey: '' }))),
     );
+  }
+
+  private async registerSubscription(subscription: PushSubscription): Promise<void> {
+    await firstValueFrom(this.http.post<void>(`${this.baseUrl}/push/subscriptions`, this.toPayload(subscription)));
   }
 
   private toPayload(subscription: PushSubscription): PushSubscriptionPayload {
