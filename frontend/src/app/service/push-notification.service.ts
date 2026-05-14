@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { environment } from '../../environments/environment';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { catchError, firstValueFrom, Observable, of } from 'rxjs';
 
 interface PushPublicKeyResponse {
   enabled: boolean;
@@ -68,6 +68,10 @@ export class PushNotificationService {
 
     localStorage.setItem(this.storageKey, 'false');
     this.isEnabled.set(false);
+  }
+
+  messages(): Observable<object> {
+    return this.swPush.messages;
   }
 
   private async getPublicKey(): Promise<PushPublicKeyResponse> {

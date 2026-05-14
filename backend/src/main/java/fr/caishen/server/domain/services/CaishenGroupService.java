@@ -64,7 +64,7 @@ public class CaishenGroupService {
         recordMemberJoinedHistory(group, appUser);
         notifyGroupMembers(group);
         pushNotificationService.notifyUsers(
-                getGroupMembersExcept(group, appUser),
+                group.getGroupAppUserEntityList(),
                 "Caishen",
                 appUser.getUsername() + " a rejoint le groupe " + group.getTitle(),
                 "/group/" + group.getId()
@@ -156,17 +156,11 @@ public class CaishenGroupService {
 
     private void notifyExpenseChanged(GroupEntity group, AppUserEntity actor, String title, ExpenseEntity expense, String url) {
         pushNotificationService.notifyUsers(
-                getGroupMembersExcept(group, actor),
+                group.getGroupAppUserEntityList(),
                 title,
                 actor.getUsername() + " - " + expense.getTitle() + " (" + normalizeMoney(expense.getAmount()) + " €)",
                 url
         );
-    }
-
-    private List<AppUserEntity> getGroupMembersExcept(GroupEntity group, AppUserEntity actor) {
-        return group.getGroupAppUserEntityList().stream()
-                .filter(member -> !Objects.equals(member.getId(), actor.getId()))
-                .toList();
     }
 
     private GroupResponse getGroupResponse(GroupEntity group) {

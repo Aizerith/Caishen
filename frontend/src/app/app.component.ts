@@ -13,6 +13,7 @@ import { AuthFeatureService } from './service/featureService/auth.feature.servic
 import { TranslocoPipe } from '@jsverse/transloco';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs/operators';
+import { PushNotificationService } from './service/push-notification.service';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -37,6 +38,7 @@ export class AppComponent {
   readonly groupStateService: GroupStateService = inject(GroupStateService);
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
   readonly swUpdate: SwUpdate = inject(SwUpdate);
+  readonly pushNotificationService: PushNotificationService = inject(PushNotificationService);
 
   protected theme: Signal<string> = this.themeService.theme;
   protected installPrompt: WritableSignal<BeforeInstallPromptEvent | null> = signal(null);
@@ -58,6 +60,10 @@ export class AppComponent {
       )
       .subscribe();
 
+    this.pushNotificationService
+      .messages()
+      .subscribe(() => this.refreshSessionWhenLogged());
+
     effect(() => {
       document.documentElement.setAttribute('data-theme', this.theme());
     });
@@ -69,10 +75,12 @@ export class AppComponent {
       window.setTimeout(() => this.showInstallBanner.set(false), 6000);
     });
 
-    window.addEventListener('focus', () => this.refreshProfileWhenLogged());
+    window.addEventListener('focus', () => this.refreshSessionWhenLogged());
+    window.addEventListener('pageshow', () => this.refreshSessionWhenLogged());
+    window.addEventListener('online', () => this.refreshSessionWhenLogged());
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        this.refreshProfileWhenLogged();
+        this.refreshSessionWhenLogged();
       }
     });
 
@@ -99,12 +107,30 @@ export class AppComponent {
     this.notificationService.register(this.snackbar);
   }
 
-  private refreshProfileWhenLogged(): void {
+  private refreshSessionWhenLogged(): void {
     if (!this.authFeatureService.authStateService.isLogged()) {
       return;
     }
 
     this.profileStateService.getProfileAction().pipe(take(1)).subscribe();
+
+    const groupId = this.getCurrentGroupId();
+    if (!groupId) {
+      return;
+    }
+
+    this.groupStateService.getGroupInfoAction(groupId).pipe(take(1)).subscribe();
+    this.groupStateService.getGroupExpenseHistoryAction(groupId).pipe(take(1)).subscribe();
+  }
+
+  private getCurrentGroupId(): number | null {
+    const match = this.router.url.match(/\/group\/(\d+)/);
+    if (!match) {
+      return null;
+    }
+
+    const groupId = Number(match[1]);
+    return Number.isNaN(groupId) ? null : groupId;
   }
 
   navigateToSettings() {

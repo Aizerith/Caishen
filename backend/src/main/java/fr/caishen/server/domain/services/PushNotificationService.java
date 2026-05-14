@@ -64,6 +64,7 @@ public class PushNotificationService {
         subscription.setEnabled(true);
         subscription.setUpdatedAt(now);
         pushSubscriptionRepository.save(subscription);
+        log.info("Push subscription registered for user {}", currentUser.getId());
     }
 
     public void unsubscribe(PushUnsubscribeRequest request) {
@@ -80,8 +81,9 @@ public class PushNotificationService {
         }
 
         List<Long> userIds = users.stream().map(AppUserEntity::getId).toList();
-        pushSubscriptionRepository.findByUserIdInAndEnabledTrue(userIds)
-                .forEach(subscription -> send(subscription, title, body, url));
+        List<PushSubscriptionEntity> subscriptions = pushSubscriptionRepository.findByUserIdInAndEnabledTrue(userIds);
+        log.info("Sending push notification '{}' to {} subscription(s)", title, subscriptions.size());
+        subscriptions.forEach(subscription -> send(subscription, title, body, url));
     }
 
     private void send(PushSubscriptionEntity subscription, String title, String body, String url) {
@@ -147,6 +149,10 @@ public class PushNotificationService {
     }
 
     private String escapeJson(String value) {
-        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 }
