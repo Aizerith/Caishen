@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
 import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { PendingJoinService } from '../../service/pending-join.service';
 
 @Component({
   selector: 'app-login',
@@ -14,11 +15,20 @@ import { TranslocoPipe } from '@jsverse/transloco';
 export class LoginComponent {
   readonly fb: FormBuilder = inject(FormBuilder);
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
+  readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  readonly pendingJoinService: PendingJoinService = inject(PendingJoinService);
 
   protected loginForm: FormGroup = this.fb.group({
     login: new FormControl<string>('', [Validators.required]),
     password: new FormControl<string>('', [Validators.required]),
   });
+
+  ngOnInit() {
+    const pendingJoinUuid = this.activatedRoute.snapshot.queryParamMap.get('join');
+    if (pendingJoinUuid) {
+      this.pendingJoinService.set(pendingJoinUuid);
+    }
+  }
 
   getFormFromName(name: string) {
     return this.loginForm.get(name) as FormControl<string>;

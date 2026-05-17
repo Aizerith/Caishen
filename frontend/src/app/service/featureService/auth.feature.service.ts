@@ -9,6 +9,7 @@ import { ProfileStateService } from '../stateService/profile.state.service';
 import { Router } from '@angular/router';
 import RegisterRequest = CaiShen.RegisterRequest;
 import { TranslocoService } from '@jsverse/transloco';
+import { PendingJoinService } from '../pending-join.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class AuthFeatureService {
   readonly notificationService: NotificationsService = inject(NotificationsService);
   readonly profileStateService: ProfileStateService = inject(ProfileStateService);
   readonly translocoService: TranslocoService = inject(TranslocoService);
+  readonly pendingJoinService: PendingJoinService = inject(PendingJoinService);
   readonly router: Router = inject(Router);
   isLogin: WritableSignal<Boolean> = signal(false);
   isRegistering: WritableSignal<boolean> = signal(false);
@@ -109,7 +111,7 @@ export class AuthFeatureService {
         switchMap((_) => this.profileStateService.getProfileAction()),
       )
       .subscribe({
-        next: (_) => this.router.navigate(['group']).then(),
+        next: (_) => this.navigateAfterAuthentication(),
         error: (err) => {
           if (err.error?.code?.includes('AccountNotActivatedException')) {
             this.notificationService.showError(this.translocoService.translate('auth.accountNotActivated'));
@@ -154,7 +156,8 @@ export class AuthFeatureService {
       .pipe(finalize(() => this.isRegistering.set(false)))
       .subscribe({
         next: (_) => {
-          this.router.navigate(['login']).then();
+          const pendingJoinUuid = this.pendingJoinService.get();
+          this.router.navigate(['login'], pendingJoinUuid ? { queryParams: { join: pendingJoinUuid } } : undefined).then();
           this.notificationService.showSuccess(this.translocoService.translate('auth.registerSuccess'), 5000);
         },
         error: (err) => {
@@ -168,5 +171,15 @@ export class AuthFeatureService {
           }
         },
       });
+  }
+
+  private navigateAfterAuthentication(): void {
+    const pendingJoinUuid = this.pendingJoinService.consume();
+    if (pendingJoinUuid) {
+      this.router.navigate(['join', pendingJoinUuid]).then();
+      return;
+    }
+
+    this.router.navigate(['group']).then();
   }
 }

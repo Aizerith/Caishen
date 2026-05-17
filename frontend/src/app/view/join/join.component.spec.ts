@@ -7,6 +7,7 @@ import { JoinComponent } from './join.component';
 import { AuthStateService } from '../../service/stateService/auth.state.service';
 import { ProfileStateService } from '../../service/stateService/profile.state.service';
 import { translocoTestingModule } from '../../testing/transloco-testing';
+import { PendingJoinService } from '../../service/pending-join.service';
 
 describe('JoinComponent', () => {
   let component: JoinComponent;
@@ -36,6 +37,13 @@ describe('JoinComponent', () => {
           provide: ProfileStateService,
           useValue: {
             joinGroupAction: vi.fn().mockReturnValue(of({ id: 1, title: 'Pool Party' })),
+          },
+        },
+        {
+          provide: PendingJoinService,
+          useValue: {
+            set: vi.fn(),
+            clear: vi.fn(),
           },
         },
         {

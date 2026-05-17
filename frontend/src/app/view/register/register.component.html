@@ -39,6 +39,6 @@
     <button type="submit" class="btn btn-primary w-full" [disabled]="registerForm.invalid || isRegistering">
       {{ 'auth.registerButton' | transloco }}
     </button>
-    <a href="/login" class="text-center underline">{{ 'auth.alreadyRegistered' | transloco }}</a>
+    <a routerLink="/login" [queryParams]="activatedRoute.snapshot.queryParams" class="text-center underline">{{ 'auth.alreadyRegistered' | transloco }}</a>
   </form>
 </div>

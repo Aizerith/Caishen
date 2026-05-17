@@ -6,16 +6,20 @@ import Validation from '../../validator/validation';
 import RegisterRequest = CaiShen.RegisterRequest;
 import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { PendingJoinService } from '../../service/pending-join.service';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, CaishenCustomFormInputComponent, TranslocoPipe],
+  imports: [ReactiveFormsModule, RouterLink, CaishenCustomFormInputComponent, TranslocoPipe],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   readonly fb: FormBuilder = inject(FormBuilder);
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
+  readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  readonly pendingJoinService: PendingJoinService = inject(PendingJoinService);
 
   protected registerForm: FormGroup = this.fb.group(
     {
@@ -28,6 +32,13 @@ export class RegisterComponent {
       validators: [Validation.match('password', 'passwordConfirmation')],
     },
   );
+
+  ngOnInit() {
+    const pendingJoinUuid = this.activatedRoute.snapshot.queryParamMap.get('join');
+    if (pendingJoinUuid) {
+      this.pendingJoinService.set(pendingJoinUuid);
+    }
+  }
 
   private getRegisterData(): RegisterRequest {
     return {

@@ -147,6 +147,7 @@
     "joined": "You have joined the group.",
     "seeGroups": "See my groups",
     "loginThenClick": "Please sign in, then click the link again.",
+    "loginThenJoin": "Sign in or create an account to join the group.",
     "login": "Sign in"
   }
 }

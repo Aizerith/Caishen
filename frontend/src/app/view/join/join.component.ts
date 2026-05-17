@@ -4,6 +4,7 @@ import { AuthStateService } from '../../service/stateService/auth.state.service'
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileStateService } from '../../service/stateService/profile.state.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { PendingJoinService } from '../../service/pending-join.service';
 
 @Component({
   selector: 'app-join',
@@ -20,16 +21,15 @@ export class JoinComponent {
     private profileStateService: ProfileStateService,
     private activateRoute: ActivatedRoute,
     private router: Router,
+    private pendingJoinService: PendingJoinService,
   ) {
-    this.profileStateService.joinGroupAction(this.activateRoute.snapshot.params['uuid']).pipe(take(1)).subscribe(
-      {
-        error: err => {
-          if (err.status === 422) {
-            this.errorMessage = err.error.message;
-          }
-        }
-      }
-    );
+    const uuid = this.activateRoute.snapshot.params['uuid'];
+    if (!this.isLogged()) {
+      this.pendingJoinService.set(uuid);
+      return;
+    }
+
+    this.joinGroup(uuid);
   }
 
   navigateToLogin() {
@@ -38,5 +38,19 @@ export class JoinComponent {
 
   navigateToGroup() {
     this.router.navigate(['group']).then();
+  }
+
+  private joinGroup(uuid: string): void {
+    this.profileStateService.joinGroupAction(uuid).pipe(take(1)).subscribe(
+      {
+        next: () => this.pendingJoinService.clear(),
+        error: err => {
+          this.pendingJoinService.clear();
+          if (err.status === 422) {
+            this.errorMessage = err.error.message;
+          }
+        }
+      }
+    );
   }
 }
