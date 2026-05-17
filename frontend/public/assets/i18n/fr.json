@@ -127,11 +127,13 @@
     "deleteError": "Erreur lors de la suppression de la dépense.",
     "deleteConfirm": "Supprimer cette dépense ?",
     "noHistory": "Aucun historique pour le moment.",
+    "historyUpdatedBy": "Dépense modifiée par {{ actor }}",
+    "historyMemberJoinedBy": "{{ actor }} a rejoint le groupe",
     "historyActions": {
       "CREATED": "Dépense créée",
       "UPDATED": "Dépense modifiée",
       "DELETED": "Dépense supprimée",
-      "MEMBER_JOINED": "Membre ajouté"
+      "MEMBER_JOINED": "Nouveau membre"
     },
     "historyFields": {
       "title": "Titre",

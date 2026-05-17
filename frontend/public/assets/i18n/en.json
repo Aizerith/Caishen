@@ -127,11 +127,13 @@
     "deleteError": "Could not delete expense.",
     "deleteConfirm": "Delete this expense?",
     "noHistory": "No history yet.",
+    "historyUpdatedBy": "Expense updated by {{ actor }}",
+    "historyMemberJoinedBy": "{{ actor }} joined the group",
     "historyActions": {
       "CREATED": "Expense created",
       "UPDATED": "Expense updated",
       "DELETED": "Expense deleted",
-      "MEMBER_JOINED": "Member joined"
+      "MEMBER_JOINED": "New member"
     },
     "historyFields": {
       "title": "Title",
