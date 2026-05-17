@@ -92,10 +92,6 @@ export class PushNotificationService {
     return this.swPush.messages;
   }
 
-  async sendTestNotification(): Promise<void> {
-    await firstValueFrom(this.http.post<void>(`${this.baseUrl}/push/test`, {}));
-  }
-
   private async getPublicKey(): Promise<PushPublicKeyResponse> {
     return firstValueFrom(
       this.http

@@ -93,16 +93,6 @@ public class PushNotificationService {
         log.info("Push notification '{}' delivered to {}/{} subscription(s)", title, successCount, subscriptions.size());
     }
 
-    public void sendTestToCurrentUser() {
-        AppUserEntity currentUser = getCurrentAppUser();
-        notifyUsers(
-                List.of(currentUser),
-                "Caishen",
-                "Notification de test",
-                "/settings"
-        );
-    }
-
     private boolean send(PushSubscriptionEntity subscription, String title, String body, String url) {
         try {
             ensureBouncyCastleProvider();

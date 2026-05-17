@@ -19,7 +19,6 @@ describe('SettingsComponent', () => {
             init: vi.fn().mockResolvedValue(undefined),
             enable: vi.fn().mockResolvedValue(undefined),
             disable: vi.fn().mockResolvedValue(undefined),
-            sendTestNotification: vi.fn().mockResolvedValue(undefined),
             isEnabled: signal(false),
             isSupported: signal(true),
             isConfigured: signal(true),

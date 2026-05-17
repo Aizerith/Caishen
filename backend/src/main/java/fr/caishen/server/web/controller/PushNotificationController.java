@@ -35,11 +35,4 @@ public class PushNotificationController {
         pushNotificationService.unsubscribe(request);
         return ResponseEntity.ok().build();
     }
-
-    @PostMapping("/test")
-    public ResponseEntity<Void> test() {
-        log.info("POST /push/test");
-        pushNotificationService.sendTestToCurrentUser();
-        return ResponseEntity.ok().build();
-    }
 }

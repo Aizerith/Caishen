@@ -83,9 +83,6 @@
     "pushNotifications": "Notifications push",
     "pushNotSupported": "Les notifications push ne sont pas disponibles sur ce navigateur.",
     "pushNotConfigured": "Les notifications push ne sont pas encore configurées côté serveur.",
-    "pushTestButton": "Tester la notification",
-    "pushTestSent": "Notification de test envoyée.",
-    "pushTestError": "Impossible d'envoyer la notification de test.",
     "logoutTitle": "Déconnexion",
     "logoutButton": "Se déconnecter"
   },

@@ -69,11 +69,6 @@
           } @else if (!pushNotificationService.isConfigured()) {
             <p class="text-sm text-warning">{{ 'settings.pushNotConfigured' | transloco }}</p>
           }
-          @if (pushNotificationService.isEnabled()) {
-            <button type="button" class="btn btn-outline btn-sm w-full sm:w-56" (click)="sendTestPushNotification()">
-              {{ 'settings.pushTestButton' | transloco }}
-            </button>
-          }
         </section>
       }
 
