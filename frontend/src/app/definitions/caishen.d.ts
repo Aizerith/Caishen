@@ -28,11 +28,18 @@ declare namespace CaiShen {
         actorId: number;
         actorName: string;
         amount: number | null;
+        changes: ExpenseHistoryChangeResponse[];
         createdAt: Date;
         expenseId: number | null;
         expenseTitle: string | null;
         groupId: number;
         id: number;
+    }
+
+    interface ExpenseHistoryChangeResponse {
+        afterValue: string;
+        beforeValue: string;
+        field: string;
     }
 
     interface ExpenseRequest {

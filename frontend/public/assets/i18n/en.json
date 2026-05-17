@@ -132,6 +132,13 @@
       "UPDATED": "Expense updated",
       "DELETED": "Expense deleted",
       "MEMBER_JOINED": "Member joined"
+    },
+    "historyFields": {
+      "title": "Title",
+      "amount": "Amount",
+      "payer": "Payer",
+      "date": "Date",
+      "participants": "Participants"
     }
   },
   "join": {

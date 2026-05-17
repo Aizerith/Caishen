@@ -98,6 +98,10 @@ export class CheckComponent {
     return `expense.historyActions.${action}`;
   }
 
+  getHistoryFieldTranslationKey(field: string) {
+    return `expense.historyFields.${field}`;
+  }
+
   navigateToExpense(expense: ExpenseResponse) {
     this.router.navigate(['group', this.groupId, 'expense', expense.id]).then();
   }

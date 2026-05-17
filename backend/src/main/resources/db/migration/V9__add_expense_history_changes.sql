@@ -1,0 +1,6 @@
+START TRANSACTION;
+
+ALTER TABLE expense_history
+    ADD COLUMN changes_json LONGTEXT NULL;
+
+COMMIT;

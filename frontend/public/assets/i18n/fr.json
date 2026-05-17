@@ -132,6 +132,13 @@
       "UPDATED": "Dépense modifiée",
       "DELETED": "Dépense supprimée",
       "MEMBER_JOINED": "Membre ajouté"
+    },
+    "historyFields": {
+      "title": "Titre",
+      "amount": "Montant",
+      "payer": "Payeur",
+      "date": "Date",
+      "participants": "Participants"
     }
   },
   "join": {

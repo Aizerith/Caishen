@@ -33,6 +33,9 @@ public class ExpenseHistoryEntity {
 
     private BigDecimal amount;
 
+    @Column(name = "changes_json", columnDefinition = "LONGTEXT")
+    private String changesJson;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 }

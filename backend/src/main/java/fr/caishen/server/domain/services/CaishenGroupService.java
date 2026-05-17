@@ -1,5 +1,8 @@
 package fr.caishen.server.domain.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.caishen.server.dal.entity.*;
 import fr.caishen.server.dal.repository.AppUserRepository;
 import fr.caishen.server.dal.repository.ExpenseHistoryRepository;
@@ -21,6 +24,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CaishenGroupService {
+    private static final TypeReference<List<ExpenseHistoryChangeResponse>> HISTORY_CHANGE_LIST_TYPE = new TypeReference<>() {
+    };
+
     private final AppUserRepository appUserRepository;
     private final GroupRepository groupRepository;
     private final AuthService authService;
@@ -28,6 +34,7 @@ public class CaishenGroupService {
     private final ExpenseHistoryRepository expenseHistoryRepository;
     private final WebSocketService webSocketService;
     private final PushNotificationService pushNotificationService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private record ParticipantShare(Long participantId, BigDecimal amount) {
     }
@@ -116,6 +123,7 @@ public class CaishenGroupService {
         GroupEntity group = expense.getGroupEntity();
         AppUserEntity currentUser = requireCurrentUserMemberOf(group);
         validateExpenseMembers(group, data);
+        List<ExpenseHistoryChangeResponse> changes = getExpenseChanges(group, expense, data);
         expense.setTitle(data.title());
         expense.setAmount(data.amount());
         expense.setPayerId(data.payerId());
@@ -123,7 +131,7 @@ public class CaishenGroupService {
         expense.setParticipant(data.participant().trim());
 
         expenseRepository.save(expense);
-        recordExpenseHistory(expense, ExpenseHistoryAction.UPDATED, currentUser);
+        recordExpenseHistory(expense, ExpenseHistoryAction.UPDATED, currentUser, changes);
         notifyGroupMembers(group);
         notifyExpenseChanged(group, currentUser, "Dépense modifiée", expense);
         return getGroupResponse(group);
@@ -322,6 +330,10 @@ public class CaishenGroupService {
     }
 
     private void recordExpenseHistory(ExpenseEntity expense, ExpenseHistoryAction action, AppUserEntity actor) {
+        recordExpenseHistory(expense, action, actor, List.of());
+    }
+
+    private void recordExpenseHistory(ExpenseEntity expense, ExpenseHistoryAction action, AppUserEntity actor, List<ExpenseHistoryChangeResponse> changes) {
         ExpenseHistoryEntity history = new ExpenseHistoryEntity();
         history.setGroupId(expense.getGroupEntity().getId());
         history.setExpenseId(expense.getId());
@@ -330,6 +342,7 @@ public class CaishenGroupService {
         history.setActorId(actor.getId());
         history.setActorName(actor.getUsername());
         history.setAmount(normalizeMoney(expense.getAmount()));
+        history.setChangesJson(writeHistoryChanges(changes));
         history.setCreatedAt(java.time.LocalDateTime.now());
         expenseHistoryRepository.save(history);
     }
@@ -354,7 +367,80 @@ public class CaishenGroupService {
                 history.getActorId(),
                 history.getActorName(),
                 history.getAmount(),
+                readHistoryChanges(history.getChangesJson()),
                 history.getCreatedAt()
         );
+    }
+
+    private List<ExpenseHistoryChangeResponse> getExpenseChanges(GroupEntity group, ExpenseEntity expense, ExpenseRequest data) {
+        List<ExpenseHistoryChangeResponse> changes = new ArrayList<>();
+
+        addChangeIfDifferent(changes, "title", expense.getTitle(), data.title());
+        addChangeIfDifferent(changes, "amount", normalizeMoney(expense.getAmount()).toPlainString(), normalizeMoney(data.amount()).toPlainString());
+        addChangeIfDifferent(changes, "payer", getMemberName(group, expense.getPayerId()), getMemberName(group, data.payerId()));
+        addChangeIfDifferent(changes, "date", expense.getExpenseDate().toString(), data.expenseDate().toString());
+
+        if (!Objects.equals(getParticipantIds(expense.getParticipant()), getParticipantIds(data.participant()))) {
+            changes.add(new ExpenseHistoryChangeResponse(
+                    "participants",
+                    formatParticipants(group, expense.getParticipant()),
+                    formatParticipants(group, data.participant())
+            ));
+        }
+
+        return changes;
+    }
+
+    private void addChangeIfDifferent(List<ExpenseHistoryChangeResponse> changes, String field, String beforeValue, String afterValue) {
+        if (!Objects.equals(beforeValue, afterValue)) {
+            changes.add(new ExpenseHistoryChangeResponse(field, beforeValue, afterValue));
+        }
+    }
+
+    private Set<Long> getParticipantIds(String participants) {
+        return Arrays.stream(participants.trim().split(" "))
+                .filter(participant -> !participant.isBlank())
+                .map(Long::parseLong)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private String formatParticipants(GroupEntity group, String participants) {
+        Set<Long> participantIds = getParticipantIds(participants);
+        return group.getGroupAppUserEntityList().stream()
+                .filter(member -> participantIds.contains(member.getId()))
+                .map(AppUserEntity::getUsername)
+                .collect(Collectors.joining(", "));
+    }
+
+    private String getMemberName(GroupEntity group, Long memberId) {
+        return group.getGroupAppUserEntityList().stream()
+                .filter(member -> Objects.equals(member.getId(), memberId))
+                .map(AppUserEntity::getUsername)
+                .findFirst()
+                .orElse(String.valueOf(memberId));
+    }
+
+    private String writeHistoryChanges(List<ExpenseHistoryChangeResponse> changes) {
+        if (changes.isEmpty()) {
+            return null;
+        }
+
+        try {
+            return objectMapper.writeValueAsString(changes);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Unable to serialize expense history changes", e);
+        }
+    }
+
+    private List<ExpenseHistoryChangeResponse> readHistoryChanges(String changesJson) {
+        if (changesJson == null || changesJson.isBlank()) {
+            return List.of();
+        }
+
+        try {
+            return objectMapper.readValue(changesJson, HISTORY_CHANGE_LIST_TYPE);
+        } catch (JsonProcessingException e) {
+            return List.of();
+        }
     }
 }

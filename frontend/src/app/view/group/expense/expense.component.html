@@ -36,7 +36,7 @@
         </section>
 
         <section class="flex flex-col gap-3">
-          <h2 class="text-lg font-semibold">{{ 'group.members' | transloco }}</h2>
+          <h2 class="text-lg font-semibold">{{ 'expense.participants' | transloco }}</h2>
           @for (participant of expense.participantDTOList; track participant.username) {
             <div class="app-card app-row">
               <h3 class="app-row-title">{{ participant.username }}</h3>

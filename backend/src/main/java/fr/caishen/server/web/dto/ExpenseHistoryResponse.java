@@ -4,6 +4,7 @@ import fr.caishen.server.dal.entity.ExpenseHistoryAction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record ExpenseHistoryResponse(
         Long id,
@@ -14,6 +15,7 @@ public record ExpenseHistoryResponse(
         Long actorId,
         String actorName,
         BigDecimal amount,
+        List<ExpenseHistoryChangeResponse> changes,
         LocalDateTime createdAt
 ) {
 }
