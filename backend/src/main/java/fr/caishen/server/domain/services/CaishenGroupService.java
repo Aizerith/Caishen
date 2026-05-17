@@ -39,6 +39,9 @@ public class CaishenGroupService {
     private record ParticipantShare(Long participantId, BigDecimal amount) {
     }
 
+    private record SettlementBalance(Long memberId, String memberName, BigDecimal amount) {
+    }
+
     public UserGroupResponse createGroup(String title, List<Long> members) {
         GroupEntity group = new GroupEntity();
         group.setTitle(title);
@@ -172,14 +175,16 @@ public class CaishenGroupService {
     }
 
     private GroupResponse getGroupResponse(GroupEntity group) {
+        List<GroupMemberResponse> memberList = group.getGroupAppUserEntityList()
+                .stream()
+                .map(appUserEntity -> new GroupMemberResponse(appUserEntity.getId(), appUserEntity.getUsername(), getMemberExpensesDelta(appUserEntity.getId(), group.getGroupExpenseEntityList())))
+                .collect(Collectors.toList());
+
         return new GroupResponse(
                 group.getId(),
                 group.getUuid(),
                 group.getTitle(),
-                group.getGroupAppUserEntityList()
-                        .stream()
-                        .map(appUserEntity -> new GroupMemberResponse(appUserEntity.getId(), appUserEntity.getUsername(), getMemberExpensesDelta(appUserEntity.getId(), group.getGroupExpenseEntityList())))
-                        .collect(Collectors.toList()),
+                memberList,
                 group.getGroupExpenseEntityList()
                         .stream()
                         .sorted(Comparator.comparing(ExpenseEntity::getExpenseDate).reversed())
@@ -190,8 +195,56 @@ public class CaishenGroupService {
                                 expenseEntity.getParticipant(),
                                 Objects.requireNonNull(appUserRepository.findById(expenseEntity.getPayerId()).orElse(null)).getUsername(),
                                 expenseEntity.getExpenseDate()))
-                        .toList()
+                        .toList(),
+                getSettlements(memberList)
         );
+    }
+
+    private List<SettlementResponse> getSettlements(List<GroupMemberResponse> memberList) {
+        List<SettlementBalance> debtors = memberList.stream()
+                .filter(member -> member.expenseDelta().signum() < 0)
+                .map(member -> new SettlementBalance(member.id(), member.name(), member.expenseDelta().abs()))
+                .sorted(Comparator.comparing(SettlementBalance::amount).reversed())
+                .collect(Collectors.toCollection(ArrayList::new));
+        List<SettlementBalance> creditors = memberList.stream()
+                .filter(member -> member.expenseDelta().signum() > 0)
+                .map(member -> new SettlementBalance(member.id(), member.name(), member.expenseDelta()))
+                .sorted(Comparator.comparing(SettlementBalance::amount).reversed())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        List<SettlementResponse> settlements = new ArrayList<>();
+        int debtorIndex = 0;
+        int creditorIndex = 0;
+
+        while (debtorIndex < debtors.size() && creditorIndex < creditors.size()) {
+            SettlementBalance debtor = debtors.get(debtorIndex);
+            SettlementBalance creditor = creditors.get(creditorIndex);
+            BigDecimal amount = debtor.amount().min(creditor.amount());
+
+            if (amount.signum() > 0) {
+                settlements.add(new SettlementResponse(
+                        debtor.memberId(),
+                        debtor.memberName(),
+                        creditor.memberId(),
+                        creditor.memberName(),
+                        normalizeMoney(amount)
+                ));
+            }
+
+            BigDecimal debtorRemaining = debtor.amount().subtract(amount);
+            BigDecimal creditorRemaining = creditor.amount().subtract(amount);
+            debtors.set(debtorIndex, new SettlementBalance(debtor.memberId(), debtor.memberName(), debtorRemaining));
+            creditors.set(creditorIndex, new SettlementBalance(creditor.memberId(), creditor.memberName(), creditorRemaining));
+
+            if (debtorRemaining.signum() == 0) {
+                debtorIndex++;
+            }
+            if (creditorRemaining.signum() == 0) {
+                creditorIndex++;
+            }
+        }
+
+        return settlements;
     }
 
     private BigDecimal getMemberExpensesDelta(Long id, List<ExpenseEntity> expenseList) {

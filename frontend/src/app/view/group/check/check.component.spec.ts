@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { CheckComponent } from './check.component';
 import { GroupStateService } from '../../../service/stateService/group.state.service';
 import { NotificationsService } from '../../../service/notifications.service';
+import { ProfileStateService } from '../../../service/stateService/profile.state.service';
 import { translocoTestingModule } from '../../../testing/transloco-testing';
 
 describe('CheckComponent', () => {
@@ -19,6 +20,7 @@ describe('CheckComponent', () => {
       { id: 1, name: 'Shen', expenseDelta: 0 },
     ],
     expenseList: [],
+    settlementList: [],
   };
 
   beforeEach(async () => {
@@ -57,6 +59,12 @@ describe('CheckComponent', () => {
             getGroupInfoAction: vi.fn().mockReturnValue(of(groupInfo)),
             getGroupExpenseHistoryAction: vi.fn().mockReturnValue(of([])),
             addExpense: vi.fn().mockReturnValue(of(groupInfo)),
+          },
+        },
+        {
+          provide: ProfileStateService,
+          useValue: {
+            getMyId: vi.fn().mockReturnValue(1),
           },
         },
       ],

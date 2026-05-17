@@ -104,6 +104,10 @@
     "datePrefix": "Le",
     "owedToYou": "On vous doit",
     "youOwe": "Vous devez",
+    "settlements": "Règlements",
+    "settlementLine": "{{ debtor }} doit payer {{ creditor }}",
+    "settlementLineMine": "Vous devez payer {{ creditor }}",
+    "noSettlements": "Aucun règlement nécessaire.",
     "members": "Membres",
     "invitationCopied": "Lien d'invitation copié dans le presse-papiers."
   },

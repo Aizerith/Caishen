@@ -54,6 +54,24 @@
             </div>
 
             <section class="flex flex-col gap-3">
+              <h2 class="text-lg font-semibold">{{ 'group.settlements' | transloco }}</h2>
+              @for (settlement of group.settlementList; track settlement.debtorId + '-' + settlement.creditorId + '-' + $index) {
+                <div class="app-card app-row">
+                  <div class="min-w-0">
+                    <h3 class="app-row-title">
+                      {{ getSettlementTranslationKey(settlement) | transloco: { debtor: settlement.debtorName, creditor: settlement.creditorName } }}
+                    </h3>
+                  </div>
+                  <div class="app-amount text-warning">
+                    {{ settlement.amount }} {{ 'common.euro' | transloco }}
+                  </div>
+                </div>
+              } @empty {
+                <p class="text-base-content/70">{{ 'group.noSettlements' | transloco }}</p>
+              }
+            </section>
+
+            <section class="flex flex-col gap-3">
               <h2 class="text-lg font-semibold">{{ 'group.members' | transloco }}</h2>
               @for (member of group.memberList; track member.id) {
                 <div class="app-card app-row">

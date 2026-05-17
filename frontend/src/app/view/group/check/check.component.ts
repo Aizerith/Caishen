@@ -7,11 +7,13 @@ import { take } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CaishenAddExpenseModalComponent } from '../../../component/caishen-add-expense-modal/caishen-add-expense-modal.component';
 import { NotificationsService } from '../../../service/notifications.service';
+import { ProfileStateService } from '../../../service/stateService/profile.state.service';
 import { GroupStateService } from '../../../service/stateService/group.state.service';
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import ExpenseResponse = CaiShen.ExpenseResponse;
 import GroupResponse = CaiShen.GroupResponse;
 import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
+import SettlementResponse = CaiShen.SettlementResponse;
 
 @Component({
   selector: 'app-check',
@@ -32,6 +34,7 @@ export class CheckComponent {
     private activateRoute: ActivatedRoute,
     private notificationsService: NotificationsService,
     private groupStateService: GroupStateService,
+    private profileStateService: ProfileStateService,
     private router: Router,
     private fb: FormBuilder,
     private translocoService: TranslocoService,
@@ -100,6 +103,14 @@ export class CheckComponent {
 
   getHistoryFieldTranslationKey(field: string) {
     return `expense.historyFields.${field}`;
+  }
+
+  getSettlementTranslationKey(settlement: SettlementResponse) {
+    if (settlement.debtorId === this.profileStateService.getMyId()) {
+      return 'group.settlementLineMine';
+    }
+
+    return 'group.settlementLine';
   }
 
   navigateToExpense(expense: ExpenseResponse) {

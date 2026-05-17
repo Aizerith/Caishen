@@ -104,6 +104,10 @@
     "datePrefix": "On",
     "owedToYou": "You are owed",
     "youOwe": "You owe",
+    "settlements": "Settlements",
+    "settlementLine": "{{ debtor }} should pay {{ creditor }}",
+    "settlementLineMine": "You should pay {{ creditor }}",
+    "noSettlements": "No settlement needed.",
     "members": "Members",
     "invitationCopied": "Invitation link copied to clipboard."
   },

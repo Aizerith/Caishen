@@ -9,6 +9,7 @@ import fr.caishen.server.dal.repository.ExpenseRepository;
 import fr.caishen.server.dal.repository.GroupRepository;
 import fr.caishen.server.web.dto.GroupMemberResponse;
 import fr.caishen.server.web.dto.GroupResponse;
+import fr.caishen.server.web.dto.SettlementResponse;
 import fr.caishen.server.websocket.service.WebSocketService;
 import org.junit.jupiter.api.Test;
 
@@ -57,6 +58,12 @@ class CaishenGroupServiceTest {
         assertThat(balanceFor(response, "Shen")).isEqualByComparingTo("66.67");
         assertThat(balanceFor(response, "Leona")).isEqualByComparingTo("-33.34");
         assertThat(balanceFor(response, "Neeko")).isEqualByComparingTo("-33.33");
+        assertThat(response.settlementList())
+                .extracting(SettlementResponse::debtorName, SettlementResponse::creditorName, settlement -> settlement.amount().toPlainString())
+                .containsExactly(
+                        org.assertj.core.groups.Tuple.tuple("Leona", "Shen", "33.34"),
+                        org.assertj.core.groups.Tuple.tuple("Neeko", "Shen", "33.33")
+                );
     }
 
     @Test
@@ -78,6 +85,13 @@ class CaishenGroupServiceTest {
         assertThat(balanceFor(response, "Leona")).isEqualByComparingTo("-3.33");
         assertThat(balanceFor(response, "Neeko")).isEqualByComparingTo("-3.34");
         assertThat(balanceFor(response, "Garen")).isEqualByComparingTo("-3.33");
+        assertThat(response.settlementList())
+                .extracting(SettlementResponse::debtorName, SettlementResponse::creditorName, settlement -> settlement.amount().toPlainString())
+                .containsExactly(
+                        org.assertj.core.groups.Tuple.tuple("Neeko", "Shen", "3.34"),
+                        org.assertj.core.groups.Tuple.tuple("Leona", "Shen", "3.33"),
+                        org.assertj.core.groups.Tuple.tuple("Garen", "Shen", "3.33")
+                );
     }
 
     private AppUserEntity user(Long id, String username) {
