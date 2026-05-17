@@ -9,8 +9,11 @@ import fr.caishen.server.web.dto.PushSubscriptionRequest;
 import fr.caishen.server.web.dto.PushUnsubscribeRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.martijndwars.webpush.Encoding;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
@@ -84,7 +87,10 @@ public class PushNotificationService {
         List<Long> userIds = users.stream().map(AppUserEntity::getId).toList();
         List<PushSubscriptionEntity> subscriptions = pushSubscriptionRepository.findByUserIdInAndEnabledTrue(userIds);
         log.info("Sending push notification '{}' to {} subscription(s)", title, subscriptions.size());
-        subscriptions.forEach(subscription -> send(subscription, title, body, url));
+        long successCount = subscriptions.stream()
+                .filter(subscription -> send(subscription, title, body, url))
+                .count();
+        log.info("Push notification '{}' delivered to {}/{} subscription(s)", title, successCount, subscriptions.size());
     }
 
     public void sendTestToCurrentUser() {
@@ -97,7 +103,7 @@ public class PushNotificationService {
         );
     }
 
-    private void send(PushSubscriptionEntity subscription, String title, String body, String url) {
+    private boolean send(PushSubscriptionEntity subscription, String title, String body, String url) {
         try {
             ensureBouncyCastleProvider();
             PushService pushService = new PushService(vapidPublicKey, vapidPrivateKey, vapidSubject);
@@ -125,10 +131,29 @@ public class PushNotificationService {
                     decodeBase64Url(subscription.getAuth()),
                     payload.getBytes(StandardCharsets.UTF_8)
             );
-            pushService.send(notification);
+            HttpResponse response = pushService.send(notification, Encoding.AES128GCM);
+            int statusCode = response.getStatusLine().getStatusCode();
+            String reason = response.getStatusLine().getReasonPhrase();
+
+            if (statusCode >= 200 && statusCode < 300) {
+                log.info("Push notification accepted by push service with status {} {}", statusCode, reason);
+                return true;
+            }
+
+            String responseBody = response.getEntity() == null ? "" : EntityUtils.toString(response.getEntity());
+            log.warn("Push notification rejected by push service with status {} {}: {}", statusCode, reason, responseBody);
+
+            if (statusCode == 404 || statusCode == 410) {
+                subscription.setEnabled(false);
+                subscription.setUpdatedAt(LocalDateTime.now());
+                pushSubscriptionRepository.save(subscription);
+                log.info("Push subscription disabled because the endpoint expired");
+            }
         } catch (Exception e) {
             log.warn("Unable to send push notification to endpoint {}", subscription.getEndpoint(), e);
         }
+
+        return false;
     }
 
     private boolean isConfigured() {

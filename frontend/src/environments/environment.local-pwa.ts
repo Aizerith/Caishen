@@ -3,5 +3,5 @@ export const environment = {
   URL: 'http://localhost:4200',
   SOCKJS_BROKER_URL: 'http://localhost:8080/ws',
   BROKER_URL: 'ws://localhost:8080/ws',
-  enableServiceWorker: false,
+  enableServiceWorker: true,
 };

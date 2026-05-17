@@ -3,4 +3,5 @@ export const environment = {
   URL: '',
   SOCKJS_BROKER_URL: '',
   BROKER_URL: '',
+  enableServiceWorker: false,
 };

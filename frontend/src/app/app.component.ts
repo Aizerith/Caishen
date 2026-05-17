@@ -62,7 +62,10 @@ export class AppComponent {
 
     this.pushNotificationService
       .messages()
-      .subscribe(() => this.refreshSessionWhenLogged());
+      .subscribe((message) => {
+        this.refreshSessionWhenLogged();
+        this.showForegroundPushMessage(message);
+      });
 
     effect(() => {
       document.documentElement.setAttribute('data-theme', this.theme());
@@ -131,6 +134,16 @@ export class AppComponent {
 
     const groupId = Number(match[1]);
     return Number.isNaN(groupId) ? null : groupId;
+  }
+
+  private showForegroundPushMessage(message: object): void {
+    const notification = (message as { notification?: { title?: string; body?: string } }).notification;
+    if (!notification?.title) {
+      return;
+    }
+
+    const text = notification.body ? `${notification.title} - ${notification.body}` : notification.title;
+    this.notificationService.showSuccess(text);
   }
 
   navigateToSettings() {
