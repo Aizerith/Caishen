@@ -15,11 +15,16 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CaishenGroupServiceTest {
@@ -94,6 +99,57 @@ class CaishenGroupServiceTest {
                 );
     }
 
+    @Test
+    void pushNotificationIsNotSentToExpenseActor() {
+        AppUserEntity shen = user(1L, "Shen");
+        AppUserEntity bob = user(2L, "Bob");
+        GroupEntity group = group(List.of(shen, bob), List.of());
+
+        when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
+        when(expenseRepository.save(any(ExpenseEntity.class))).thenAnswer(invocation -> {
+            ExpenseEntity expense = invocation.getArgument(0);
+            expense.setId(10L);
+            return expense;
+        });
+        mockCurrentUser(shen);
+
+        service.createExpense(new fr.caishen.server.web.dto.ExpenseRequest(
+                1L,
+                "Dinner",
+                new BigDecimal("20.00"),
+                "1 2",
+                1L,
+                LocalDate.now()
+        ));
+
+        verify(pushNotificationService).notifyUsers(
+                argThat(users -> users.size() == 1 && users.get(0).getId().equals(bob.getId())),
+                eq("Dépense ajoutée"),
+                any(),
+                any()
+        );
+    }
+
+    @Test
+    void pushNotificationIsNotSentToJoiningUser() throws Exception {
+        AppUserEntity shen = user(1L, "Shen");
+        AppUserEntity bob = user(2L, "Bob");
+        GroupEntity group = group(List.of(bob), List.of());
+
+        when(groupRepository.findByUuid("group-uuid")).thenReturn(Optional.of(group));
+        when(groupRepository.save(group)).thenReturn(group);
+        mockCurrentUser(shen);
+
+        service.addUserToGroup("group-uuid");
+
+        verify(pushNotificationService).notifyUsers(
+                argThat(users -> users.size() == 1 && users.get(0).getId().equals(bob.getId())),
+                eq("Caishen"),
+                any(),
+                any()
+        );
+    }
+
     private AppUserEntity user(Long id, String username) {
         AppUserEntity user = new AppUserEntity();
         user.setId(id);
@@ -107,8 +163,8 @@ class CaishenGroupServiceTest {
         group.setId(1L);
         group.setTitle("Trip");
         group.setUuid("group-uuid");
-        group.setGroupAppUserEntityList(users);
-        group.setGroupExpenseEntityList(expenses);
+        group.setGroupAppUserEntityList(new ArrayList<>(users));
+        group.setGroupExpenseEntityList(new ArrayList<>(expenses));
         expenses.forEach(expense -> expense.setGroupEntity(group));
         return group;
     }
