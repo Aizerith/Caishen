@@ -8,6 +8,7 @@ import fr.caishen.server.dal.repository.AppUserRepository;
 import fr.caishen.server.dal.repository.ExpenseHistoryRepository;
 import fr.caishen.server.dal.repository.ExpenseRepository;
 import fr.caishen.server.dal.repository.GroupRepository;
+import fr.caishen.server.dal.repository.SettlementPaymentRepository;
 import fr.caishen.server.domain.exception.GroupAccessDeniedException;
 import fr.caishen.server.domain.exception.UserAlreadyInGroupException;
 import fr.caishen.server.web.dto.*;
@@ -32,6 +33,7 @@ public class CaishenGroupService {
     private final AuthService authService;
     private final ExpenseRepository expenseRepository;
     private final ExpenseHistoryRepository expenseHistoryRepository;
+    private final SettlementPaymentRepository settlementPaymentRepository;
     private final WebSocketService webSocketService;
     private final PushNotificationService pushNotificationService;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -157,6 +159,45 @@ public class CaishenGroupService {
         return getGroupResponse(group);
     }
 
+    @Transactional
+    public GroupResponse paySettlement(SettlementPaymentRequest data) {
+        GroupEntity group = groupRepository.findById(data.groupId()).orElse(null);
+        if (group == null) {
+            return null;
+        }
+        AppUserEntity currentUser = requireCurrentUserMemberOf(group);
+        AppUserEntity receiver = group.getGroupAppUserEntityList().stream()
+                .filter(member -> Objects.equals(member.getId(), data.receiverId()))
+                .findFirst()
+                .orElseThrow(GroupAccessDeniedException::new);
+        BigDecimal requestedAmount = normalizeMoney(data.amount());
+        if (requestedAmount.signum() <= 0) {
+            return getGroupResponse(group);
+        }
+
+        Optional<SettlementResponse> currentSettlement = getSettlements(getGroupMemberList(group))
+                .stream()
+                .filter(settlement -> Objects.equals(settlement.debtorId(), currentUser.getId()) && Objects.equals(settlement.creditorId(), receiver.getId()))
+                .findFirst();
+        if (currentSettlement.isEmpty()) {
+            return getGroupResponse(group);
+        }
+
+        BigDecimal paidAmount = normalizeMoney(requestedAmount.min(currentSettlement.get().amount()));
+        SettlementPaymentEntity payment = new SettlementPaymentEntity();
+        payment.setGroupId(group.getId());
+        payment.setPayerId(currentUser.getId());
+        payment.setReceiverId(receiver.getId());
+        payment.setAmount(paidAmount);
+        payment.setCreatedAt(java.time.LocalDateTime.now());
+        settlementPaymentRepository.save(payment);
+
+        recordSettlementPaidHistory(group, currentUser, receiver, paidAmount);
+        notifyGroupMembers(group);
+        notifySettlementPaid(group, currentUser, receiver, paidAmount);
+        return getGroupResponse(group);
+    }
+
     private void notifyGroupMembers(GroupEntity group) {
         group.getGroupAppUserEntityList().forEach(appUserEntity -> webSocketService.sendNotificationToUser(appUserEntity.getLogin(), group.getId()));
     }
@@ -174,6 +215,15 @@ public class CaishenGroupService {
         );
     }
 
+    private void notifySettlementPaid(GroupEntity group, AppUserEntity actor, AppUserEntity receiver, BigDecimal amount) {
+        pushNotificationService.notifyUsers(
+                getPushRecipients(group, actor),
+                "Règlement payé",
+                actor.getUsername() + " a réglé " + normalizeMoney(amount) + " € à " + receiver.getUsername(),
+                "/group/" + group.getId()
+        );
+    }
+
     private List<AppUserEntity> getPushRecipients(GroupEntity group, AppUserEntity actor) {
         return group.getGroupAppUserEntityList()
                 .stream()
@@ -182,10 +232,7 @@ public class CaishenGroupService {
     }
 
     private GroupResponse getGroupResponse(GroupEntity group) {
-        List<GroupMemberResponse> memberList = group.getGroupAppUserEntityList()
-                .stream()
-                .map(appUserEntity -> new GroupMemberResponse(appUserEntity.getId(), appUserEntity.getUsername(), getMemberExpensesDelta(appUserEntity.getId(), group.getGroupExpenseEntityList())))
-                .collect(Collectors.toList());
+        List<GroupMemberResponse> memberList = getGroupMemberList(group);
 
         return new GroupResponse(
                 group.getId(),
@@ -205,6 +252,19 @@ public class CaishenGroupService {
                         .toList(),
                 getSettlements(memberList)
         );
+    }
+
+    private List<GroupMemberResponse> getGroupMemberList(GroupEntity group) {
+        List<SettlementPaymentEntity> settlementPayments = settlementPaymentRepository.findByGroupId(group.getId());
+        List<GroupMemberResponse> memberList = group.getGroupAppUserEntityList()
+                .stream()
+                .map(appUserEntity -> new GroupMemberResponse(
+                        appUserEntity.getId(),
+                        appUserEntity.getUsername(),
+                        getMemberExpensesDelta(appUserEntity.getId(), group.getGroupExpenseEntityList()).add(getMemberSettlementDelta(appUserEntity.getId(), settlementPayments))
+                ))
+                .collect(Collectors.toList());
+        return memberList;
     }
 
     private List<SettlementResponse> getSettlements(List<GroupMemberResponse> memberList) {
@@ -257,6 +317,21 @@ public class CaishenGroupService {
     private BigDecimal getMemberExpensesDelta(Long id, List<ExpenseEntity> expenseList) {
         return expenseList.stream()
                 .map(expense -> getMember1ExpenseDelta(id, expense))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal getMemberSettlementDelta(Long id, List<SettlementPaymentEntity> settlementPayments) {
+        return settlementPayments.stream()
+                .map(payment -> {
+                    BigDecimal amount = normalizeMoney(payment.getAmount());
+                    if (Objects.equals(id, payment.getPayerId())) {
+                        return amount;
+                    }
+                    if (Objects.equals(id, payment.getReceiverId())) {
+                        return amount.negate();
+                    }
+                    return BigDecimal.ZERO.setScale(2, RoundingMode.UNNECESSARY);
+                })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -413,6 +488,18 @@ public class CaishenGroupService {
         history.setAction(ExpenseHistoryAction.MEMBER_JOINED);
         history.setActorId(actor.getId());
         history.setActorName(actor.getUsername());
+        history.setCreatedAt(java.time.LocalDateTime.now());
+        expenseHistoryRepository.save(history);
+    }
+
+    private void recordSettlementPaidHistory(GroupEntity group, AppUserEntity actor, AppUserEntity receiver, BigDecimal amount) {
+        ExpenseHistoryEntity history = new ExpenseHistoryEntity();
+        history.setGroupId(group.getId());
+        history.setExpenseTitle(receiver.getUsername());
+        history.setAction(ExpenseHistoryAction.SETTLEMENT_PAID);
+        history.setActorId(actor.getId());
+        history.setActorName(actor.getUsername());
+        history.setAmount(normalizeMoney(amount));
         history.setCreatedAt(java.time.LocalDateTime.now());
         expenseHistoryRepository.save(history);
     }

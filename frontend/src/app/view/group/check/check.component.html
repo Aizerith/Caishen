@@ -56,13 +56,20 @@
             <section class="flex flex-col gap-3">
               <h2 class="text-lg font-semibold">{{ 'group.settlements' | transloco }}</h2>
               @for (settlement of group.settlementList; track settlement.debtorId + '-' + settlement.creditorId + '-' + $index) {
-                <div class="app-card app-row">
-                  <div class="min-w-0">
+                <div
+                  class="app-card settlement-card"
+                  [class.settlement-card-actionable]="isMySettlement(settlement)"
+                  [attr.role]="isMySettlement(settlement) ? 'button' : null"
+                  [attr.tabindex]="isMySettlement(settlement) ? 0 : null"
+                  [attr.aria-label]="isMySettlement(settlement) ? ('group.settlementConfirmTitle' | transloco) : null"
+                  (click)="openSettlementModal(settlement)"
+                  (keydown.enter)="openSettlementModal(settlement)">
+                  <div class="settlement-label">
                     <h3 class="app-row-title">
                       {{ getSettlementTranslationKey(settlement) | transloco: { debtor: settlement.debtorName, creditor: settlement.creditorName } }}
                     </h3>
                   </div>
-                  <div class="app-amount text-warning">
+                  <div class="app-amount settlement-amount text-warning">
                     {{ settlement.amount }} {{ 'common.euro' | transloco }}
                   </div>
                 </div>
@@ -99,6 +106,10 @@
                   </h2>
                   @if (history.action === 'MEMBER_JOINED') {
                     <p class="app-row-meta">{{ 'expense.historyMemberJoinedBy' | transloco: { actor: history.actorName } }}</p>
+                  } @else if (history.action === 'SETTLEMENT_PAID') {
+                    <p class="app-row-meta">
+                      {{ 'expense.historySettlementPaidBy' | transloco: { actor: history.actorName, receiver: history.expenseTitle, amount: history.amount } }}
+                    </p>
                   } @else {
                     <p class="app-row-meta">{{ history.expenseTitle }} - {{ history.actorName }}</p>
                   }
@@ -137,5 +148,27 @@
         </footer>
       }
     </section>
+
+    <dialog #settlementModal class="modal">
+      @if (selectedSettlement(); as settlement) {
+        <div class="modal-box flex flex-col gap-4">
+          <h2 class="text-lg font-semibold">{{ 'group.settlementConfirmTitle' | transloco }}</h2>
+          <p class="text-base-content/70">
+            {{ 'group.settlementConfirmMessage' | transloco: { creditor: settlement.creditorName, amount: settlement.amount } }}
+          </p>
+          <div class="modal-action">
+            <button type="button" class="btn btn-ghost" [disabled]="payingSettlementKey() !== null" (click)="closeSettlementModal()">
+              {{ 'common.cancel' | transloco }}
+            </button>
+            <button type="button" class="btn btn-success" [disabled]="payingSettlementKey() !== null" (click)="confirmSettlementPayment()">
+              {{ 'common.validate' | transloco }}
+            </button>
+          </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+          <button [disabled]="payingSettlementKey() !== null">{{ 'common.cancel' | transloco }}</button>
+        </form>
+      }
+    </dialog>
   }
 </div>

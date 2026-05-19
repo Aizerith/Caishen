@@ -135,6 +135,12 @@ declare namespace CaiShen {
         username: string;
     }
 
+    interface SettlementPaymentRequest {
+        amount: number;
+        groupId: number;
+        receiverId: number;
+    }
+
     interface SettlementResponse {
         amount: number;
         creditorId: number;
@@ -148,7 +154,7 @@ declare namespace CaiShen {
         title: string;
     }
 
-    type ExpenseHistoryAction = "CREATED" | "UPDATED" | "DELETED" | "MEMBER_JOINED";
+    type ExpenseHistoryAction = "CREATED" | "UPDATED" | "DELETED" | "MEMBER_JOINED" | "SETTLEMENT_PAID";
 
     /**
      * Values:

@@ -7,6 +7,7 @@ import GroupResponse = CaiShen.GroupResponse;
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import ExpenseInfoResponse = CaiShen.ExpenseInfoResponse;
 import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
+import SettlementPaymentRequest = CaiShen.SettlementPaymentRequest;
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +35,10 @@ export class GroupHttpService {
 
   deleteExpense(id: number) {
     return this.http.delete<GroupResponse>(`${this.baseUrl}/group/expenses/${id}`);
+  }
+
+  paySettlement(data: SettlementPaymentRequest) {
+    return this.http.post<GroupResponse>(`${this.baseUrl}/group/settlements/pay`, data);
   }
 
   getExpenseInfoById(id: number) {

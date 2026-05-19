@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, ElementRef, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { take } from 'rxjs';
+import { finalize, take } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CaishenAddExpenseModalComponent } from '../../../component/caishen-add-expense-modal/caishen-add-expense-modal.component';
 import { NotificationsService } from '../../../service/notifications.service';
@@ -14,6 +14,7 @@ import ExpenseResponse = CaiShen.ExpenseResponse;
 import GroupResponse = CaiShen.GroupResponse;
 import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
 import SettlementResponse = CaiShen.SettlementResponse;
+import SettlementPaymentRequest = CaiShen.SettlementPaymentRequest;
 
 @Component({
   selector: 'app-check',
@@ -22,6 +23,8 @@ import SettlementResponse = CaiShen.SettlementResponse;
   styleUrl: './check.component.css',
 })
 export class CheckComponent {
+  @ViewChild('settlementModal') settlementModal!: ElementRef<HTMLDialogElement>;
+
   protected readonly Math = Math;
   groupId!: number;
   groupInfo: Signal<GroupResponse | null>;
@@ -29,6 +32,8 @@ export class CheckComponent {
   myBalance: Signal<number>;
   expenseForm: FormGroup;
   currentTab: WritableSignal<'expense' | 'balance' | 'history'> = signal('expense');
+  payingSettlementKey: WritableSignal<string | null> = signal(null);
+  selectedSettlement: WritableSignal<SettlementResponse | null> = signal(null);
 
   constructor(
     private activateRoute: ActivatedRoute,
@@ -106,11 +111,76 @@ export class CheckComponent {
   }
 
   getSettlementTranslationKey(settlement: SettlementResponse) {
-    if (settlement.debtorId === this.profileStateService.getMyId()) {
+    if (this.isMySettlement(settlement)) {
       return 'group.settlementLineMine';
     }
 
     return 'group.settlementLine';
+  }
+
+  isMySettlement(settlement: SettlementResponse) {
+    return settlement.debtorId === this.profileStateService.getMyId();
+  }
+
+  getSettlementKey(settlement: SettlementResponse) {
+    return `${settlement.debtorId}-${settlement.creditorId}-${settlement.amount}`;
+  }
+
+  openSettlementModal(settlement: SettlementResponse) {
+    if (!this.isMySettlement(settlement) || this.payingSettlementKey() !== null) {
+      return;
+    }
+
+    this.selectedSettlement.set(settlement);
+    this.settlementModal.nativeElement.showModal();
+  }
+
+  closeSettlementModal() {
+    if (this.payingSettlementKey() !== null) {
+      return;
+    }
+
+    this.settlementModal.nativeElement.close();
+    this.selectedSettlement.set(null);
+  }
+
+  confirmSettlementPayment() {
+    const settlement = this.selectedSettlement();
+    if (!settlement) {
+      return;
+    }
+
+    this.paySettlement(settlement);
+  }
+
+  paySettlement(settlement: SettlementResponse) {
+    const settlementKey = this.getSettlementKey(settlement);
+    if (this.payingSettlementKey() !== null) {
+      return;
+    }
+
+    this.payingSettlementKey.set(settlementKey);
+    const data: SettlementPaymentRequest = {
+      groupId: this.groupId,
+      receiverId: settlement.creditorId,
+      amount: settlement.amount,
+    };
+
+    this.groupStateService
+      .paySettlement(data)
+      .pipe(
+        take(1),
+        finalize(() => this.payingSettlementKey.set(null)),
+      )
+      .subscribe({
+        next: () => {
+          this.notificationsService.showSuccess(this.translocoService.translate('group.settlementPaid'));
+          this.groupStateService.getGroupExpenseHistoryAction(this.groupId).pipe(take(1)).subscribe();
+          this.settlementModal.nativeElement.close();
+          this.selectedSettlement.set(null);
+        },
+        error: () => this.notificationsService.showError(this.translocoService.translate('group.settlementPayError')),
+      });
   }
 
   navigateToExpense(expense: ExpenseResponse) {

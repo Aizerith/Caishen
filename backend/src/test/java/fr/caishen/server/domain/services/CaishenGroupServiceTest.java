@@ -3,12 +3,15 @@ package fr.caishen.server.domain.services;
 import fr.caishen.server.dal.entity.AppUserEntity;
 import fr.caishen.server.dal.entity.ExpenseEntity;
 import fr.caishen.server.dal.entity.GroupEntity;
+import fr.caishen.server.dal.entity.SettlementPaymentEntity;
 import fr.caishen.server.dal.repository.AppUserRepository;
 import fr.caishen.server.dal.repository.ExpenseHistoryRepository;
 import fr.caishen.server.dal.repository.ExpenseRepository;
 import fr.caishen.server.dal.repository.GroupRepository;
+import fr.caishen.server.dal.repository.SettlementPaymentRepository;
 import fr.caishen.server.web.dto.GroupMemberResponse;
 import fr.caishen.server.web.dto.GroupResponse;
+import fr.caishen.server.web.dto.SettlementPaymentRequest;
 import fr.caishen.server.web.dto.SettlementResponse;
 import fr.caishen.server.websocket.service.WebSocketService;
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,7 @@ class CaishenGroupServiceTest {
     private final GroupRepository groupRepository = mock(GroupRepository.class);
     private final ExpenseRepository expenseRepository = mock(ExpenseRepository.class);
     private final ExpenseHistoryRepository expenseHistoryRepository = mock(ExpenseHistoryRepository.class);
+    private final SettlementPaymentRepository settlementPaymentRepository = mock(SettlementPaymentRepository.class);
     private final AuthService authService = mock(AuthService.class);
     private final WebSocketService webSocketService = mock(WebSocketService.class);
     private final PushNotificationService pushNotificationService = mock(PushNotificationService.class);
@@ -42,9 +46,14 @@ class CaishenGroupServiceTest {
             authService,
             expenseRepository,
             expenseHistoryRepository,
+            settlementPaymentRepository,
             webSocketService,
             pushNotificationService
     );
+
+    CaishenGroupServiceTest() {
+        when(settlementPaymentRepository.findByGroupId(any())).thenReturn(List.of());
+    }
 
     @Test
     void balancesStayBalancedWhenExpenseCannotBeSplitEvenly() {
@@ -147,6 +156,37 @@ class CaishenGroupServiceTest {
                 eq("Caishen"),
                 any(),
                 any()
+        );
+    }
+
+    @Test
+    void paidSettlementReducesBalancesAndNotifiesOtherMembers() {
+        AppUserEntity shen = user(1L, "Shen");
+        AppUserEntity bob = user(2L, "Bob");
+        GroupEntity group = group(List.of(shen, bob), List.of(expense("20.00", "1 2", 2L)));
+        List<SettlementPaymentEntity> settlementPayments = new ArrayList<>();
+
+        when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
+        when(appUserRepository.findById(2L)).thenReturn(Optional.of(bob));
+        when(settlementPaymentRepository.findByGroupId(1L)).thenAnswer(invocation -> settlementPayments);
+        when(settlementPaymentRepository.save(any(SettlementPaymentEntity.class))).thenAnswer(invocation -> {
+            SettlementPaymentEntity payment = invocation.getArgument(0);
+            payment.setId(1L);
+            settlementPayments.add(payment);
+            return payment;
+        });
+        mockCurrentUser(shen);
+
+        GroupResponse response = service.paySettlement(new SettlementPaymentRequest(1L, 2L, new BigDecimal("10.00")));
+
+        assertThat(balanceFor(response, "Shen")).isEqualByComparingTo("0.00");
+        assertThat(balanceFor(response, "Bob")).isEqualByComparingTo("0.00");
+        assertThat(response.settlementList()).isEmpty();
+        verify(pushNotificationService).notifyUsers(
+                argThat(users -> users.size() == 1 && users.get(0).getId().equals(bob.getId())),
+                eq("Règlement payé"),
+                any(),
+                eq("/group/1")
         );
     }
 

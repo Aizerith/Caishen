@@ -107,6 +107,11 @@
     "settlements": "Settlements",
     "settlementLine": "{{ debtor }} should pay {{ creditor }}",
     "settlementLineMine": "You should pay {{ creditor }}",
+    "paySettlement": "I paid",
+    "settlementConfirmTitle": "Debt settled?",
+    "settlementConfirmMessage": "Confirm the {{ amount }} € payment to {{ creditor }}.",
+    "settlementPaid": "Settlement saved.",
+    "settlementPayError": "Could not save settlement.",
     "noSettlements": "No settlement needed.",
     "members": "Members",
     "invitationCopied": "Invitation link copied to clipboard."
@@ -133,11 +138,13 @@
     "noHistory": "No history yet.",
     "historyUpdatedBy": "Expense updated by {{ actor }}",
     "historyMemberJoinedBy": "{{ actor }} joined the group",
+    "historySettlementPaidBy": "{{ actor }} paid {{ amount }} € to {{ receiver }}",
     "historyActions": {
       "CREATED": "Expense created",
       "UPDATED": "Expense updated",
       "DELETED": "Expense deleted",
-      "MEMBER_JOINED": "New member"
+      "MEMBER_JOINED": "New member",
+      "SETTLEMENT_PAID": "Settlement paid"
     },
     "historyFields": {
       "title": "Title",

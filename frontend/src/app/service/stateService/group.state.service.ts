@@ -5,6 +5,7 @@ import { GroupHttpService } from '../httpService/group.http.service';
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import { ProfileStateService } from './profile.state.service';
 import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
+import SettlementPaymentRequest = CaiShen.SettlementPaymentRequest;
 
 export interface GroupStateInterface {
   groupInfo: GroupResponse | null;
@@ -92,6 +93,18 @@ export class GroupStateService {
 
   public deleteExpense(id: number) {
     return this.groupHttpService.deleteExpense(id).pipe(
+      tap((value) => {
+        const newState: GroupStateInterface = {
+          ...this.groupState(),
+          groupInfo: value,
+        };
+        this.updateState(newState);
+      }),
+    );
+  }
+
+  public paySettlement(data: SettlementPaymentRequest) {
+    return this.groupHttpService.paySettlement(data).pipe(
       tap((value) => {
         const newState: GroupStateInterface = {
           ...this.groupState(),

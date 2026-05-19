@@ -107,6 +107,11 @@
     "settlements": "Règlements",
     "settlementLine": "{{ debtor }} doit payer {{ creditor }}",
     "settlementLineMine": "Vous devez payer {{ creditor }}",
+    "paySettlement": "J'ai payé",
+    "settlementConfirmTitle": "Dette réglée ?",
+    "settlementConfirmMessage": "Confirmer le règlement de {{ amount }} € à {{ creditor }}.",
+    "settlementPaid": "Règlement enregistré.",
+    "settlementPayError": "Erreur lors de l'enregistrement du règlement.",
     "noSettlements": "Aucun règlement nécessaire.",
     "members": "Membres",
     "invitationCopied": "Lien d'invitation copié dans le presse-papiers."
@@ -133,11 +138,13 @@
     "noHistory": "Aucun historique pour le moment.",
     "historyUpdatedBy": "Dépense modifiée par {{ actor }}",
     "historyMemberJoinedBy": "{{ actor }} a rejoint le groupe",
+    "historySettlementPaidBy": "{{ actor }} a réglé {{ amount }} € à {{ receiver }}",
     "historyActions": {
       "CREATED": "Dépense créée",
       "UPDATED": "Dépense modifiée",
       "DELETED": "Dépense supprimée",
-      "MEMBER_JOINED": "Nouveau membre"
+      "MEMBER_JOINED": "Nouveau membre",
+      "SETTLEMENT_PAID": "Règlement payé"
     },
     "historyFields": {
       "title": "Titre",

@@ -52,6 +52,12 @@ public class CaishenGroupController {
         return caishenGroupService.deleteExpense(id);
     }
 
+    @PostMapping("/settlements/pay")
+    public GroupResponse paySettlement(@RequestBody SettlementPaymentRequest data) {
+        log.info("POST /group/settlements/pay");
+        return caishenGroupService.paySettlement(data);
+    }
+
     @GetMapping("/expenses/{id}")
     public ExpenseInfoResponse getExpenseInfo(@PathVariable Long id) {
         log.info("GET /group/expenses/{}", id);
