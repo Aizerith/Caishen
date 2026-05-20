@@ -33,7 +33,7 @@ export class GroupDetailsComponent {
   expenseHistory: Signal<ExpenseHistoryResponse[]>;
   myBalance: Signal<number>;
   expenseForm: FormGroup;
-  currentTab: WritableSignal<'expense' | 'balance' | 'history'> = signal('expense');
+  currentTab: WritableSignal<'expense' | 'balance' | 'activity'> = signal('expense');
   payingSettlementKey: WritableSignal<string | null> = signal(null);
   cancellingSettlementPaymentId: WritableSignal<number | null> = signal(null);
   selectedSettlement: WritableSignal<SettlementResponse | null> = signal(null);
@@ -103,8 +103,8 @@ export class GroupDetailsComponent {
     this.currentTab.set('balance');
   }
 
-  changeTabToHistory() {
-    this.currentTab.set('history');
+  changeTabToActivity() {
+    this.currentTab.set('activity');
     this.activityReadBoundary.set(this.activityStateService.getReadHistoryId(this.groupId));
     this.groupStateService.getGroupExpenseHistoryAction(this.groupId).pipe(take(1)).subscribe((history) => {
       this.activityStateService.markGroupAsRead(this.groupId, history[0]?.id);

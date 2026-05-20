@@ -13,8 +13,8 @@
                 (click)="changeTabToExpense()">{{ 'group.expenses' | transloco }}</button>
         <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'balance'"
                 (click)="changeTabToBalance()">{{ 'group.balance' | transloco }}</button>
-        <button type="button" role="tab" class="tab relative" [class.tab-active]="currentTab() === 'history'"
-                (click)="changeTabToHistory()">
+        <button type="button" role="tab" class="tab relative" [class.tab-active]="currentTab() === 'activity'"
+                (click)="changeTabToActivity()">
           {{ 'group.activity' | transloco }}
           @if (activityStateService.hasUnreadActivity(group.id)) {
             <span class="badge badge-accent badge-xs absolute right-2 top-1"></span>
@@ -97,7 +97,7 @@
           </div>
         }
 
-        @case ('history') {
+        @case ('activity') {
           <div class="app-content app-content-with-tabs">
             @for (history of expenseHistory(); track history.id) {
               <article class="app-card app-row activity-card" [class.activity-card-new]="isNewActivity(history)">
