@@ -4,6 +4,7 @@ import { ThemeService } from '../../service/theme.service';
 import { AuthFeatureService } from '../../service/feature/auth.feature.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { PushNotificationService } from '../../service/push-notification.service';
+import { getSupportedLang, SUPPORTED_LANGS } from '../../i18n/supported-languages';
 
 @Component({
   selector: 'app-settings',
@@ -19,9 +20,9 @@ export class SettingsComponent {
   readonly route: Router = inject(Router);
   protected readonly isLogged = this.authFeatureService.authStateService.isLogged;
   protected readonly themes = ['caishen', 'night', 'light', 'dark', 'forest', 'lofi'];
-  protected readonly languages = ['fr', 'en'];
+  protected readonly languages = SUPPORTED_LANGS;
   protected theme: WritableSignal<string> = signal(localStorage.getItem('theme') ?? 'caishen');
-  protected language: WritableSignal<string> = signal(localStorage.getItem('lang') ?? 'fr');
+  protected language: WritableSignal<string> = signal(getSupportedLang(localStorage.getItem('lang')));
 
   ngOnInit() {
     this.changeTheme(this.theme());
@@ -35,9 +36,10 @@ export class SettingsComponent {
   }
 
   changeLanguage(language: string): void {
-    this.language.set(language);
-    localStorage.setItem('lang', language);
-    this.translocoService.setActiveLang(language);
+    const supportedLang = getSupportedLang(language);
+    this.language.set(supportedLang);
+    localStorage.setItem('lang', supportedLang);
+    this.translocoService.setActiveLang(supportedLang);
   }
 
   logout() {

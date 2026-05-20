@@ -4,6 +4,7 @@
     "cancel": "Annuler",
     "settings": "Paramètres",
     "validate": "Valider",
+    "loading": "Chargement",
     "emailPlaceholder": "mail@exemple.com",
     "passwordPlaceholder": "Mot de passe",
     "confirmPasswordPlaceholder": "Confirmer le mot de passe",

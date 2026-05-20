@@ -15,6 +15,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs/operators';
 import { PushNotificationService } from './service/push-notification.service';
+import { LoadingService } from './service/loading.service';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -41,6 +42,7 @@ export class AppComponent {
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
   readonly swUpdate: SwUpdate = inject(SwUpdate);
   readonly pushNotificationService: PushNotificationService = inject(PushNotificationService);
+  readonly loadingService: LoadingService = inject(LoadingService);
 
   protected theme: Signal<string> = this.themeService.theme;
   protected installPrompt: WritableSignal<BeforeInstallPromptEvent | null> = signal(null);

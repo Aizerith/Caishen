@@ -4,6 +4,7 @@
     "cancel": "Cancel",
     "settings": "Settings",
     "validate": "Validate",
+    "loading": "Loading",
     "emailPlaceholder": "email@example.com",
     "passwordPlaceholder": "Password",
     "confirmPasswordPlaceholder": "Confirm password",
