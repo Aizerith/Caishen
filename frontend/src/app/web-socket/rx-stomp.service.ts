@@ -1,7 +1,7 @@
 import { effect, Injectable, inject } from '@angular/core';
 import { RxStomp } from '@stomp/rx-stomp';
 import { rxStompConfigFactory } from './rx-stomp.config';
-import { AuthStateService } from '../service/stateService/auth.state.service';
+import { AuthStateService } from '../service/state/auth.state.service';
 
 @Injectable({ providedIn: 'root' })
 export class RxStompService extends RxStomp {

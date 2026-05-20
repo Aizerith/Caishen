@@ -4,7 +4,7 @@
       <h1 class="app-title">{{ 'groups.add' | transloco }}</h1>
     </header>
     <div class="app-content">
-      <form class="app-card flex flex-col gap-4" [formGroup]="groupForm" (ngSubmit)="addNewGroup()">
+      <form class="app-card flex flex-col gap-4" [formGroup]="groupForm" (ngSubmit)="createGroup()">
         <app-caishen-custom-form-input [placeholder]="'groups.titlePlaceholder' | transloco"
                                        [type]="'text'"
                                        [inputForm]="getFormFromName('title')"

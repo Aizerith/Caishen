@@ -5,5 +5,6 @@ public enum ExpenseHistoryAction {
     UPDATED,
     DELETED,
     MEMBER_JOINED,
-    SETTLEMENT_PAID
+    SETTLEMENT_PAID,
+    SETTLEMENT_CANCELLED
 }

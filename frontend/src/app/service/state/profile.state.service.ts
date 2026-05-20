@@ -1,7 +1,7 @@
 import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import UserGroupResponse = CaiShen.UserGroupResponse;
-import { ProfileHttpService } from '../httpService/profile.http.service';
+import { ProfileHttpService } from '../http/profile.http.service';
 import ProfileInfoResponse = CaiShen.ProfileInfoResponse;
 
 export interface ProfileStateInterface {

@@ -93,13 +93,14 @@
     "titlePlaceholder": "Titre du groupe",
     "created": "Le groupe \"{{ title }}\" a été ajouté.",
     "createError": "Erreur lors de la création du groupe \"{{ title }}\".",
-    "createWithoutUser": "Impossible de créer le groupe sans utilisateur connecté."
+    "createWithoutUser": "Impossible de créer le groupe sans utilisateur connecté.",
+    "newActivity": "Nouveau"
   },
   "group": {
     "invitationLink": "Lien d'invitation",
     "expenses": "Dépenses",
     "balance": "Équilibre",
-    "history": "Historique",
+    "history": "Activit\u00e9",
     "paidBy": "Payé par",
     "datePrefix": "Le",
     "owedToYou": "On vous doit",
@@ -114,7 +115,13 @@
     "settlementPayError": "Erreur lors de l'enregistrement du règlement.",
     "noSettlements": "Aucun règlement nécessaire.",
     "members": "Membres",
-    "invitationCopied": "Lien d'invitation copié dans le presse-papiers."
+    "invitationCopied": "Lien d'invitation copié dans le presse-papiers.",
+    "activity": "Activit\u00e9",
+    "cancelSettlement": "Annuler",
+    "settlementCancelTitle": "Annuler le règlement ?",
+    "settlementCancelMessage": "Annuler le règlement de {{ amount }} € à {{ receiver }}.",
+    "settlementCancelled": "Règlement annulé.",
+    "settlementCancelError": "Erreur lors de l'annulation du règlement."
   },
   "expense": {
     "add": "Ajouter une dépense",
@@ -144,7 +151,8 @@
       "UPDATED": "Dépense modifiée",
       "DELETED": "Dépense supprimée",
       "MEMBER_JOINED": "Nouveau membre",
-      "SETTLEMENT_PAID": "Règlement payé"
+      "SETTLEMENT_PAID": "Règlement payé",
+      "SETTLEMENT_CANCELLED": "Règlement annulé"
     },
     "historyFields": {
       "title": "Titre",
@@ -152,7 +160,8 @@
       "payer": "Payeur",
       "date": "Date",
       "participants": "Participants"
-    }
+    },
+    "historySettlementCancelledBy": "{{ actor }} a annulé le règlement de {{ amount }} € à {{ receiver }}"
   },
   "join": {
     "joined": "Vous avez rejoint le groupe.",

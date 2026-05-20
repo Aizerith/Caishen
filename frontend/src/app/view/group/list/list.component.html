@@ -3,7 +3,7 @@
     <header class="app-panel-header app-panel-header-inline">
       <h1 class="app-title">{{ 'groups.title' | transloco }}</h1>
       <button type="button" class="btn btn-accent btn-square relative p-0" [attr.aria-label]="'groups.addAria' | transloco"
-              (click)="navigateToAddGroup()">
+              (click)="navigateToCreateGroup()">
         <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>
         <span aria-hidden="true" class="absolute left-1/2 top-1/2 h-5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded bg-current"></span>
       </button>
@@ -16,7 +16,19 @@
           class="app-card app-row cursor-pointer"
           (click)="navigateToGroupId(group.id)"
           (keydown.enter)="navigateToGroupId(group.id)">
-          <h2 class="app-row-title">{{ group.title }}</h2>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <h2 class="app-row-title min-w-0 truncate">{{ group.title }}</h2>
+              @if (hasUnreadActivity(group.id)) {
+                <span class="badge badge-accent badge-sm shrink-0">{{ 'groups.newActivity' | transloco }}</span>
+              }
+            </div>
+            @if (latestActivityForGroup(group.id); as activity) {
+              <p class="app-row-meta">
+                {{ getActivityTranslationKey(activity.action) | transloco }} - {{ activity.actorName }}
+              </p>
+            }
+          </div>
           <span class="btn btn-primary btn-square self-end sm:self-auto">
             <img src="/icons/right-arrow.svg" alt="">
           </span>

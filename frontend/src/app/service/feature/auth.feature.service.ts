@@ -1,11 +1,11 @@
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { finalize, Observable, of, switchMap, take } from 'rxjs';
-import { AuthHttpService } from '../httpService/auth.http.service';
-import { AuthStateInterface, AuthStateService } from '../stateService/auth.state.service';
+import { AuthHttpService } from '../http/auth.http.service';
+import { AuthStateInterface, AuthStateService } from '../state/auth.state.service';
 import { UserToken } from '../../definitions/interface/user-token.interface';
 import { jwtDecode } from 'jwt-decode';
 import { NotificationsService } from '../notifications.service';
-import { ProfileStateService } from '../stateService/profile.state.service';
+import { ProfileStateService } from '../state/profile.state.service';
 import { Router } from '@angular/router';
 import RegisterRequest = CaiShen.RegisterRequest;
 import { TranslocoService } from '@jsverse/transloco';

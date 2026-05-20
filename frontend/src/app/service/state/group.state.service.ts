@@ -1,7 +1,7 @@
 import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import GroupResponse = CaiShen.GroupResponse;
-import { GroupHttpService } from '../httpService/group.http.service';
+import { GroupHttpService } from '../http/group.http.service';
 import ExpenseRequest = CaiShen.ExpenseRequest;
 import { ProfileStateService } from './profile.state.service';
 import ExpenseHistoryResponse = CaiShen.ExpenseHistoryResponse;
@@ -105,6 +105,18 @@ export class GroupStateService {
 
   public paySettlement(data: SettlementPaymentRequest) {
     return this.groupHttpService.paySettlement(data).pipe(
+      tap((value) => {
+        const newState: GroupStateInterface = {
+          ...this.groupState(),
+          groupInfo: value,
+        };
+        this.updateState(newState);
+      }),
+    );
+  }
+
+  public cancelSettlementPayment(paymentId: number) {
+    return this.groupHttpService.cancelSettlementPayment(paymentId).pipe(
       tap((value) => {
         const newState: GroupStateInterface = {
           ...this.groupState(),

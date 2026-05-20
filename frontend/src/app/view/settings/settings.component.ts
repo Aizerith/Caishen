@@ -1,7 +1,7 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../service/theme.service';
-import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
+import { AuthFeatureService } from '../../service/feature/auth.feature.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { PushNotificationService } from '../../service/push-notification.service';
 

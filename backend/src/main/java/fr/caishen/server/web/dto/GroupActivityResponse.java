@@ -5,18 +5,15 @@ import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
-public record ExpenseHistoryResponse(
-        Long id,
+public record GroupActivityResponse(
         Long groupId,
-        @Nullable Long expenseId,
-        @Nullable String expenseTitle,
+        Long latestHistoryId,
         ExpenseHistoryAction action,
         Long actorId,
         String actorName,
+        @Nullable String expenseTitle,
         @Nullable BigDecimal amount,
-        List<ExpenseHistoryChangeResponse> changes,
         LocalDateTime createdAt
 ) {
 }

@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { RouterLink } from '@angular/router';
 import { finalize, take } from 'rxjs';
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
-import { AuthHttpService } from '../../service/httpService/auth.http.service';
+import { AuthHttpService } from '../../service/http/auth.http.service';
 import { VALID_EMAIL_REGEX } from '../../validator/validator.regex';
 import { TranslocoPipe } from '@jsverse/transloco';
 

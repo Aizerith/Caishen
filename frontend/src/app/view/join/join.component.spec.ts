@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 
 import { JoinComponent } from './join.component';
-import { AuthStateService } from '../../service/stateService/auth.state.service';
-import { ProfileStateService } from '../../service/stateService/profile.state.service';
+import { AuthStateService } from '../../service/state/auth.state.service';
+import { ProfileStateService } from '../../service/state/profile.state.service';
 import { translocoTestingModule } from '../../testing/transloco-testing';
 import { PendingJoinService } from '../../service/pending-join.service';
 

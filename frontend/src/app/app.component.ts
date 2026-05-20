@@ -4,12 +4,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CaishenCustomSnackbarComponent } from './component/caishen-custom-snackbar/caishen-custom-snackbar.component';
 import { NotificationsService } from './service/notifications.service';
 import { NavigationService } from './service/navigation.service';
-import { ProfileStateService } from './service/stateService/profile.state.service';
+import { ProfileStateService } from './service/state/profile.state.service';
 import { forkJoin, switchMap, take } from 'rxjs';
 import { ThemeService } from './service/theme.service';
 import { WebSocketService } from './web-socket/web-socket.service';
-import { GroupStateService } from './service/stateService/group.state.service';
-import { AuthFeatureService } from './service/featureService/auth.feature.service';
+import { GroupStateService } from './service/state/group.state.service';
+import { ActivityStateService } from './service/state/activity.state.service';
+import { AuthFeatureService } from './service/feature/auth.feature.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs/operators';
@@ -36,6 +37,7 @@ export class AppComponent {
   readonly profileStateService: ProfileStateService = inject(ProfileStateService);
   readonly webSocketService: WebSocketService = inject(WebSocketService);
   readonly groupStateService: GroupStateService = inject(GroupStateService);
+  readonly activityStateService: ActivityStateService = inject(ActivityStateService);
   readonly authFeatureService: AuthFeatureService = inject(AuthFeatureService);
   readonly swUpdate: SwUpdate = inject(SwUpdate);
   readonly pushNotificationService: PushNotificationService = inject(PushNotificationService);
@@ -53,6 +55,7 @@ export class AppComponent {
           const groupId = Number(value);
           return forkJoin([
             this.profileStateService.getProfileAction(),
+            this.activityStateService.refreshGroupActivityAction(),
             this.groupStateService.getGroupInfoAction(groupId),
             this.groupStateService.getGroupExpenseHistoryAction(groupId),
           ]);
@@ -101,6 +104,7 @@ export class AppComponent {
       .initLoginAction()
       .pipe(
         switchMap((_) => this.profileStateService.getProfileAction()),
+        switchMap((_) => this.activityStateService.refreshGroupActivityAction()),
         take(1),
       )
       .subscribe();
@@ -116,6 +120,7 @@ export class AppComponent {
     }
 
     this.profileStateService.getProfileAction().pipe(take(1)).subscribe();
+    this.activityStateService.refreshGroupActivityAction().pipe(take(1)).subscribe();
 
     const groupId = this.getCurrentGroupId();
     if (!groupId) {

@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
-import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
+import { AuthFeatureService } from '../../service/feature/auth.feature.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PendingJoinService } from '../../service/pending-join.service';
 

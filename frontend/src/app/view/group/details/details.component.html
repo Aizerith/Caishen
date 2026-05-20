@@ -13,8 +13,13 @@
                 (click)="changeTabToExpense()">{{ 'group.expenses' | transloco }}</button>
         <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'balance'"
                 (click)="changeTabToBalance()">{{ 'group.balance' | transloco }}</button>
-        <button type="button" role="tab" class="tab" [class.tab-active]="currentTab() === 'history'"
-                (click)="changeTabToHistory()">{{ 'group.history' | transloco }}</button>
+        <button type="button" role="tab" class="tab relative" [class.tab-active]="currentTab() === 'history'"
+                (click)="changeTabToHistory()">
+          {{ 'group.activity' | transloco }}
+          @if (activityStateService.hasUnreadActivity(group.id)) {
+            <span class="badge badge-accent badge-xs absolute right-2 top-1"></span>
+          }
+        </button>
       </div>
 
       @switch (currentTab()) {
@@ -95,20 +100,25 @@
         @case ('history') {
           <div class="app-content app-content-with-tabs">
             @for (history of expenseHistory(); track history.id) {
-              <article class="app-card app-row">
+              <article class="app-card app-row activity-card" [class.activity-card-new]="isNewActivity(history)">
                 <div class="min-w-0">
-                  <h2 class="app-row-title">
-                    @if (history.action === 'UPDATED') {
-                      {{ 'expense.historyUpdatedBy' | transloco: { actor: history.actorName } }}
-                    } @else {
-                      {{ getHistoryTranslationKey(history.action) | transloco }}
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="app-row-title">
+                      {{ getHistoryTitle(history) }}
+                    </h2>
+                    @if (isNewActivity(history)) {
+                      <span class="badge badge-accent badge-sm">{{ 'groups.newActivity' | transloco }}</span>
                     }
-                  </h2>
+                  </div>
                   @if (history.action === 'MEMBER_JOINED') {
                     <p class="app-row-meta">{{ 'expense.historyMemberJoinedBy' | transloco: { actor: history.actorName } }}</p>
                   } @else if (history.action === 'SETTLEMENT_PAID') {
                     <p class="app-row-meta">
                       {{ 'expense.historySettlementPaidBy' | transloco: { actor: history.actorName, receiver: history.expenseTitle, amount: history.amount } }}
+                    </p>
+                  } @else if (history.action === 'SETTLEMENT_CANCELLED') {
+                    <p class="app-row-meta">
+                      {{ 'expense.historySettlementCancelledBy' | transloco: { actor: history.actorName, receiver: history.expenseTitle, amount: history.amount } }}
                     </p>
                   } @else {
                     <p class="app-row-meta">{{ history.expenseTitle }} - {{ history.actorName }}</p>
@@ -131,6 +141,11 @@
                   <div class="app-amount">
                     {{ history.amount }} {{ 'common.euro' | transloco }}
                   </div>
+                }
+                @if (canCancelSettlementPayment(history)) {
+                  <button type="button" class="btn btn-ghost btn-sm" (click)="openCancelSettlementModal(history)">
+                    {{ 'group.cancelSettlement' | transloco }}
+                  </button>
                 }
               </article>
             } @empty {
@@ -167,6 +182,28 @@
         </div>
         <form method="dialog" class="modal-backdrop">
           <button [disabled]="payingSettlementKey() !== null">{{ 'common.cancel' | transloco }}</button>
+        </form>
+      }
+    </dialog>
+
+    <dialog #cancelSettlementModal class="modal">
+      @if (selectedSettlementHistory(); as history) {
+        <div class="modal-box flex flex-col gap-4">
+          <h2 class="text-lg font-semibold">{{ 'group.settlementCancelTitle' | transloco }}</h2>
+          <p class="text-base-content/70">
+            {{ 'group.settlementCancelMessage' | transloco: { receiver: history.expenseTitle, amount: history.amount } }}
+          </p>
+          <div class="modal-action">
+            <button type="button" class="btn btn-ghost" [disabled]="cancellingSettlementPaymentId() !== null" (click)="closeCancelSettlementModal()">
+              {{ 'common.cancel' | transloco }}
+            </button>
+            <button type="button" class="btn btn-error" [disabled]="cancellingSettlementPaymentId() !== null" (click)="confirmCancelSettlementPayment()">
+              {{ 'group.cancelSettlement' | transloco }}
+            </button>
+          </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+          <button [disabled]="cancellingSettlementPaymentId() !== null">{{ 'common.cancel' | transloco }}</button>
         </form>
       }
     </dialog>

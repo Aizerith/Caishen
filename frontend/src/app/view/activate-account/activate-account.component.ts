@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { take } from 'rxjs';
-import { AuthHttpService } from '../../service/httpService/auth.http.service';
+import { AuthHttpService } from '../../service/http/auth.http.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 type ActivationStatus = 'loading' | 'success' | 'error';

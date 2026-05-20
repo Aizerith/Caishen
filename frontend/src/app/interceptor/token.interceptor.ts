@@ -1,10 +1,10 @@
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { AuthStateService } from '../service/stateService/auth.state.service';
-import { AuthHttpService } from '../service/httpService/auth.http.service';
+import { AuthStateService } from '../service/state/auth.state.service';
+import { AuthHttpService } from '../service/http/auth.http.service';
 import { Router } from '@angular/router';
 import { catchError, concatMap, from, Observable, switchMap, tap, throwError } from 'rxjs';
 import { inject, Injectable } from '@angular/core';
-import {AuthFeatureService} from '../service/featureService/auth.feature.service';
+import { AuthFeatureService } from '../service/feature/auth.feature.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {

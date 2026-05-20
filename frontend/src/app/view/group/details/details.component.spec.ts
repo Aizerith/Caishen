@@ -3,15 +3,16 @@ import { signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 
-import { CheckComponent } from './check.component';
-import { GroupStateService } from '../../../service/stateService/group.state.service';
+import { GroupDetailsComponent } from './details.component';
+import { GroupStateService } from '../../../service/state/group.state.service';
 import { NotificationsService } from '../../../service/notifications.service';
-import { ProfileStateService } from '../../../service/stateService/profile.state.service';
+import { ProfileStateService } from '../../../service/state/profile.state.service';
 import { translocoTestingModule } from '../../../testing/transloco-testing';
+import { ActivityStateService } from '../../../service/state/activity.state.service';
 
-describe('CheckComponent', () => {
-  let component: CheckComponent;
-  let fixture: ComponentFixture<CheckComponent>;
+describe('GroupDetailsComponent', () => {
+  let component: GroupDetailsComponent;
+  let fixture: ComponentFixture<GroupDetailsComponent>;
   const groupInfo = {
     id: 1,
     title: 'Pool Party',
@@ -25,14 +26,14 @@ describe('CheckComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CheckComponent, translocoTestingModule],
+      imports: [GroupDetailsComponent, translocoTestingModule],
       providers: [
         {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
               params: {
-                id: 1,
+                groupId: 1,
               },
             },
           },
@@ -59,6 +60,8 @@ describe('CheckComponent', () => {
             getGroupInfoAction: vi.fn().mockReturnValue(of(groupInfo)),
             getGroupExpenseHistoryAction: vi.fn().mockReturnValue(of([])),
             addExpense: vi.fn().mockReturnValue(of(groupInfo)),
+            paySettlement: vi.fn().mockReturnValue(of(groupInfo)),
+            cancelSettlementPayment: vi.fn().mockReturnValue(of(groupInfo)),
           },
         },
         {
@@ -67,11 +70,19 @@ describe('CheckComponent', () => {
             getMyId: vi.fn().mockReturnValue(1),
           },
         },
+        {
+          provide: ActivityStateService,
+          useValue: {
+            hasUnreadActivity: vi.fn().mockReturnValue(false),
+            markGroupAsRead: vi.fn(),
+            refreshGroupActivityAction: vi.fn().mockReturnValue(of([])),
+          },
+        },
       ],
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CheckComponent);
+    fixture = TestBed.createComponent(GroupDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

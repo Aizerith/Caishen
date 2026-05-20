@@ -37,3 +37,14 @@
 .settlement-card-actionable .settlement-amount {
   color: var(--color-success);
 }
+
+.activity-card {
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.activity-card-new {
+  border-color: color-mix(in oklch, var(--color-accent) 52%, var(--color-base-300));
+  background: color-mix(in oklch, var(--color-accent) 8%, var(--color-base-100));
+}

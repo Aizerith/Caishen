@@ -5,12 +5,12 @@ export const groupRoutes: Route[] = [
   {
     path: '',
     canActivate: [IsLoggedGuard],
-    loadComponent: () => import('./group.component').then((value) => value.GroupComponent),
+    loadComponent: () => import('./list/list.component').then((value) => value.GroupListComponent),
   },
   {
-    path: 'add',
+    path: 'create',
     canActivate: [IsLoggedGuard],
-    loadComponent: () => import('./add/add.component').then((value) => value.AddComponent),
+    loadComponent: () => import('./create/create.component').then((value) => value.GroupCreateComponent),
   },
   {
     path: ':groupId/expense/:expenseId',
@@ -18,8 +18,8 @@ export const groupRoutes: Route[] = [
     loadComponent: () => import('./expense/expense.component').then((value) => value.ExpenseComponent),
   },
   {
-    path: ':id',
+    path: ':groupId',
     canActivate: [IsLoggedGuard],
-    loadComponent: () => import('./check/check.component').then((value) => value.CheckComponent),
+    loadComponent: () => import('./details/details.component').then((value) => value.GroupDetailsComponent),
   },
 ];

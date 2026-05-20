@@ -190,6 +190,44 @@ class CaishenGroupServiceTest {
         );
     }
 
+    @Test
+    void cancellingSettlementRestoresBalancesAndNotifiesOtherMembers() {
+        AppUserEntity shen = user(1L, "Shen");
+        AppUserEntity bob = user(2L, "Bob");
+        GroupEntity group = group(List.of(shen, bob), List.of(expense("20.00", "1 2", 2L)));
+        SettlementPaymentEntity payment = new SettlementPaymentEntity();
+        payment.setId(7L);
+        payment.setGroupId(1L);
+        payment.setPayerId(1L);
+        payment.setReceiverId(2L);
+        payment.setAmount(new BigDecimal("10.00"));
+        List<SettlementPaymentEntity> settlementPayments = new ArrayList<>(List.of(payment));
+
+        when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
+        when(appUserRepository.findById(2L)).thenReturn(Optional.of(bob));
+        when(settlementPaymentRepository.findById(7L)).thenReturn(Optional.of(payment));
+        when(settlementPaymentRepository.findByGroupId(1L)).thenAnswer(invocation -> settlementPayments);
+        org.mockito.Mockito.doAnswer(invocation -> {
+            settlementPayments.remove(payment);
+            return null;
+        }).when(settlementPaymentRepository).delete(payment);
+        mockCurrentUser(shen);
+
+        GroupResponse response = service.cancelSettlementPayment(7L);
+
+        assertThat(balanceFor(response, "Shen")).isEqualByComparingTo("-10.00");
+        assertThat(balanceFor(response, "Bob")).isEqualByComparingTo("10.00");
+        assertThat(response.settlementList())
+                .extracting(SettlementResponse::debtorName, SettlementResponse::creditorName, settlement -> settlement.amount().toPlainString())
+                .containsExactly(org.assertj.core.groups.Tuple.tuple("Shen", "Bob", "10.00"));
+        verify(pushNotificationService).notifyUsers(
+                argThat(users -> users.size() == 1 && users.get(0).getId().equals(bob.getId())),
+                eq("Reglement annule"),
+                any(),
+                eq("/group/1")
+        );
+    }
+
     private AppUserEntity user(Long id, String username) {
         AppUserEntity user = new AppUserEntity();
         user.setId(id);

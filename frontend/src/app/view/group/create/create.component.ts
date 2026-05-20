@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 import { CaishenCustomFormInputComponent } from '../../../component/caishen-custom-form-input/caishen-custom-form-input.component';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GroupHttpService } from '../../../service/httpService/group.http.service';
+import { GroupHttpService } from '../../../service/http/group.http.service';
 import GroupInfoRequest = CaiShen.GroupInfoRequest;
 import { NotificationsService } from '../../../service/notifications.service';
 import { Router } from '@angular/router';
-import { ProfileStateService } from '../../../service/stateService/profile.state.service';
+import { ProfileStateService } from '../../../service/state/profile.state.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 @Component({
-  selector: 'app-add',
+  selector: 'app-group-create',
   imports: [CaishenCustomFormInputComponent, ReactiveFormsModule, TranslocoPipe],
-  templateUrl: './add.component.html',
-  styleUrl: './add.component.css',
+  templateUrl: './create.component.html',
+  styleUrl: './create.component.css',
 })
-export class AddComponent {
+export class GroupCreateComponent {
   groupForm: FormGroup;
   userId: number | null = null;
 
@@ -37,7 +37,7 @@ export class AddComponent {
     return this.groupForm.get(name) as FormControl;
   }
 
-  addNewGroup() {
+  createGroup() {
     if (this.groupForm.invalid) {
       this.groupForm.markAllAsTouched();
       return;

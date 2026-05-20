@@ -58,6 +58,12 @@ public class CaishenGroupController {
         return caishenGroupService.paySettlement(data);
     }
 
+    @DeleteMapping("/settlements/payments/{id}")
+    public GroupResponse cancelSettlementPayment(@PathVariable Long id) {
+        log.info("DELETE /group/settlements/payments/{}", id);
+        return caishenGroupService.cancelSettlementPayment(id);
+    }
+
     @GetMapping("/expenses/{id}")
     public ExpenseInfoResponse getExpenseInfo(@PathVariable Long id) {
         log.info("GET /group/expenses/{}", id);
@@ -68,6 +74,12 @@ public class CaishenGroupController {
     public List<ExpenseHistoryResponse> getGroupExpenseHistory(@PathVariable Long id) {
         log.info("GET /group/{}/expenses/history", id);
         return caishenGroupService.getGroupExpenseHistory(id);
+    }
+
+    @GetMapping("/activity")
+    public List<GroupActivityResponse> getCurrentUserGroupActivity() {
+        log.info("GET /group/activity");
+        return caishenGroupService.getCurrentUserGroupActivity();
     }
 
     @GetMapping("/expenses/{id}/history")

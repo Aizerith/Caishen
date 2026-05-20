@@ -1,8 +1,8 @@
 import {Component, inject, Signal} from '@angular/core';
 import { take } from 'rxjs';
-import { AuthStateService } from '../../service/stateService/auth.state.service';
+import { AuthStateService } from '../../service/state/auth.state.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProfileStateService } from '../../service/stateService/profile.state.service';
+import { ProfileStateService } from '../../service/state/profile.state.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PendingJoinService } from '../../service/pending-join.service';
 

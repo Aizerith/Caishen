@@ -192,9 +192,39 @@ public class CaishenGroupService {
         payment.setCreatedAt(java.time.LocalDateTime.now());
         settlementPaymentRepository.save(payment);
 
-        recordSettlementPaidHistory(group, currentUser, receiver, paidAmount);
+        recordSettlementPaidHistory(group, currentUser, receiver, paidAmount, payment.getId());
         notifyGroupMembers(group);
         notifySettlementPaid(group, currentUser, receiver, paidAmount);
+        return getGroupResponse(group);
+    }
+
+    @Transactional
+    public GroupResponse cancelSettlementPayment(Long paymentId) {
+        SettlementPaymentEntity payment = settlementPaymentRepository.findById(paymentId).orElse(null);
+        if (payment == null) {
+            throw new GroupAccessDeniedException();
+        }
+
+        GroupEntity group = groupRepository.findById(payment.getGroupId()).orElse(null);
+        if (group == null) {
+            throw new GroupAccessDeniedException();
+        }
+
+        AppUserEntity currentUser = requireCurrentUserMemberOf(group);
+        if (!Objects.equals(payment.getPayerId(), currentUser.getId())) {
+            throw new GroupAccessDeniedException();
+        }
+
+        AppUserEntity receiver = group.getGroupAppUserEntityList().stream()
+                .filter(member -> Objects.equals(member.getId(), payment.getReceiverId()))
+                .findFirst()
+                .orElseThrow(GroupAccessDeniedException::new);
+        BigDecimal amount = normalizeMoney(payment.getAmount());
+
+        settlementPaymentRepository.delete(payment);
+        recordSettlementCancelledHistory(group, currentUser, receiver, amount, paymentId);
+        notifyGroupMembers(group);
+        notifySettlementCancelled(group, currentUser, receiver, amount);
         return getGroupResponse(group);
     }
 
@@ -220,6 +250,15 @@ public class CaishenGroupService {
                 getPushRecipients(group, actor),
                 "Règlement payé",
                 actor.getUsername() + " a réglé " + normalizeMoney(amount) + " € à " + receiver.getUsername(),
+                "/group/" + group.getId()
+        );
+    }
+
+    private void notifySettlementCancelled(GroupEntity group, AppUserEntity actor, AppUserEntity receiver, BigDecimal amount) {
+        pushNotificationService.notifyUsers(
+                getPushRecipients(group, actor),
+                "Reglement annule",
+                actor.getUsername() + " a annule le reglement de " + normalizeMoney(amount) + " EUR a " + receiver.getUsername(),
                 "/group/" + group.getId()
         );
     }
@@ -437,6 +476,31 @@ public class CaishenGroupService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<GroupActivityResponse> getCurrentUserGroupActivity() {
+        AppUserEntity currentUser = getCurrentAppUser();
+        List<GroupEntity> groups = currentUser.getUserGroupEntityList();
+        if (groups == null) {
+            return List.of();
+        }
+
+        return groups.stream()
+                .map(GroupEntity::getId)
+                .map(expenseHistoryRepository::findFirstByGroupIdOrderByCreatedAtDesc)
+                .flatMap(Optional::stream)
+                .map(history -> new GroupActivityResponse(
+                        history.getGroupId(),
+                        history.getId(),
+                        history.getAction(),
+                        history.getActorId(),
+                        history.getActorName(),
+                        history.getExpenseTitle(),
+                        history.getAmount(),
+                        history.getCreatedAt()
+                ))
+                .toList();
+    }
+
     private AppUserEntity getCurrentAppUser() {
         return appUserRepository.findByLogin(authService.getCurrentUser().getUsername()).orElseThrow();
     }
@@ -492,11 +556,25 @@ public class CaishenGroupService {
         expenseHistoryRepository.save(history);
     }
 
-    private void recordSettlementPaidHistory(GroupEntity group, AppUserEntity actor, AppUserEntity receiver, BigDecimal amount) {
+    private void recordSettlementPaidHistory(GroupEntity group, AppUserEntity actor, AppUserEntity receiver, BigDecimal amount, Long paymentId) {
         ExpenseHistoryEntity history = new ExpenseHistoryEntity();
         history.setGroupId(group.getId());
+        history.setExpenseId(paymentId);
         history.setExpenseTitle(receiver.getUsername());
         history.setAction(ExpenseHistoryAction.SETTLEMENT_PAID);
+        history.setActorId(actor.getId());
+        history.setActorName(actor.getUsername());
+        history.setAmount(normalizeMoney(amount));
+        history.setCreatedAt(java.time.LocalDateTime.now());
+        expenseHistoryRepository.save(history);
+    }
+
+    private void recordSettlementCancelledHistory(GroupEntity group, AppUserEntity actor, AppUserEntity receiver, BigDecimal amount, Long paymentId) {
+        ExpenseHistoryEntity history = new ExpenseHistoryEntity();
+        history.setGroupId(group.getId());
+        history.setExpenseId(paymentId);
+        history.setExpenseTitle(receiver.getUsername());
+        history.setAction(ExpenseHistoryAction.SETTLEMENT_CANCELLED);
         history.setActorId(actor.getId());
         history.setActorName(actor.getUsername());
         history.setAmount(normalizeMoney(amount));

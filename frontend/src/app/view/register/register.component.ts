@@ -4,7 +4,7 @@ import { STRONG_PASSWORD_REGEX, VALID_EMAIL_REGEX, VALID_PSEUDO_REGEX } from '..
 import { CaishenCustomFormInputComponent } from '../../component/caishen-custom-form-input/caishen-custom-form-input.component';
 import Validation from '../../validator/validation';
 import RegisterRequest = CaiShen.RegisterRequest;
-import { AuthFeatureService } from '../../service/featureService/auth.feature.service';
+import { AuthFeatureService } from '../../service/feature/auth.feature.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PendingJoinService } from '../../service/pending-join.service';

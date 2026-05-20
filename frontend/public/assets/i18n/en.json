@@ -93,13 +93,14 @@
     "titlePlaceholder": "Group title",
     "created": "Group \"{{ title }}\" has been added.",
     "createError": "Could not create group \"{{ title }}\".",
-    "createWithoutUser": "Cannot create a group without a signed-in user."
+    "createWithoutUser": "Cannot create a group without a signed-in user.",
+    "newActivity": "New"
   },
   "group": {
     "invitationLink": "Invitation link",
     "expenses": "Expenses",
     "balance": "Balance",
-    "history": "History",
+    "history": "Activity",
     "paidBy": "Paid by",
     "datePrefix": "On",
     "owedToYou": "You are owed",
@@ -114,7 +115,13 @@
     "settlementPayError": "Could not save settlement.",
     "noSettlements": "No settlement needed.",
     "members": "Members",
-    "invitationCopied": "Invitation link copied to clipboard."
+    "invitationCopied": "Invitation link copied to clipboard.",
+    "activity": "Activity",
+    "cancelSettlement": "Undo",
+    "settlementCancelTitle": "Undo settlement?",
+    "settlementCancelMessage": "Undo the {{ amount }} € payment to {{ receiver }}.",
+    "settlementCancelled": "Settlement undone.",
+    "settlementCancelError": "Could not undo settlement."
   },
   "expense": {
     "add": "Add an expense",
@@ -144,7 +151,8 @@
       "UPDATED": "Expense updated",
       "DELETED": "Expense deleted",
       "MEMBER_JOINED": "New member",
-      "SETTLEMENT_PAID": "Settlement paid"
+      "SETTLEMENT_PAID": "Settlement paid",
+      "SETTLEMENT_CANCELLED": "Settlement undone"
     },
     "historyFields": {
       "title": "Title",
@@ -152,7 +160,8 @@
       "payer": "Payer",
       "date": "Date",
       "participants": "Participants"
-    }
+    },
+    "historySettlementCancelledBy": "{{ actor }} undid the {{ amount }} € payment to {{ receiver }}"
   },
   "join": {
     "joined": "You have joined the group.",

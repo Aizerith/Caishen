@@ -60,6 +60,17 @@ declare namespace CaiShen {
         title: string;
     }
 
+    interface GroupActivityResponse {
+        action: ExpenseHistoryAction;
+        actorId: number;
+        actorName: string;
+        amount: number | null;
+        createdAt: Date;
+        expenseTitle: string | null;
+        groupId: number;
+        latestHistoryId: number;
+    }
+
     interface GroupInfoRequest {
         members: number[];
         title: string;
@@ -78,10 +89,6 @@ declare namespace CaiShen {
         settlementList: SettlementResponse[];
         title: string;
         uuid: string;
-    }
-
-    interface HelloWorldDTO {
-        hello: string;
     }
 
     interface LoginRequest {
@@ -154,7 +161,7 @@ declare namespace CaiShen {
         title: string;
     }
 
-    type ExpenseHistoryAction = "CREATED" | "UPDATED" | "DELETED" | "MEMBER_JOINED" | "SETTLEMENT_PAID";
+    type ExpenseHistoryAction = "CREATED" | "UPDATED" | "DELETED" | "MEMBER_JOINED" | "SETTLEMENT_PAID" | "SETTLEMENT_CANCELLED";
 
     /**
      * Values:

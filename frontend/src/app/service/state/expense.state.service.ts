@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { GroupHttpService } from '../httpService/group.http.service';
+import { GroupHttpService } from '../http/group.http.service';
 import ExpenseInfoResponse = CaiShen.ExpenseInfoResponse;
 
 export interface ExpenseStateInterface {
